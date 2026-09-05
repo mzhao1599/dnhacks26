@@ -118,6 +118,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--consolidate", default=None, choices=[None, "small", "medium", "full"],
                     help="run ONE sleep cycle on the perturbed skill instance (opt+gate seeds) before BM-3")
     ap.add_argument("--png", default=None)
+    ap.add_argument("--cem", default=None, help='JSON overrides for ConsolidationConfig, e.g. {"population":24,"iterations":4}')
     a = ap.parse_args(argv)
 
     from fleet_memory.envs.libero_plus import list_configs
@@ -139,6 +140,8 @@ def main(argv: list[str] | None = None) -> int:
         ccfg = {"small": ConsolidationConfig.small, "medium": ConsolidationConfig.medium,
                 "full": ConsolidationConfig}[a.consolidate]()
         ccfg.workers = a.workers
+        for k, v in (json.loads(a.cem) if a.cem else {}).items():
+            setattr(ccfg, k, v)
         for t in tasks:                       # one skill instance per (task, perturbed env)
             tmpl = dataclasses.replace(base, task_id=t, arm="B", env_kind="libero_plus", env_kwargs=perturbed_kwargs,
                                        environment_tag=tag)
