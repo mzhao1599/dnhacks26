@@ -103,8 +103,59 @@ Python API: `list_configs("robot_init", "libero_spatial")`, `make_perturbed_env(
 
 ## 4. Measured (libero_spatial task 0, "pick up the black bowl between the plate and the ramekin ...", 220 steps)
 
-RESULTS_PLACEHOLDER
+Jobs 2026-09-05 (A100.40gb, EGL, `logs/slurm/plus_9560559.out`, `plus_9560621.out`, `pi05_9560577.out`).
+Seeds = LIBERO init-state index (same object layout in every column).
+
+**SmolVLA** (`HuggingFaceVLA/smolvla_libero`, `n_action_steps=1`, 456 ms/step, 1.2 GB GPU, 105 s per failed
+220-step episode):
+
+| config | mechanism | success | initial EE pos (seed 0) |
+|---|---|---|---|
+| `standard` | hf-libero reset | **3/5** (seeds 0,3,4 in 73-78 steps; mean 134 steps) | `[-0.211, -0.011, 1.174]` (per-seed spread ~1 cm) |
+| `robot_init:0` = MountedPanda1, r=0.1 rad, joint qpos re-applied | paper's perturbation | **0/5** | `[-0.186, 0.022, 1.203]` — 3.3-5.8 cm from standard, identical for every seed |
+| `robot_init:0/asis` = MountedPanda1 env exactly as their loop leaves it (nullspace target only) | their code path | **1/5** (seed 1) | `[-0.203, -0.006, 1.184]` (1.4 cm drift after 10 settle steps, keeps drifting) |
+| `robot_init:init_state=450` = MountedPanda450, r=0.5 rad | paper's perturbation, hardest level | **0/2** (seeds 0,1; job cancelled before seeds 2-4) | `[-0.335, -0.039, 1.047]` — 18 cm + tilted (`quat [0.953,0.196,-0.229,0.039]`) |
+
+The collapse reproduces on SmolVLA: 60% -> 0% already at the smallest radius (paper: π₀ 94.2% -> 6.6% averaged
+over all radii/tasks). Even the as-is LIBERO-plus env (only the OSC nullspace target changed) drops to 20%.
+Zero-policy sanity (`plus_9560542.out` / `plus_9560496.out`): both backends give identical perturbed poses.
+Coordinator's later BM probe on the eval seeds (10 seeds each, same task): BM-0 8/10, BM-1 3/10, BM-2 4/10,
+BM-4 (homing) 6/10.
+
+**π₀.₅** (`lerobot/pi05_libero`, float32, `n_action_steps=10`, shared venv, job 9560577):
+load 150-224 s (14.5 GB safetensors from /scratch), **15.45 GB GPU allocated (15.7 GB peak)**, policy
+**515 ms per 10-action chunk (p95 519 ms, first call 892 ms) = ~52 ms/step amortised, 16 s wall per 220-step
+episode** (vs 105 s for SmolVLA). Success **0/3** on the standard task: the EE wanders across the table without
+grasping. Root cause candidates (see open issues): the Hub checkpoint's `policy_preprocessor.json` has
+`normalizer_processor {"features": {}}` and ships no stats file, i.e. state/action normalisation is *identity*,
+and the state-token prompt discretises the raw state (z=1.17 m, axis-angle ~pi) into saturated bins.
+**Treat π₀.₅ as broken / unverified**: lerobot's own `lerobot-eval` ground-truth run of the same checkpoint
+(`logs/plus/lerobot_eval_pi05.sbatch`) was cancelled twice before producing a number, so it is unknown whether the
+0/3 is our adapter or the published checkpoint. Adapter knobs for the next attempt: `--stats dataset`
+(`STATS=dataset`, normalises with `HuggingFaceVLA/libero` `meta/stats.json`, prefetched in HF_HOME; state z mean
+0.76 there vs 1.17 in the sim, so the frame may also differ), `--dtype bfloat16`, `N_ACTION_STEPS`.
 
 ## 5. Open issues
 
-ISSUES_PLACEHOLDER
+* **π₀.₅ adapter produces no successes (0/3)**; not yet validated against `lerobot-eval` (jobs cancelled). The Hub
+  checkpoint ships an identity normalizer (`features: {}`, no stats file) — verify with `STATS=dataset`, and verify
+  the state frame of `HuggingFaceVLA/libero` vs the sim (`robot0_eef_pos` z 1.17 vs dataset mean 0.76). Until
+  then no π₀.₅ numbers for the LIBERO-Plus collapse (paper: 94.2% -> 6.6%).
+* PaliGemma tokenizer is gated; we use the ungated mirror `leo009/paligemma-3b-pt-224` (same vocab/ids for text;
+  not byte-verified against the original).
+* `wand`/ImageMagick is absent on the GPU compute nodes -> stub installed at import; the **Sensor Noise** dimension
+  of LIBERO-Plus cannot run there (stage `libMagickWand-6.Q16.so.7`+deps into `$FM_ROOT/lib` like the osmesa trick,
+  or run it on a node that has ImageMagick).
+* MIG slices need `MUJOCO_GL=osmesa` (see README "osmesa"); `libero_plus_smoke.sbatch` inherits `env.sh`'s handling
+  but was only tested with EGL on A100.40gb. venv_plus has no OSMesa-specific setup beyond `env.sh`.
+* The `plus` backend's `LiberoPlusEnv` bypasses `LiberoEnv.__init__` (LIBERO-plus benchmark tables index 2402+
+  tasks and lack the base init files) and sets the same attributes by hand; keep in sync if `LiberoEnv` changes.
+* Standard SmolVLA baseline on libero_spatial task 0 is only 3/5 (5 seeds, 220-step horizon); the collapse to 0/5
+  is clear but N is small. Statistics over more seeds/tasks and all 5 radii are the next step (32 robot-init
+  configs for task 0, 350 for the suite).
+* Objects-Layout tasks (`_add_N`) need `new_objects/` from `assets.zip`: download done, extraction into
+  `libero_plus_assets/inspire/hdd/.../LIBERO-plus-0/assets/` was still running (291k/457k files); once done, point
+  `LIBERO-plus/libero/libero/assets` at a merged dir (base subdirs from hf-libero + `new_objects`, `scenes` from
+  the zip). `list_configs("layout", suite)` and `make_perturbed_env` already handle these configs (untested).
+* Cluster hygiene: several of our jobs were cancelled mid-run by another agent's `scancel`; the GPU queue is
+  shared with the production benchmark run — coordinate before submitting.
