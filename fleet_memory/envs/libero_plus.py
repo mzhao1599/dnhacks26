@@ -65,8 +65,10 @@ def _ensure_wand() -> None:
         sys.modules.update({"wand": pkg, "wand.api": api, "wand.image": image})
 
 
+_ensure_wand()   # before any libero import (LIBERO-plus's env package imports wand at module level)
+
+
 def is_plus_backend() -> bool:
-    _ensure_wand()
     try:
         from libero.libero.envs.robots import mounted_panda
         return hasattr(mounted_panda, "MountedPanda1")
@@ -111,18 +113,22 @@ def robot_init_qpos_table() -> dict[int, np.ndarray]:
     return _QPOS_CACHE
 
 
+def _exec_taskmap(path: Path, suite: str) -> list[str]:
+    ns: dict[str, Any] = {}
+    exec(path.read_text(), ns)          # plain dict literal; exec avoids importing the benchmark package
+    return list(ns["libero_task_map"][suite])
+
+
 def base_task_names(suite: str) -> list[str]:
     """Canonical (original LIBERO) task order of a suite, e.g. index 0 of libero_spatial."""
     try:
-        from libero.libero.benchmark.libero_suite_task_map import libero_task_map
-        names = libero_task_map[suite]
+        import libero.libero as L
+        names = _exec_taskmap(Path(L.__file__).parent / "benchmark/libero_suite_task_map.py", suite)
         if all(_SUFFIX.search(n) is None for n in names):
-            return list(names)
+            return names
     except Exception:
         pass
-    ns: dict[str, Any] = {}
-    exec(Path(ORIG_TASKMAP).read_text(), ns)  # hf-libero's table (bare names, canonical order)
-    return list(ns["libero_task_map"][suite])
+    return _exec_taskmap(Path(ORIG_TASKMAP), suite)   # hf-libero's table (bare names, canonical order)
 
 
 def split_task_name(name: str) -> tuple[str, str]:
@@ -149,7 +155,7 @@ def list_configs(dimension: str, suite: str) -> list[dict]:
         if key == "robot_init":
             view, n = variant.split("_initstate_")
             n = int(n.split("_noise_")[0])
-            cfg.update(init_state=n, view=view[len("view_"):], radius=0.1 * math.ceil(n / 100),
+            cfg.update(init_state=n, view=view[len("view_"):], radius=round(0.1 * math.ceil(n / 100), 1),
                        init_qpos=table[n].tolist())
         elif key == "layout":
             cfg.update(bddl=f"{suite}/{it['name']}.bddl", init_states_file=f"libero_newobj/{suite}/{it['name']}.pruned_init")
@@ -169,6 +175,10 @@ def robot_init_qpos(config: dict, seed: int) -> np.ndarray:
         return robot_init_qpos_table()[int(config["init_state"])]
     u = np.random.default_rng(seed).standard_normal(7)
     return BASE_QPOS + u / np.linalg.norm(u) * float(config.get("radius", 0.1))
+
+
+def _r(x, nd: int = 4) -> list:
+    return np.round(np.asarray(x, dtype=np.float64), nd).tolist()
 
 
 def apply_robot_init_state(env: LiberoEnv, config: dict, seed: int) -> Obs:
@@ -194,10 +204,9 @@ def apply_robot_init_state(env: LiberoEnv, config: dict, seed: int) -> Obs:
     env._last_obs = obs
     env.last_perturbation["robot_init"] = {
         "init_state": config.get("init_state"), "radius": config.get("radius"),
-        "qpos_before": np.round(q_before, 4).tolist(), "qpos_target": np.round(q, 4).tolist(),
-        "qpos_after": np.round(pe.sim.data.qpos[robot._ref_joint_pos_indexes], 4).tolist(),
-        "ee_pos_before": np.round(before.ee_pos, 4).tolist(), "ee_pos_after": np.round(obs.ee_pos, 4).tolist(),
-        "ee_quat_before": np.round(before.ee_quat, 4).tolist(), "ee_quat_after": np.round(obs.ee_quat, 4).tolist(),
+        "qpos_before": _r(q_before), "qpos_target": _r(q), "qpos_after": _r(pe.sim.data.qpos[robot._ref_joint_pos_indexes]),
+        "ee_pos_before": _r(before.ee_pos), "ee_pos_after": _r(obs.ee_pos),
+        "ee_quat_before": _r(before.ee_quat), "ee_quat_after": _r(obs.ee_quat),
         "ee_shift_m": round(float(np.linalg.norm(obs.ee_pos - before.ee_pos)), 4),
     }
     return obs
@@ -215,7 +224,6 @@ class LiberoPlusEnv(LiberoEnv):
                  max_steps: int | None = None, render_gl: str = "egl"):
         if render_gl and os.environ.get("MUJOCO_GL") != render_gl:
             os.environ["MUJOCO_GL"] = render_gl
-        _ensure_wand()
         from libero.libero import get_libero_path
         import libero.libero.envs.bddl_utils as BDDLUtils
 

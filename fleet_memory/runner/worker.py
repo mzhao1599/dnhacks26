@@ -272,6 +272,12 @@ def run_episode(cfg: RunConfig, env=None, policy=None, store: EventStore | None 
         shim.apply_envelope(envelope)
     else:                                       # older shim: the loop clamps instead (never skipped)
         loop_envelope = envelope
+    # (4b) v3.1 homing: an S3 parameter, so only when the shim is on. Scripted EE-space controller drives the arm
+    # back to the canonical start (+delta) BEFORE the VLA acts; its steps/actions count toward the episode's cost.
+    homing_res = None
+    if arm.shim and vec.homing_on and cfg.env_kind != "mock":
+        from fleet_memory.execution.homing import Homing, HomingTarget
+        obs, homing_res, _ = Homing(HomingTarget.canonical(vec.homing_delta()), envelope).run(env, obs)
     # (5) subtask loop
     coach = _agent("inner") if arm.inner_loop else None
     error = None
@@ -282,6 +288,10 @@ def run_episode(cfg: RunConfig, env=None, policy=None, store: EventStore | None 
     except Exception as ex:                     # a crashed episode is still an episode (termination="error")
         log.exception("episode %s crashed", episode_id)
         res, error = loop.LoopResult(), f"{type(ex).__name__}: {ex}"
+    if homing_res is not None:                  # prepend the homing trace so metrics/cost include it
+        res.steps += homing_res.steps
+        res.ee_positions = list(homing_res.ee_positions) + list(res.ee_positions)
+        res.actions = list(homing_res.actions) + list(res.actions)
     # (6) outcome from the env predicate ONLY
     success = bool(env.success_flag())
     outcome = Outcome(env_success=success, steps=res.steps, termination="error" if error else res.termination,

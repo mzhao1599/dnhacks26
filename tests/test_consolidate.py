@@ -13,7 +13,7 @@ from fleet_memory.memory.schema import Episode, EpisodeMetrics, Outcome, new_id,
 from fleet_memory.memory.store import EventStore
 from fleet_memory.runner import consolidate as C
 
-U_STAR = np.array([0.5, 0.5, 0.5, 0.2, 0.25, 0.9, 0.8, 0.7, 0.4])   # optimum in normalized space
+U_STAR = np.concatenate([[0.5, 0.5, 0.5, 0.2, 0.25, 0.9, 0.8, 0.7, 0.4], np.full(P.DIM - 9, 0.5)])   # optimum in normalized space (generic in DIM)
 
 
 def quad(X: np.ndarray) -> np.ndarray:
