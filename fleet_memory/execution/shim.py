@@ -277,7 +277,8 @@ class ExecutionShim:
             if self._ctrl_steps == 0:
                 self._event("waypoint_active", waypoint=wp.tolist(), tol_m=cs.pre_grasp_tol_m, mode="blend")
             self._ctrl_steps += 1
-            row[:3] = (1.0 - self.alpha) * row[:3] + self.alpha * _toward(err)
+            a = getattr(cs, "blend_alpha", 0.0) or self.alpha   # vector-controlled strength (v3.1); ctor alpha as fallback
+            row[:3] = (1.0 - a) * row[:3] + a * _toward(err)
             est = est + row[:3].astype(float) * self.pos_scale_m
             n += 1
         if n:

@@ -153,14 +153,14 @@ def test_through_shim_identity_blend_and_time_scale():
         env, _ = rollout(pol, env, shim)
         return env, shim
 
-    env0, shim0 = run_with(S3Params.identity())                             # waypoint 0.05 vs hover 0.08: stall latch
+    env0, shim0 = run_with(S3Params(blend_alpha=0.5))                       # blend on: waypoint 0.05 vs hover 0.08: stall latch
     assert env0.success()
     kinds = [e["kind"] for e in shim0.events]
     assert "blended" in kinds and "waypoint_reached" in kinds
-    env1, shim1 = run_with(S3Params(time_scale=1.5))
+    env1, shim1 = run_with(S3Params(blend_alpha=0.5, time_scale=1.5))
     assert env1.success() and env1.t < env0.t
     assert any(e["kind"] == "time_scaled" for e in shim1.events)
-    env2, shim2 = run_with(S3Params(pregrasp_height=0.08, velocity_cap=0.5))
+    env2, shim2 = run_with(S3Params(blend_alpha=0.5, pregrasp_height=0.08, velocity_cap=0.5))
     assert env2.success() and env2.t > env0.t
     assert any(e["kind"] == "velocity_clamped" for e in shim2.events)
 

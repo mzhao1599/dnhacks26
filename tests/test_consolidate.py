@@ -172,7 +172,7 @@ def test_consolidate_promotes_when_gate_passes(tmp_path):
     assert end.phase == "end" and end.trigger == "drift" and end.incumbent_version == 1
     assert end.gate is not None and end.gate.passed and end.promoted_version == 2
     assert end.gate.n_seeds == cfg.gate_seeds
-    assert len(end.history) == 6 and end.best_candidate["opt_cost"] < 1.5
+    assert len(end.history) == 6 and end.best_candidate["opt_cost"] < 2.0   # 17-dim quadratic, same budget
     n_ref, n_search, n_gate = max(4, cfg.gate_seeds), 6 * 24 * 2, 2 * cfg.gate_seeds
     val = end.best_candidate["validation"]
     n_val = len(val["candidates"]) * cfg.validation_seeds        # {incumbent, final mean, best of each iter}
@@ -221,7 +221,7 @@ def test_seed_set_fallback_and_rollout_cfgs():
     s = C.seed_set("gate", 3)
     assert len(s) == 3 and all(isinstance(x, int) for x in s) and s[0] >= 4000
     tpl = FakeCfg()
-    cfgs = C.rollout_cfgs(tpl, "B", {"grasp_offset_z": -0.01}, [7, 8], {"jitter_m": 0.01})
+    cfgs = C.rollout_cfgs(tpl, "B", {"blend_alpha": 0.5, "grasp_offset_z": -0.01}, [7, 8], {"jitter_m": 0.01})
     assert [c.seed for c in cfgs] == [7, 8] and all(c.arm == "B" for c in cfgs)
     assert cfgs[0].perturbation == {"jitter_m": 0.01} and cfgs[0].perturbation is not cfgs[1].perturbation
     assert tpl.arm == "B" and tpl.seed == 0 and tpl.s3_params is None            # template untouched

@@ -102,7 +102,7 @@ def test_arm_a_success_and_slack(log):
 
 
 def test_grasp_offset_raises_success(log):
-    eps = batch(log, "B", s3_params={"grasp_offset_z": -0.015})
+    eps = batch(log, "B", s3_params={"blend_alpha": 0.5, "grasp_offset_z": -0.015})
     assert rate(eps) > 0.80
     assert all(e.constraints_active["grasp_offset"][2] == pytest.approx(-0.015) for e in eps)
 
@@ -123,7 +123,7 @@ def test_shift_perturbation_breaks_policy_and_s3_recovers(log):
     a = batch(log, "A", perturbation=pert)
     assert rate(a) < 0.20
     assert all(e.perturbation == pert for e in a)
-    fixed = batch(log, "B", perturbation=pert, s3_params={"approach_offset_xyz": [0.03, 0, 0], "grasp_offset_z": -0.015})
+    fixed = batch(log, "B", perturbation=pert, s3_params={"blend_alpha": 0.5, "approach_offset_xyz": [0.03, 0, 0], "grasp_offset_z": -0.015})
     assert rate(fixed) > 0.5
 
 
@@ -186,7 +186,7 @@ def test_incumbent_and_scorecard_path(log):
     hm = pytest.importorskip("fleet_memory.memory.house_model")
     store = EventStore(log)
     c = RunConfig("mock", TASK, 0, "B", log_path=log)
-    hm.init_incumbent(store, c.skill_instance_id, c.environment_id, TASK, "black_bowl", {"grasp_offset_z": -0.015})
+    hm.init_incumbent(store, c.skill_instance_id, c.environment_id, TASK, "black_bowl", {"blend_alpha": 0.5, "grasp_offset_z": -0.015})
     eps = batch(log, "B", seeds=range(6))
     assert all(e.skill_instance_versions == {c.skill_instance_id: 1} for e in eps)
     assert all(e.s3_params["grasp_offset_z"] == pytest.approx(-0.015) for e in eps) and rate(eps) > 0.8

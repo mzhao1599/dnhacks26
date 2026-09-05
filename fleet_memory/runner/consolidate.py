@@ -26,7 +26,6 @@ from fleet_memory.memory.store import EventStore
 
 FAILED_COST = 10.0             # NaN / errored / cost-less rollouts
 GATE_SUCCESS_SLACK = 0.02      # candidate success may trail the incumbent by at most this
-SEED_BASE = {"train": 0, "heldout": 1000, "probe": 2000, "opt": 3000, "gate": 4000}   # conditions.py fallback
 OPT_POOL = 200                 # size of the rotating opt-seed pool
 
 Evaluate = Callable[[np.ndarray], "Sequence[float] | np.ndarray"]
