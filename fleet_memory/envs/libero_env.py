@@ -140,9 +140,10 @@ class LiberoEnv:
         task_id: str | int,
         image_size: int = 256,
         max_steps: int | None = None,
-        render_gl: str = "egl",
+        render_gl: str | None = None,
     ):
-        if render_gl and os.environ.get("MUJOCO_GL") != render_gl:
+        render_gl = render_gl or os.environ.get("MUJOCO_GL") or "egl"   # respect MUJOCO_GL (osmesa on MIG slices)
+        if os.environ.get("MUJOCO_GL") != render_gl:
             os.environ["MUJOCO_GL"] = render_gl  # only effective if mujoco not imported yet
             if render_gl == "egl":
                 os.environ["PYOPENGL_PLATFORM"] = "egl"

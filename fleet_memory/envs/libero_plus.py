@@ -221,8 +221,9 @@ class LiberoPlusEnv(LiberoEnv):
     LIBERO-plus package the benchmark tables index 2402+ tasks and lack the base init files."""
 
     def __init__(self, suite: str, task_id: str | int, config: dict, image_size: int = 256,
-                 max_steps: int | None = None, render_gl: str = "egl"):
-        if render_gl and os.environ.get("MUJOCO_GL") != render_gl:
+                 max_steps: int | None = None, render_gl: str | None = None):
+        render_gl = render_gl or os.environ.get("MUJOCO_GL") or "egl"   # respect MUJOCO_GL (osmesa on MIG slices)
+        if os.environ.get("MUJOCO_GL") != render_gl:
             os.environ["MUJOCO_GL"] = render_gl
         from libero.libero import get_libero_path
         import libero.libero.envs.bddl_utils as BDDLUtils
