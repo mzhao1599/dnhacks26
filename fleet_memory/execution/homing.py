@@ -44,12 +44,17 @@ class HomingTarget:
     quat_xyzw: np.ndarray                    # (4,)
 
     @classmethod
-    def canonical(cls, delta: np.ndarray | None = None) -> "HomingTarget":
-        """Canonical start pose plus an optional 6-D delta [dx, dy, dz, drx, dry, drz] (m, rad)."""
+    def canonical(cls, delta: np.ndarray | None = None, env=None) -> "HomingTarget":
+        """Canonical start pose plus an optional 6-D delta [dx, dy, dz, drx, dry, drz] (m, rad).
+        The pose comes from env.canonical_ee_pose() when the env provides it (table heights differ per
+        LIBERO suite: LIBERO-10 starts at z~0.70, LIBERO-Spatial at z~1.17); else the LIBERO-10 constant."""
         from scipy.spatial.transform import Rotation as R
+        base_pos, base_quat = CANONICAL_EE_POS, CANONICAL_EE_QUAT_XYZW
+        if env is not None and hasattr(env, "canonical_ee_pose"):
+            base_pos, base_quat = env.canonical_ee_pose()
         d = np.zeros(6) if delta is None else np.asarray(delta, np.float64).reshape(6)
-        pos = CANONICAL_EE_POS + d[:3]
-        quat = (R.from_rotvec(d[3:]) * R.from_quat(CANONICAL_EE_QUAT_XYZW)).as_quat()
+        pos = np.asarray(base_pos, np.float64) + d[:3]
+        quat = (R.from_rotvec(d[3:]) * R.from_quat(np.asarray(base_quat, np.float64))).as_quat()
         return cls(pos=pos.astype(np.float32), quat_xyzw=quat.astype(np.float32))
 
 

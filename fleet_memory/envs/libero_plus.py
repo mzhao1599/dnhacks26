@@ -264,6 +264,15 @@ class LiberoPlusEnv(LiberoEnv):
         self.last_perturbation["plus"] = {k: self.config.get(k) for k in ("dimension", "name", "init_state", "radius")}
         return obs
 
+    def canonical_ee_pose(self) -> tuple[np.ndarray, np.ndarray]:
+        """(pos, quat_xyzw) of the EE at the UNPERTURBED reset of this env+seed — the homing target.
+        Recorded by apply_robot_init_state before it rewrites the joints; falls back to the current reset pose."""
+        ri = self.last_perturbation.get("robot_init")
+        if ri and ri.get("ee_pos_before") is not None:
+            return np.asarray(ri["ee_pos_before"], np.float32), np.asarray(ri["ee_quat_before"], np.float32)
+        obs = self._last_obs
+        return np.asarray(obs.ee_pos, np.float32), np.asarray(obs.ee_quat, np.float32)
+
 
 def make_perturbed_env(suite: str, task_id: str | int, config: dict | str | None, image_size: int = 256,
                        **kw) -> LiberoEnv:
