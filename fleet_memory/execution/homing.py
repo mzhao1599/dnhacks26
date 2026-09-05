@@ -19,10 +19,12 @@ from fleet_memory.execution.envelope import DEFAULT_ENVELOPE, POS_SCALE_M, Envel
 
 ROT_SCALE_RAD = 0.5   # |drot| = 1 -> 0.5 rad per step (robosuite OSC_POSE default)
 
-# Canonical LIBERO start pose, read from an unperturbed reset (libero_10 task 0, init state 0) in Phase 0.
-# All LIBERO suites share the same robot start configuration; object layouts differ, the arm does not.
-CANONICAL_EE_POS = np.array([-0.0461, -0.0036, 0.7020], np.float32)
-CANONICAL_EE_QUAT_XYZW = np.array([0.99964, -0.00045, -0.02694, -0.00012], np.float32)
+# FALLBACK ONLY (envs provide canonical_ee_pose()). Measured at an unperturbed reset of the current LiberoEnv
+# (libero_10 task 3 / libero_spatial task 0 agree to ~1 cm: the arm starts the same way in every suite).
+# An earlier constant from a pre-rewrite adapter said z=0.70 and sent the arm 47 cm into the table — hence
+# the rule: never home to a constant when the env can tell you where it started.
+CANONICAL_EE_POS = np.array([-0.2171, -0.0148, 1.1700], np.float32)
+CANONICAL_EE_QUAT_XYZW = np.array([0.9996, -0.0011, -0.0293, -0.0002], np.float32)
 
 
 def quat_to_rotvec(q_xyzw: np.ndarray) -> np.ndarray:
