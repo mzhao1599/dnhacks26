@@ -104,8 +104,55 @@ def bar_chart(results: list[dict], out: str, title: str) -> str | None:
     return out
 
 
+def aggregate(store: EventStore, png: str | None = None) -> dict | None:
+    """Combine every per-task `benchmark_result` in the log (same policy/dimension/config) into one
+    pooled result: k and n summed per arm, Wilson CI and BM-3/BM-1 ratio recomputed, tasks unioned."""
+    runs = [d for d in store.read_all() if d.get("type") == "benchmark_result" and not d.get("aggregated")]
+    if not runs:
+        return None
+    key = lambda d: (d.get("policy"), d.get("dimension"), d.get("config_index"), d.get("suite"))
+    runs = [d for d in runs if key(d) == key(runs[-1])]
+    acc: dict[str, dict] = {}
+    for d in runs:
+        for r in d["results"]:
+            a = acc.setdefault(r["arm"], {"arm": r["arm"], "n": 0, "k": 0, "steps_sum": 0.0, "episode_ids": [], "s3_params": {}})
+            a["n"] += r["n"]; a["k"] += r["k"]; a["steps_sum"] += (r.get("mean_steps") or 0) * r["n"]
+            a["episode_ids"] += r.get("episode_ids", [])
+            a["s3_params"].setdefault(str(d.get("tasks")), r.get("s3_params"))
+    results = []
+    for arm in ARMS:
+        if arm not in acc:
+            continue
+        a = acc[arm]; lo, hi = wilson_ci(a["k"], a["n"])
+        results.append({"arm": arm, "n": a["n"], "k": a["k"], "rate": a["k"] / a["n"], "ci": [lo, hi],
+                        "mean_steps": a["steps_sum"] / a["n"], "episode_ids": a["episode_ids"], "s3_params": a["s3_params"]})
+    by = {r["arm"]: r for r in results}
+    ratio = None
+    if "BM-3" in by and "BM-1" in by:
+        rr, lo, hi = ratio_ci(by["BM-3"]["k"], by["BM-3"]["n"], by["BM-1"]["k"], by["BM-1"]["n"])
+        ratio = {"BM-3/BM-1": rr, "ci": [lo, hi],
+                 "verdict": ("pass" if by["BM-3"]["ci"][0] > by["BM-1"]["ci"][1] else
+                             "partial" if by["BM-3"]["rate"] > by["BM-1"]["rate"] else "fail")}
+    tasks = sorted({t for d in runs for t in d.get("tasks", [])}, key=lambda x: int(x) if str(x).isdigit() else str(x))
+    last = runs[-1]
+    event = {"type": "benchmark_result", "aggregated": True, "ts": now_iso(), "suite": last["suite"], "tasks": tasks,
+             "dimension": last["dimension"], "config_index": last["config_index"], "policy": last["policy"],
+             "tag": last.get("tag"), "n_per_task": last.get("n_per_task"), "n_runs": len(runs), "results": results, "ratio": ratio}
+    store.append(event)
+    print(f"aggregated {len(runs)} runs over tasks {tasks}\n| arm | n | success | 95% CI | mean steps |\n|---|---|---|---|---|")
+    for r in results:
+        print(f"| {r['arm']} | {r['n']} | {100 * r['rate']:.1f}% ({r['k']}) | [{100 * r['ci'][0]:.1f}, "
+              f"{100 * r['ci'][1]:.1f}] | {r['mean_steps']:.0f} |")
+    if ratio:
+        print(f"BM-3 / BM-1 = {ratio['BM-3/BM-1']:.2f} [{ratio['ci'][0]:.2f}, {ratio['ci'][1]:.2f}] -> {ratio['verdict']}")
+    if png:
+        print("chart:", bar_chart(results, png, f"{last['policy']} on {last['suite']} tasks {tasks} — LIBERO-Plus {last['dimension']} (pooled)"))
+    return event
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser()
+    ap.add_argument("--aggregate", action="store_true", help="pool the per-task benchmark_result events in --log")
     ap.add_argument("--policy", default="smolvla")
     ap.add_argument("--suite", default=seedmod.BENCHMARK["suite"])
     ap.add_argument("--tasks", default=",".join(str(t) for t in seedmod.BENCHMARK["tasks"]))
@@ -121,6 +168,8 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--png", default=None)
     ap.add_argument("--cem", default=None, help='JSON overrides for ConsolidationConfig, e.g. {"population":24,"iterations":4}')
     a = ap.parse_args(argv)
+    if a.aggregate:
+        return 0 if aggregate(EventStore(a.log), a.png) else 1
 
     from fleet_memory.envs.libero_plus import list_configs
     configs = list_configs(a.dimension, a.suite)
