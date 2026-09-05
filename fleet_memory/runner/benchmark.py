@@ -69,7 +69,8 @@ def run_arm(arm: str, base: RunConfig, tasks: list[str], perturbed_kwargs: dict,
             workers: int, store: EventStore) -> dict:
     cfgs = []
     for t in tasks:
-        cfg = arm_config(arm, dataclasses.replace(base, task_id=t), perturbed_kwargs, tag, store)
+        pk = perturbed_kwargs(t) if callable(perturbed_kwargs) else perturbed_kwargs
+        cfg = arm_config(arm, dataclasses.replace(base, task_id=t), pk, tag, store)
         cfgs += [dataclasses.replace(cfg, seed=s) for s in seedmod.seeds("eval", n_per_task)]
     eps = run_many(cfgs, workers)
     print(summarize(eps, arm), flush=True)
@@ -126,13 +127,20 @@ def main(argv: list[str] | None = None) -> int:
     if not configs:
         print(f"no LIBERO-Plus configs for dimension={a.dimension} suite={a.suite}", file=sys.stderr)
         return 2
-    config = configs[a.config_index]
     tag = a.tag or f"plus_{a.dimension}_{a.config_index}"
     tasks = [t.strip() for t in a.tasks.split(",") if t.strip()]
+
+    def config_for(task: str) -> dict:
+        """The config-index-th perturbation config of THIS task's scene (configs are per base task)."""
+        mine = [c for c in configs if str(c.get("base_task_idx", "")) == str(task) or c.get("base_task") == task]
+        if not mine:
+            raise SystemExit(f"no {a.dimension} configs for {a.suite} task {task}")
+        return mine[a.config_index % len(mine)]
+    config = config_for(tasks[0])
     store = EventStore(a.log)
     base = RunConfig(suite=a.suite, task_id=tasks[0], seed=0, arm="A", env_kind="libero", policy_kind=a.policy,
                      log_path=a.log)
-    perturbed_kwargs = {"config": config}
+    perturbed_kwargs = lambda t: {"config": config_for(t)}
     arms = [x.strip() for x in a.arms.split(",") if x.strip()]
 
     if a.consolidate:
@@ -143,7 +151,7 @@ def main(argv: list[str] | None = None) -> int:
         for k, v in (json.loads(a.cem) if a.cem else {}).items():
             setattr(ccfg, k, v)
         for t in tasks:                       # one skill instance per (task, perturbed env)
-            tmpl = dataclasses.replace(base, task_id=t, arm="B", env_kind="libero_plus", env_kwargs=perturbed_kwargs,
+            tmpl = dataclasses.replace(base, task_id=t, arm="B", env_kind="libero_plus", env_kwargs=perturbed_kwargs(t),
                                        environment_tag=tag)
             c = consolidate(store, tmpl.skill_instance_id, template=tmpl, cfg=ccfg, trigger="manual")
             print(f"consolidation {c.consolidation_id} task={t} gate={c.gate.to_dict() if c.gate else None} "
