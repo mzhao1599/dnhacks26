@@ -98,7 +98,13 @@ def summarize(eps: list[Episode], label: str = "") -> str:
 
 # --------------------------------------------------------------------------- batch hooks
 def make_reference(store: EventStore, eps: list[Episode], si_id: str, env_id: str, condition: str = "A"):
-    """Freeze Arm-A means as the cost reference for si_id (metrics.jerk is raw when no ref existed)."""
+    """Freeze Arm-A means as the cost reference for si_id (metrics.jerk is raw when no ref existed).
+    Frozen means frozen: an existing reference is returned untouched. Re-deriving one would silently
+    rescale every later cost (and metrics.jerk is already normalised by the first reference)."""
+    existing = cost_reference_of(store, si_id)
+    if existing is not None:
+        print(f"  cost_reference for {si_id} already frozen (n={existing.n_episodes}); keeping it", flush=True)
+        return existing
     ms = [e.metrics for e in eps if e.metrics is not None and e.condition == condition]
     if not ms:
         return None

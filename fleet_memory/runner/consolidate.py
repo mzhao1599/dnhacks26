@@ -194,11 +194,11 @@ def gate_decision(candidate_eps: Sequence[Episode | None], incumbent_eps: Sequen
 
 # --------------------------------------------------------------------------- runner glue
 def seed_set(name: str, n: int) -> list[int]:
-    try:
-        from fleet_memory.runner.conditions import seed_set as _ss
-        return [int(s) for s in _ss(name, n)]
-    except ImportError:
-        return [SEED_BASE[name] + i for i in range(n)]
+    """runner/seeds.py is the authority (invariant 7): opt = LIBERO init states 0-29, gate = 30-39, so the
+    gate never re-uses an optimisation init state and neither touches the benchmark's eval states 40-49.
+    conditions.seed_set is NOT used here: its flat ranges (3000.., 4000..) collide modulo 50."""
+    from fleet_memory.runner.seeds import seeds as _ss
+    return [int(s) for s in _ss(name, n)]
 
 
 def environment_id_of(template) -> str:
