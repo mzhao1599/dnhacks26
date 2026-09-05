@@ -298,7 +298,7 @@ def run_episode(cfg: RunConfig, env=None, policy=None, store: EventStore | None 
     homing_res = None
     if arm.shim and vec.homing_on and cfg.env_kind != "mock":
         from fleet_memory.execution.homing import Homing, HomingTarget
-        obs, homing_res, _ = Homing(HomingTarget.canonical(vec.homing_delta()), envelope).run(env, obs)
+        obs, homing_res, _ = Homing(HomingTarget.canonical(vec.homing_delta(), env=env), envelope).run(env, obs)
     # (5) subtask loop
     coach = _agent("inner") if arm.inner_loop else None
     error = None

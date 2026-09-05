@@ -8,7 +8,9 @@
 
 --config is a comma-separated list; each entry is ``standard`` | ``robot_init[:idx]`` (idx-th
 LIBERO-Plus robot-init config of this task, default 0) | ``robot_init:init_state=N`` (MountedPanda N)
-| ``robot_init:radius=R`` (fresh seeded sample of joint-norm R) | ``layout[:idx]``.
+| ``robot_init:radius=R`` (fresh seeded sample of joint-norm R) | ``layout[:idx]``; a ``/asis`` suffix
+(plus backend only) keeps the LIBERO-plus env exactly as their eval loop leaves it (MountedPanda{N}
++ set_init_state, no joint re-apply: only the OSC nullspace target is perturbed).
 Prints, per episode: success, steps, initial ee_pos/ee_quat (standard reset and after the
 perturbation), per-step policy latency; per config: mean success. Machine-readable lines:
 ``PLUS_RESULT {json}`` per episode, ``PLUS_SUMMARY {json}`` per config, ``PLUS_OK`` at the end.
@@ -34,16 +36,24 @@ def parse_config(spec: str, suite: str, task_idx: int) -> dict | str:
     from fleet_memory.envs.libero_plus import list_configs
     if spec == "standard":
         return "standard"
-    dim, _, arg = spec.partition(":")
+    body, _, flag = spec.partition("/")          # ``/asis``: LIBERO-plus env as their eval loop leaves it
+    dim, _, arg = body.partition(":")            # (no joint re-apply; plus backend only)
     if "=" in arg:
         k, v = arg.split("=", 1)
-        return {"dimension": dim, k: (int(v) if k == "init_state" else float(v)), "label": spec}
-    cfgs = [c for c in list_configs(dim, suite) if c["base_task_idx"] == task_idx]
-    if not cfgs:
-        raise SystemExit(f"no {dim} configs for {suite} task {task_idx}")
-    cfg = dict(cfgs[int(arg or 0)])
+        cfg = {"dimension": dim, k: (int(v) if k == "init_state" else float(v))}
+    else:
+        cfgs = [c for c in list_configs(dim, suite) if c["base_task_idx"] == task_idx]
+        if not cfgs:
+            raise SystemExit(f"no {dim} configs for {suite} task {task_idx}")
+        cfg = dict(cfgs[int(arg or 0)])
     cfg["label"] = spec
+    if flag == "asis":
+        cfg["reapply_qpos"] = False
     return cfg
+
+
+def r4(x) -> list:
+    return np.round(np.asarray(x, dtype=np.float64), 4).tolist()
 
 
 def gpu_mem() -> dict:
@@ -121,8 +131,7 @@ def main() -> int:
                       f"ee_quat={rp['ee_quat_before']} -> perturbed ee_pos={rp['ee_pos_after']} "
                       f"ee_quat={rp['ee_quat_after']} (shift {rp['ee_shift_m']} m, qpos {rp['qpos_before']} -> {rp['qpos_after']})")
             else:
-                print(f"[plus] seed={seed} initial ee_pos={np.round(obs.ee_pos, 4).tolist()} "
-                      f"ee_quat={np.round(obs.ee_quat, 4).tolist()}")
+                print(f"[plus] seed={seed} initial ee_pos={r4(obs.ee_pos)} ee_quat={r4(obs.ee_quat)}")
             init_pos, init_quat = obs.ee_pos.copy(), obs.ee_quat.copy()
             policy.reset(ti.language)
             te, act_ms, t, done, first_t = time.time(), [], 0, False, None
@@ -137,13 +146,13 @@ def main() -> int:
                         first_t = t
                     if t % args.print_every == 0:
                         print(f"[plus]   {spec} seed={seed} t={t} policy_ms={act_ms[-1]:.0f} "
-                              f"ee={np.round(obs.ee_pos, 3).tolist()} succ={info['is_success']}")
+                              f"ee={r4(obs.ee_pos)} succ={info['is_success']}")
                     if done or t >= args.steps:
                         break
             success = bool(env.success_flag())
             res = {"config": spec, "suite": args.suite, "task": task_idx, "seed": seed, "policy": policy.name,
                    "success": success, "steps": t, "first_success_t": first_t,
-                   "init_ee_pos": np.round(init_pos, 4).tolist(), "init_ee_quat": np.round(init_quat, 4).tolist(),
+                   "init_ee_pos": r4(init_pos), "init_ee_quat": r4(init_quat),
                    "init_state": (rp or {}).get("init_state"), "ee_shift_m": (rp or {}).get("ee_shift_m"),
                    "policy_ms_mean": round(float(np.mean(act_ms)), 1), "policy_ms_p50": round(float(np.median(act_ms)), 1),
                    "policy_ms_p95": round(float(np.percentile(act_ms, 95)), 1), "wall_s": round(time.time() - te, 1),
