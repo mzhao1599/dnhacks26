@@ -148,6 +148,24 @@ def run_subtasks(env, obs: Obs, plan: Plan, shim, tracker: Tracker, task: TaskIn
         res.trace["subtask_ends"][st.subtask_id] = t
         if i < len(plan.subtasks) and plan.subtasks[i] is st:
             i += 1
+    # Plan exhausted before the env horizon: the plan's step budgets are guidance for the coach, not a kill
+    # switch for the policy (arm C on LIBERO-10: planner budgets of ~460 steps truncated a VLA that needs ~300
+    # of unbroken control). Keep the policy running on the canonical instruction until done/horizon.
+    if not done and t < budget and plan.subtasks:
+        res.trace["plan_exhausted_at"] = t
+        shim.reset(task.language, target_object=plan.subtasks[-1].target_object)
+        while t < budget and not done:
+            chunk = np.asarray(shim.act(obs), np.float32).reshape(-1, 7)
+            if envelope is not None:
+                chunk, _ = envelope.clamp_chunk(chunk, obs.ee_pos)
+            for row in chunk:
+                obs, done, _info = env.step(row)
+                tracker.update(obs, env.success_subconditions())
+                res.ee_positions.append(np.asarray(obs.ee_pos, np.float64).copy())
+                res.actions.append(np.asarray(row, np.float32).copy())
+                t += 1
+                if done or t >= budget:
+                    break
     res.steps = t
     res.termination = "success" if env.success_flag() else "timeout"
     return res
