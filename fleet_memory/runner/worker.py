@@ -3,6 +3,8 @@ retrieval frozen BEFORE reset, success from env.success_flag() only, envelope al
 held-out suites never generate lessons, everything appended to the event log."""
 from __future__ import annotations
 
+import json
+
 import inspect
 import logging
 import os
@@ -85,9 +87,14 @@ def make_policy(cfg: RunConfig):
         if cfg.env_kind == "mock":
             kw.setdefault("pos_scale_m", 0.02)
         return ScriptedPolicy(**kw)
-    if cfg.policy_kind == "smolvla":
-        from fleet_memory.policies.smolvla import SmolVLAPolicy
-        return SmolVLAPolicy(**cfg.policy_kwargs)
+    if cfg.policy_kind in ("smolvla", "pi05"):
+        # FM_POLICY_KWARGS='{"n_action_steps": 10}' — chunk execution length etc., without a CLI flag per policy.
+        kw = {**json.loads(os.environ.get("FM_POLICY_KWARGS", "{}")), **cfg.policy_kwargs}
+        if cfg.policy_kind == "smolvla":
+            from fleet_memory.policies.smolvla import SmolVLAPolicy
+            return SmolVLAPolicy(**kw)
+        from fleet_memory.policies.pi05 import Pi05Policy
+        return Pi05Policy(**kw)
     raise ValueError(f"unknown policy_kind {cfg.policy_kind!r}")
 
 
