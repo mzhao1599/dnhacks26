@@ -4,6 +4,7 @@
 events.jsonl, or an in-memory list of records/dicts. Success is read from Outcome.env_success only.
 
 CLI: python -m fleet_memory.analysis.metrics --log logs/events.jsonl [--json]
+The latest `benchmark_result` (runner/benchmark.py) is reported first when the log has one.
 """
 from __future__ import annotations
 
@@ -22,6 +23,7 @@ from fleet_memory.analysis.mastery import (environment_lines, environment_report
                                            readaptation, versions)
 
 ARM_ORDER = ["A", "B", "C", "D", "P", "E", "F", "D_S1", "D_S2", "D_S3"]
+BENCH_ARMS = ["BM-0", "BM-1", "BM-2", "BM-3", "BM-4"]   # runner/benchmark.py (spec §13)
 STATUSES = ("candidate", "validated", "retired")
 
 
@@ -136,6 +138,59 @@ def success_curve(store, arm: str, window: int = 20) -> list[tuple[int, float]]:
         w = flags[max(0, i - window + 1): i + 1]
         pts.append((i + 1, sum(w) / len(w)))
     return pts
+
+
+# --------------------------------------------------------------------------- #
+# Benchmark (runner/benchmark.py: BM-0..BM-4 on LIBERO-Plus)
+# --------------------------------------------------------------------------- #
+
+def benchmark_records(store) -> list[dict]:
+    """All 'benchmark_result' events in log order."""
+    return [r for r in _records(store) if r.get("type") == "benchmark_result"]
+
+
+def benchmark_summary(store) -> dict[str, Any] | None:
+    """The LATEST benchmark_result (last in the log) with its header fields, one flat row per arm
+    (BM-0..BM-4 order) and the BM-3/BM-1 risk ratio. None when the log has no benchmark yet."""
+    recs = benchmark_records(store)
+    if not recs:
+        return None
+    b = recs[-1]
+    rows = []
+    for r in sorted(b.get("results") or [],
+                    key=lambda r: (BENCH_ARMS.index(r["arm"]) if r["arm"] in BENCH_ARMS else len(BENCH_ARMS), r["arm"])):
+        n, k = int(r.get("n") or 0), int(r.get("k") or 0)
+        ci = r.get("ci") or wilson_ci(k, n)
+        rows.append({"arm": r["arm"], "n": n, "k": k, "rate": r.get("rate", (k / n) if n else 0.0),
+                     "ci": [float(ci[0]), float(ci[1])], "mean_steps": r.get("mean_steps"),
+                     "episodes": len(r.get("episode_ids") or []), "s3_params": r.get("s3_params")})
+    ratio = b.get("ratio") or None
+    return {"ts": b.get("ts"), "suite": b.get("suite"), "tasks": list(b.get("tasks") or []),
+            "dimension": b.get("dimension"), "config_index": b.get("config_index"), "config": b.get("config"),
+            "policy": b.get("policy"), "tag": b.get("tag"), "n_per_task": b.get("n_per_task"),
+            "n_runs": len(recs), "rows": rows,
+            "ratio": None if ratio is None else {"BM-3/BM-1": ratio.get("BM-3/BM-1"),
+                                                 "ci": list(ratio.get("ci") or [None, None]),
+                                                 "verdict": ratio.get("verdict")}}
+
+
+def benchmark_lines(store) -> list[str]:
+    """Markdown block for the latest benchmark; [] when there is none."""
+    b = benchmark_summary(store)
+    if b is None:
+        return []
+    L = ["## Benchmark (LIBERO-Plus)",
+         f"{b['policy']} on {b['suite']} · tasks {','.join(str(t) for t in b['tasks'])} · {b['dimension']} "
+         f"#{b['config_index']} · {b['n_per_task']} eval seeds/task · tag {b['tag']} · {b['ts']}"
+         + (f" · latest of {b['n_runs']} runs" if b["n_runs"] > 1 else ""),
+         "| arm | n | success | 95% CI | mean steps |", "|---|---|---|---|---|"]
+    L += [f"| {r['arm']} | {r['n']} | {_pct(r['rate'])} ({r['k']}) | {_ci(r['ci'])} | {_num(r['mean_steps'], 0)} |"
+          for r in b["rows"]]
+    rr = b["ratio"]
+    if rr and rr["BM-3/BM-1"] is not None:
+        L.append(f"BM-3 / BM-1 = {rr['BM-3/BM-1']:.2f} [{_num(rr['ci'][0], 2)}, {_num(rr['ci'][1], 2)}] "
+                 f"-> {rr['verdict']}")
+    return L + [""]
 
 
 # --------------------------------------------------------------------------- #
@@ -297,7 +352,8 @@ def surface_ablation(store) -> dict[str, Any]:
 # --------------------------------------------------------------------------- #
 
 def all_metrics(store) -> dict[str, Any]:
-    return {"success_by_arm": success_by_arm(store), "lesson_precision": lesson_precision(store),
+    return {"benchmark": benchmark_summary(store),
+            "success_by_arm": success_by_arm(store), "lesson_precision": lesson_precision(store),
             "lessons": lesson_rows(store), "rescue_rate": rescue_rate(store),
             "intervention_efficiency": intervention_efficiency(store), "latency_cost": latency_cost(store),
             "surface_ablation": surface_ablation(store), "gate_pass_rate": gate_pass_rate(store),
@@ -317,10 +373,12 @@ def _num(x, nd=1) -> str:
 
 
 def results_table(store) -> str:
-    """Markdown summary: arms, ablation, lessons, interventions, latency, sleep loop, environments."""
+    """Markdown summary: benchmark (first, when present), arms, ablation, lessons, interventions, latency,
+    sleep loop, environments."""
     sba, prec, resc, eff, lat, abl = (success_by_arm(store), lesson_precision(store), rescue_rate(store),
                                       intervention_efficiency(store), latency_cost(store), surface_ablation(store))
-    L = ["## Success by arm", "| arm | n | successes | rate | 95% CI |", "|---|---|---|---|---|"]
+    L = benchmark_lines(store)   # the headline result goes first
+    L += ["## Success by arm", "| arm | n | successes | rate | 95% CI |", "|---|---|---|---|---|"]
     L += [f"| {a} | {r['n']} | {r['k']} | {_pct(r['rate'])} | {_ci(r['ci'])} |" for a, r in sba.items()]
     if abl["arms"]:
         L += ["", "## Surface ablation", "| arm | n | rate | 95% CI | delta vs D (pp) |", "|---|---|---|---|---|"]

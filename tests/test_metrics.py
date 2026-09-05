@@ -258,6 +258,47 @@ def test_store_inputs_agree(log):
     assert M.lesson_precision(EventStore(path)) == M.lesson_precision(path)
 
 
+def _bench_result(arm, k, n, steps):
+    """One results[] entry in the exact shape runner/benchmark.py:run_arm writes."""
+    return {"arm": arm, "n": n, "k": k, "rate": k / n, "ci": list(M.wilson_ci(k, n)), "mean_steps": steps,
+            "episode_ids": [f"ep_{arm}_{i}" for i in range(n)],
+            "s3_params": {"homing_enable": 1.0 if arm in ("BM-3", "BM-4") else 0.0}}
+
+
+def test_benchmark_summary(tmp_path):
+    assert M.benchmark_summary([]) is None and M.benchmark_lines([]) == []
+    assert "## Benchmark" not in M.results_table([]) and M.all_metrics([])["benchmark"] is None
+    head = {"type": "benchmark_result", "suite": "libero_spatial", "tasks": ["0", "1"], "dimension": "robot_init",
+            "config_index": 0, "config": {"name": "shift_x", "dx": 0.03}, "policy": "smolvla",
+            "tag": "plus_robot_init_0", "n_per_task": 10}
+    older = {**head, "ts": "2026-09-01T00:00:00", "results": [_bench_result("BM-1", 2, 20, 200)], "ratio": None}
+    latest = {**head, "ts": "2026-09-02T00:00:00",
+              "results": [_bench_result("BM-3", 15, 20, 120), _bench_result("BM-0", 18, 20, 100),
+                          _bench_result("BM-1", 5, 20, 180)],
+              "ratio": {"BM-3/BM-1": 3.0, "ci": [1.4, 6.4], "verdict": "pass"}}
+    path = str(tmp_path / "bench.jsonl")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(json.dumps(older) + "\n" + json.dumps(latest) + "\n" + '{"type": "benchmark_result", "torn')
+    s = M.benchmark_summary(path)
+    assert s["ts"] == "2026-09-02T00:00:00" and s["n_runs"] == 2                       # latest wins, torn line skipped
+    for k in ("suite", "tasks", "dimension", "config_index", "config", "policy", "tag", "n_per_task"):
+        assert s[k] == head[k]
+    assert [r["arm"] for r in s["rows"]] == ["BM-0", "BM-1", "BM-3"]                   # BM order, not log order
+    bm1 = s["rows"][1]
+    assert (bm1["n"], bm1["k"], bm1["rate"], bm1["episodes"], bm1["mean_steps"]) == (20, 5, 0.25, 20, 180)
+    assert bm1["ci"] == list(M.wilson_ci(5, 20)) and bm1["s3_params"] == {"homing_enable": 0.0}
+    assert s["ratio"] == {"BM-3/BM-1": 3.0, "ci": [1.4, 6.4], "verdict": "pass"}
+    md = M.results_table(path)
+    assert md.startswith("## Benchmark (LIBERO-Plus)") and md.index("## Benchmark") < md.index("## Success by arm")
+    assert "| BM-3 | 20 | 75.0% (15) |" in md and "BM-3 / BM-1 = 3.00 [1.40, 6.40] -> pass" in md
+    assert "latest of 2 runs" in md and "plus_robot_init_0" in md
+    assert json.loads(json.dumps(M.all_metrics(path)))["benchmark"]["rows"][2]["arm"] == "BM-3"
+    no_ratio = M.benchmark_summary([older])
+    assert no_ratio["ratio"] is None and "BM-3 / BM-1" not in "\n".join(M.benchmark_lines([older]))
+    from fleet_memory.memory.store import EventStore
+    assert M.benchmark_summary(EventStore(path)) == s
+
+
 def test_cli(log, capsys):
     path, _ = log
     assert M.main(["--log", path]) == 0
@@ -294,3 +335,7 @@ def test_dashboard_static_file():
         assert panel in html
     for kind in ("skill_instance", "consolidation", "drift_trigger", "protocol_stage", "consolidation_id"):
         assert kind in html                                        # v3 record types are read and rollouts excluded
+    assert "#bench" in html and 'r.type==="benchmark_result"' in html   # v3.1 benchmark panel reads the exact event shape
+    for field in ("results", "episode_ids", "s3_params", "mean_steps", "n_per_task", "config_index",
+                  '"BM-3/BM-1"', "verdict", "BM-0", "BM-4", "LIBERO-Plus"):
+        assert field in html
