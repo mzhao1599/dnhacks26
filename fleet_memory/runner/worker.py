@@ -74,6 +74,10 @@ def make_env(cfg: RunConfig):
     if cfg.env_kind == "libero":
         from fleet_memory.envs.libero_env import LiberoEnv
         return LiberoEnv(cfg.suite, cfg.task_id, **cfg.env_kwargs)
+    if cfg.env_kind == "libero_plus":              # LIBERO-Plus perturbation config (envs/libero_plus.py)
+        from fleet_memory.envs.libero_plus import make_perturbed_env
+        kw = dict(cfg.env_kwargs)
+        return make_perturbed_env(cfg.suite, cfg.task_id, kw.pop("config"), **kw)
     raise ValueError(f"unknown env_kind {cfg.env_kind!r}")
 
 

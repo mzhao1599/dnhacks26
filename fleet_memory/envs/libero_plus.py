@@ -236,6 +236,8 @@ class LiberoPlusEnv(LiberoEnv):
         if self.config.get("base_task") not in (None, base):
             raise ValueError(f"config is for {self.config['base_task']!r}, task {task_id} is {base!r}")
         self.plus = is_plus_backend()
+        if self.config.get("reapply_qpos") is False and not (self.plus and self.config.get("name")):
+            raise ValueError("reapply_qpos=False needs the LIBERO-plus backend and a benchmark task name")
         bddl_dir, init_dir = Path(get_libero_path("bddl_files")), Path(get_libero_path("init_states"))
         self._bddl = str(bddl_dir / suite / f"{base}.bddl")
         init_file = init_dir / suite / f"{base}.pruned_init"
@@ -268,6 +270,8 @@ def make_perturbed_env(suite: str, task_id: str | int, config: dict | str | None
     """``config``: dict from ``list_configs`` (or ``{"dimension":"robot_init","init_state":N}`` /
     ``{"dimension":"robot_init","radius":0.3}``), or None/"standard" for the plain LiberoEnv."""
     if not config or config == "standard":
+        if is_plus_backend():   # LIBERO-plus's benchmark tables index 2402+ tasks -> use the base bddl directly
+            return LiberoPlusEnv(suite, task_id, {"dimension": "standard"}, image_size=image_size, **kw)
         return LiberoEnv(suite, task_id, image_size=image_size, **kw)
     if isinstance(config, str):
         raise ValueError(f"unknown config {config!r}")

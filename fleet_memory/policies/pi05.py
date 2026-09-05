@@ -98,7 +98,10 @@ class Pi05Policy:
             },
         )
         self.tokenizer_name = tok
-        self.image_keys = [k for k in cfg.input_features if k.startswith("observation.images.")]
+        # `empty_cameras: 1` adds observation.images.empty_camera_0 to input_features; the model pads
+        # any image feature missing from the batch with a masked -1 image itself, so we never feed it.
+        self.image_keys = [k for k in cfg.input_features
+                           if k.startswith("observation.images.") and ".empty_camera_" not in k]
         self.state_key = "observation.state"
         self.state_dim = int(cfg.input_features[self.state_key].shape[0])
         self.instruction: str = ""
