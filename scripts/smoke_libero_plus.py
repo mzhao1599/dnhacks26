@@ -79,7 +79,8 @@ def make_policy(name: str, args):
     if name == "pi05":
         from fleet_memory.policies.pi05 import Pi05Policy
         return Pi05Policy(path=args.policy_path or "lerobot/pi05_libero", device="cuda",
-                          n_action_steps=args.n_action_steps, image_size=args.image_size, dtype=args.dtype)
+                          n_action_steps=args.n_action_steps, image_size=args.image_size, dtype=args.dtype,
+                          stats=args.stats)
     raise ValueError(name)
 
 
@@ -93,6 +94,7 @@ def main() -> int:
     ap.add_argument("--policy-path", default=None)
     ap.add_argument("--n-action-steps", type=int, default=None)
     ap.add_argument("--dtype", default=None, help="pi05 only: float32 (checkpoint default) | bfloat16")
+    ap.add_argument("--stats", default=None, help="pi05 only: 'dataset' = normalise with HuggingFaceVLA/libero stats")
     ap.add_argument("--image-size", type=int, default=256)
     ap.add_argument("--config", default="standard,robot_init:0")
     ap.add_argument("--print-every", type=int, default=20)

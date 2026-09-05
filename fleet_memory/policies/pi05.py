@@ -32,6 +32,14 @@ from fleet_memory.policies.base import ActionChunk, clip_action
 
 DEFAULT_PATH = "lerobot/pi05_libero"
 TOKENIZER_MIRROR = "leo009/paligemma-3b-pt-224"
+STATS_DATASET = "HuggingFaceVLA/libero"     # training set of lerobot/pi05_libero (README lerobot-train cmd)
+
+
+def load_dataset_stats(repo_id: str = STATS_DATASET) -> dict:
+    """meta/stats.json of the training dataset (prefetch on the login node; offline-cached afterwards)."""
+    import json
+    from huggingface_hub import hf_hub_download
+    return json.load(open(hf_hub_download(repo_id, "meta/stats.json", repo_type="dataset")))
 
 
 def resolve_tokenizer(name: str = "google/paligemma-3b-pt-224") -> str:
@@ -57,7 +65,11 @@ class Pi05Policy:
         image_size: int = 256,
         num_inference_steps: int | None = None,
         dtype: str | None = None,
+        stats: str | dict | None = None,
     ):
+        """``stats``: None = the checkpoint's own normalizer (the Hub repo ships ``features: {}`` and no
+        stats file, i.e. identity); "dataset" = MEAN_STD stats of ``STATS_DATASET`` (what lerobot-train
+        would have used); or a stats dict."""
         import torch
         from lerobot.configs.policies import PreTrainedConfig
         from lerobot.policies.factory import make_pre_post_processors
@@ -88,14 +100,23 @@ class Pi05Policy:
         self.policy.eval()
 
         tok = resolve_tokenizer()
+        pre_over: dict[str, Any] = {
+            "device_processor": {"device": str(device)},
+            "rename_observations_processor": {"rename_map": {}},
+            "tokenizer_processor": {"tokenizer_name": tok},
+        }
+        post_over: dict[str, Any] = {}
+        if stats:
+            st = load_dataset_stats(stats) if isinstance(stats, str) and stats != "dataset" else (
+                load_dataset_stats() if stats == "dataset" else stats)
+            pre_over["normalizer_processor"] = {"features": {**cfg.input_features, **cfg.output_features},
+                                                "norm_map": cfg.normalization_mapping, "stats": st}
+            post_over["unnormalizer_processor"] = {"features": cfg.output_features,
+                                                   "norm_map": cfg.normalization_mapping, "stats": st}
+        self.stats_source = stats
         self.preprocessor, self.postprocessor = make_pre_post_processors(
-            policy_cfg=cfg,
-            pretrained_path=path,
-            preprocessor_overrides={
-                "device_processor": {"device": str(device)},
-                "rename_observations_processor": {"rename_map": {}},
-                "tokenizer_processor": {"tokenizer_name": tok},
-            },
+            policy_cfg=cfg, pretrained_path=path,
+            preprocessor_overrides=pre_over, postprocessor_overrides=post_over,
         )
         self.tokenizer_name = tok
         # `empty_cameras: 1` adds observation.images.empty_camera_0 to input_features; the model pads

@@ -240,11 +240,18 @@ class LiberoEnv:
         self._objects = None
         obs = self._make_obs(raw)
         self._last_obs = obs
+        # canonical start pose = the arm's pose at the unperturbed reset (homing target); object
+        # perturbations below never move the robot, robot-init perturbations (libero_plus) override this.
+        self._canonical_pose = (np.asarray(obs.ee_pos, np.float32).copy(), np.asarray(obs.ee_quat, np.float32).copy())
         self.last_perturbation = {}
         if perturbation:
             from fleet_memory.envs.perturb import apply_perturbation
             obs, self.last_perturbation = apply_perturbation(self, perturbation, default_seed=int(seed))
         return obs
+
+    def canonical_ee_pose(self) -> tuple[np.ndarray, np.ndarray]:
+        """(pos, quat_xyzw) of the EE at this env+seed's unperturbed reset — the homing target."""
+        return self._canonical_pose
 
     def step(self, action: np.ndarray) -> tuple[Obs, bool, dict[str, Any]]:
         assert self._env is not None, "reset() before step()"
