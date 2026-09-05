@@ -143,8 +143,8 @@ def test_run_episode_record_shape(log):
     ep = run_episode(RunConfig("mock", TASK, 7, "A", log_path=log, environment_tag="lab"))
     assert ep.environment_id == "mock_pick_bowl_to_plate_lab" and ep.retrieval_frozen_at <= ep.ts
     assert ep.retrieved_lesson_ids == [] and ep.applied_lesson_ids == [] and ep.plan.source == "identity"
-    assert set(ep.s3_params) == {"approach_offset_xyz", "pregrasp_height", "grasp_offset_z", "time_scale",
-                                 "velocity_cap", "gripper_cmd", "approach_cone_deg"}
+    from fleet_memory.execution.params import NAMES
+    assert set(ep.s3_params) == set(NAMES)
     assert ep.metrics.steps == ep.outcome.steps and ep.metrics.cost is None    # no cost_reference yet
     store = EventStore(log)
     types = [d["type"] for d in store.read_all()]
