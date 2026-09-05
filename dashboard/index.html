@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fleet Memory dashboard</title>
+<style>
+:root{color-scheme:light dark;
+  --page:#f9f9f7;--surface:#fcfcfb;--ink:#0b0b0b;--ink2:#52514e;--muted:#898781;--grid:#e1e0d9;--axis:#c3c2b7;--border:rgba(11,11,11,.10);
+  --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;--s6:#008300;--s7:#4a3aa7;--s8:#e34948;
+  --good:#0ca30c;--warn:#fab219;--bad:#d03b3b;--good-text:#006300;--wash:rgba(11,11,11,.04)}
+@media (prefers-color-scheme:dark){:root{
+  --page:#0d0d0d;--surface:#1a1a19;--ink:#fff;--ink2:#c3c2b7;--muted:#898781;--grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);
+  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9;--s8:#e66767;--good-text:#0ca30c;--wash:rgba(255,255,255,.05)}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:16px 24px;border-bottom:1px solid var(--border);background:var(--surface)}
+h1{font-size:18px;margin:0;font-weight:600}h1 span{color:var(--muted);font-weight:400;margin-left:8px}
+h2{font-size:13px;font-weight:600;margin:0 0 10px;color:var(--ink2);text-transform:uppercase;letter-spacing:.04em}h2 span{color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0;margin-left:6px}
+.load{display:flex;gap:12px;align-items:center;color:var(--muted);font-size:13px}
+.btn{border:1px solid var(--border);background:var(--surface);color:var(--ink);padding:6px 12px;border-radius:6px;cursor:pointer}
+.btn:hover{background:var(--wash)}.btn input{display:none}
+main{padding:20px 24px;display:grid;gap:16px;max-width:1400px;margin:0 auto}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px 18px;min-width:0}
+.grid2{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(420px,1fr))}
+.tiles{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.tile{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 16px}
+.tile .label{font-size:12px;color:var(--muted)}.tile .value{font-size:26px;font-weight:600;margin:2px 0}.tile .sub{font-size:12px;color:var(--ink2)}
+table{width:100%;border-collapse:collapse;font-size:13px}th{font-weight:500;color:var(--muted);text-align:left;border-bottom:1px solid var(--grid);padding:6px 8px;white-space:nowrap}
+td{padding:6px 8px;border-bottom:1px solid var(--grid);vertical-align:top;font-variant-numeric:tabular-nums}tr:last-child td{border-bottom:0}tr:hover td{background:var(--wash)}
+td.num,th.num{text-align:right}td.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px}
+.wrap{overflow-x:auto}.muted{color:var(--muted)}.dim{color:var(--ink2);font-size:12px}
+.sw{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.badge{display:inline-block;padding:1px 7px;border-radius:10px;font-size:11px;font-weight:500;border:1px solid var(--border)}
+.badge.validated,.badge.success{color:var(--good-text);border-color:var(--good)}.badge.retired,.badge.failure{color:var(--bad);border-color:var(--bad)}
+.badge.candidate{color:var(--ink2)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--ink2);margin-top:6px}.legend i{display:inline-block;width:14px;height:0;border-top:2px solid;margin-right:5px;vertical-align:middle}
+svg{width:100%;height:auto;display:block;overflow:visible}
+.tip{position:fixed;pointer-events:none;background:var(--surface);color:var(--ink);border:1px solid var(--border);border-radius:6px;padding:6px 10px;font-size:12px;box-shadow:0 4px 16px rgba(0,0,0,.18);z-index:9;max-width:320px}
+.drop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(42,120,214,.12);border:3px dashed var(--s1);font-size:20px;color:var(--ink);z-index:8}
+body.dragging .drop{display:flex}
+.empty{color:var(--muted);padding:12px 0}
+footer{padding:0 24px 24px;color:var(--muted);font-size:12px;max-width:1400px;margin:0 auto}
+</style>
+</head>
+<body>
+<header>
+  <h1>Fleet Memory<span>v2 · event log</span></h1>
+  <div class="load"><span id="src">loading…</span><label class="btn">Open events.jsonl<input type="file" id="file" accept=".jsonl,.json,.txt,.log"></label></div>
+</header>
+<div class="drop">Drop <code>&nbsp;events.jsonl&nbsp;</code> to load it</div>
+<main>
+  <section class="tiles" id="tiles"></section>
+  <section class="grid2">
+    <div class="card"><h2>Success by arm<span>env predicate only · 95% Wilson CI</span></h2><div class="wrap" id="arms"></div></div>
+    <div class="card"><h2>Success curves<span>rolling 20 episodes per arm</span></h2><div id="curves"></div></div>
+  </section>
+  <section class="card"><h2>Lessons<span>treated = retrieved and applied · control = retrieved and withheld · one-sided p</span></h2><div class="wrap" id="lessons"></div></section>
+  <section class="grid2">
+    <div class="card"><h2>Interventions timeline<span>inner-loop coach edits · x = episode order, y = step</span></h2><div id="timeline"></div></div>
+    <div class="card"><h2>Recent episodes</h2><div class="wrap" id="episodes"></div></div>
+  </section>
+</main>
+<footer>Reads <code>logs/events.jsonl</code> (append-only JSONL of lesson / lesson_status / episode / snapshot records). Metrics mirror <code>fleet_memory/analysis/metrics.py</code>. Nothing leaves the browser.</footer>
+<div id="tip" class="tip" hidden></div>
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const ARM_ORDER=["A","B","C","D","E","F","D_S1","D_S2","D_S3"];
+const ARM_HUE={A:1,B:2,C:3,D:4,E:5,F:6,D_S1:4,D_S2:4,D_S3:4};   // fixed hue per arm; ablations share D's hue
+const ARM_DASH={D_S1:"8 4",D_S2:"2 4",D_S3:"8 3 2 3"};              // ...and carry identity in the dash
+const SURF_HUE={S1:1,S2:2,S3:3};
+const hue=n=>`var(--s${n||7})`;
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const pct=x=>x==null?"–":(100*x).toFixed(1)+"%";
+const ci=c=>`[${(100*c[0]).toFixed(1)}, ${(100*c[1]).toFixed(1)}]`;
+const num=(x,d=1)=>x==null?"–":Number(x).toFixed(d);
+const ok=e=>!!(e.outcome&&e.outcome.env_success);
+
+// ---------- parsing ----------
+function parseJsonl(text){const out=[];for(const line of text.split("\n")){const s=line.trim();if(!s)continue;try{out.push(JSON.parse(s));}catch(e){}}return out;}
+
+// ---------- metrics (mirror of analysis/metrics.py) ----------
+function wilson(k,n,z=1.96){if(n<=0)return[0,1];const p=k/n,d=1+z*z/n,c=(p+z*z/(2*n))/d,h=z*Math.sqrt(p*(1-p)/n+z*z/(4*n*n))/d;return[Math.max(0,c-h),Math.min(1,c+h)];}
+function erfc(x){const t=1/(1+.5*Math.abs(x));const r=t*Math.exp(-x*x-1.26551223+t*(1.00002368+t*(.37409196+t*(.09678418+t*(-.18628806+t*(.27886807+t*(-1.13520398+t*(1.48851587+t*(-.82215223+t*.17087277)))))))));return x>=0?r:2-r;}
+function pValue(k1,n1,k2,n2){if(!n1||!n2)return null;const p1=k1/n1,p2=k2/n2,p=(k1+k2)/(n1+n2),se=Math.sqrt(p*(1-p)*(1/n1+1/n2));return se===0?1:.5*erfc(((p1-p2)/se)/Math.SQRT2);}
+const sortArms=a=>[...a].sort((x,y)=>{const i=ARM_ORDER.indexOf(x),j=ARM_ORDER.indexOf(y);return((i<0?99:i)-(j<0?99:j))||x.localeCompare(y);});
+
+function analyse(records){
+  const eps=records.filter(r=>r.type==="episode"&&r.outcome);
+  const lessons={};
+  for(const r of records){
+    if(r.type==="lesson")lessons[r.lesson_id]={...r};
+    else if(r.type==="lesson_status"&&lessons[r.lesson_id]){lessons[r.lesson_id].status=r.to_status;if(r.evidence)lessons[r.lesson_id].evidence=r.evidence;}
+  }
+  const byArm={};
+  for(const e of eps){const a=byArm[e.condition]||(byArm[e.condition]={n:0,k:0});a.n++;a.k+=ok(e)?1:0;}
+  for(const a of Object.values(byArm)){a.rate=a.k/a.n;a.ci=wilson(a.k,a.n);}
+  const arms=sortArms(Object.keys(byArm)),curves={};
+  for(const arm of arms){const f=eps.filter(e=>e.condition===arm).map(e=>ok(e)?1:0);curves[arm]=f.map((_,i)=>{const w=f.slice(Math.max(0,i-19),i+1);return w.reduce((s,v)=>s+v,0)/w.length;});}
+  const ab={};   // lesson_id -> [treated_n, treated_ok, control_n, control_ok]
+  for(const e of eps){const applied=new Set(e.applied_lesson_ids||[]);for(const lid of e.retrieved_lesson_ids||[]){const c=ab[lid]||(ab[lid]=[0,0,0,0]);const j=applied.has(lid)?0:2;c[j]++;c[j+1]+=ok(e)?1:0;}}
+  const lessonRows=Object.values(lessons).map(l=>{
+    let[tn,ts,cn,cs]=ab[l.lesson_id]||[0,0,0,0];const ev=l.evidence||{};
+    if(!tn&&!cn&&(ev.treated_n||ev.control_n))[tn,ts,cn,cs]=[ev.treated_n||0,ev.treated_successes||0,ev.control_n||0,ev.control_successes||0];
+    const tr=tn?ts/tn:null,cr=cn?cs/cn:null,t=l.trigger||{},ed=l.edit||{};
+    return{id:l.lesson_id,surface:l.surface,op:ed.op,params:ed.params||{},trigger:[t.task_family,t.object_class,t.phase,t.predicate].map(x=>x??"*").join("/"),
+      status:l.status||"candidate",rationale:l.rationale_text||"",tn,ts,cn,cs,tr,cr,lift:(tr==null||cr==null)?null:(tr-cr)*100,p:pValue(ts,tn,cs,cn)};
+  });
+  const ord={validated:0,candidate:1,retired:2};
+  lessonRows.sort((a,b)=>((ord[a.status]??9)-(ord[b.status]??9))||a.id.localeCompare(b.id));
+  const prec={candidate:0,validated:0,retired:0};
+  for(const l of lessonRows)prec[l.status]=(prec[l.status]||0)+1;
+  const decided=prec.validated+prec.retired;prec.precision=decided?prec.validated/decided:null;
+  const withIv=eps.filter(e=>(e.interventions||[]).length),rescue={n:withIv.length,k:withIv.filter(ok).length};
+  rescue.rate=rescue.n?rescue.k/rescue.n:null;rescue.ci=wilson(rescue.k,rescue.n);
+  const ivs=[];eps.forEach((e,i)=>{for(const iv of e.interventions||[])ivs.push({...iv,ep:e,idx:i});});
+  const D=byArm.D,B=byArm.B,tokD=ivs.filter(v=>v.ep.condition==="D").reduce((s,v)=>s+(v.tokens_in||0)+(v.tokens_out||0),0);
+  const gain=(D&&B)?(D.rate-B.rate)*100:null;
+  return{eps,arms,byArm,curves,lessonRows,prec,rescue,ivs,eff:{gain,tokens:tokD,perPp:(gain&&gain>0)?tokD/gain:null}};
+}
+
+// ---------- tooltip ----------
+const tip=$("#tip");
+function showTip(ev,html){tip.innerHTML=html;tip.hidden=false;const x=Math.min(ev.clientX+14,window.innerWidth-tip.offsetWidth-8),y=Math.min(ev.clientY+14,window.innerHeight-tip.offsetHeight-8);tip.style.left=x+"px";tip.style.top=y+"px";}
+function hideTip(){tip.hidden=true;}
+
+// ---------- panels ----------
+function tile(label,value,sub){return`<div class="tile"><div class="label">${label}</div><div class="value">${value}</div><div class="sub">${sub||""}</div></div>`;}
+function renderTiles(m){
+  const best=m.arms.length?m.arms.reduce((a,b)=>m.byArm[b].rate>m.byArm[a].rate?b:a):null;
+  const nIv=m.ivs.length,p=m.prec,r=m.rescue,e=m.eff;
+  $("#tiles").innerHTML=tile("Episodes",m.eps.length,`${m.arms.length} arm${m.arms.length===1?"":"s"} · ${nIv} intervention${nIv===1?"":"s"}`)
+    +tile("Best arm",best?`${best} · ${pct(m.byArm[best].rate)}`:"–",best?`n=${m.byArm[best].n} · CI ${ci(m.byArm[best].ci)}`:"no episodes")
+    +tile("Lesson precision",pct(p.precision),`${p.validated} validated · ${p.retired} retired · ${p.candidate} candidate`)
+    +tile("Rescue rate",pct(r.rate),r.n?`${r.k}/${r.n} intervened episodes succeeded · CI ${ci(r.ci)}`:"no interventions")
+    +tile("Coach tokens / pp",e.perPp==null?"–":Math.round(e.perPp).toLocaleString(),e.gain==null?"needs arms B and D":`D − B = ${num(e.gain)} pp · ${e.tokens.toLocaleString()} tokens`);
+}
+function renderArms(m){
+  if(!m.arms.length){$("#arms").innerHTML='<div class="empty">No episodes yet.</div>';return;}
+  $("#arms").innerHTML=`<table><tr><th>arm</th><th class="num">n</th><th class="num">successes</th><th class="num">rate</th><th class="num">95% CI</th><th>surfaces</th></tr>`+m.arms.map(a=>{
+    const r=m.byArm[a],surf=[...new Set(m.eps.filter(e=>e.condition===a).flatMap(e=>e.surfaces_enabled||[]))].join(" ")||"–";
+    return`<tr><td><span class="sw" style="background:${hue(ARM_HUE[a])}"></span>${esc(a)}</td><td class="num">${r.n}</td><td class="num">${r.k}</td><td class="num"><b>${pct(r.rate)}</b></td><td class="num dim">${ci(r.ci)}</td><td class="dim">${esc(surf)}</td></tr>`;}).join("")+"</table>";
+}
+function renderCurves(m){
+  const host=$("#curves");
+  if(!m.arms.length){host.innerHTML='<div class="empty">No episodes yet.</div>';return;}
+  const W=560,H=250,L=36,R=16,T=10,B=26,pw=W-L-R,ph=H-T-B;
+  const xmax=Math.max(2,...m.arms.map(a=>m.curves[a].length));
+  const X=i=>L+(i-1)/(xmax-1)*pw,Y=v=>T+(1-v)*ph;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="rolling success rate per arm">`;
+  for(const v of[0,.25,.5,.75,1])s+=`<line x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--grid)"/><text x="${L-6}" y="${Y(v)+4}" font-size="10" text-anchor="end" fill="var(--muted)">${v*100}%</text>`;
+  s+=`<line x1="${L}" x2="${W-R}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--axis)"/><text x="${W-R}" y="${H-6}" font-size="10" text-anchor="end" fill="var(--muted)">episode ${xmax}</text><text x="${L}" y="${H-6}" font-size="10" fill="var(--muted)">1</text>`;
+  for(const a of m.arms){const c=m.curves[a];if(!c.length)continue;
+    const d=c.map((v,i)=>`${X(i+1).toFixed(1)},${Y(v).toFixed(1)}`).join(" ");
+    s+=`<polyline points="${d}" fill="none" stroke="${hue(ARM_HUE[a])}" stroke-width="2" stroke-linejoin="round" ${ARM_DASH[a]?`stroke-dasharray="${ARM_DASH[a]}"`:""}/>`;
+    if(m.arms.length<=4)s+=`<text x="${X(c.length)+4}" y="${Y(c[c.length-1])+4}" font-size="11" fill="var(--ink)">${esc(a)}</text>`;}
+  s+=`<line id="xhair" x1="0" x2="0" y1="${T}" y2="${T+ph}" stroke="var(--axis)" visibility="hidden"/><rect id="hit" x="${L}" y="${T}" width="${pw}" height="${ph}" fill="transparent"/></svg>`;
+  s+=`<div class="legend">${m.arms.map(a=>`<span><i style="border-color:${hue(ARM_HUE[a])};${ARM_DASH[a]?"border-top-style:dashed":""}"></i>${esc(a)} <span class="muted">n=${m.byArm[a].n}</span></span>`).join("")}</div>`;
+  host.innerHTML=s;
+  const svg=host.querySelector("svg"),xh=host.querySelector("#xhair");
+  host.querySelector("#hit").addEventListener("mousemove",ev=>{
+    const pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;const p=pt.matrixTransform(svg.getScreenCTM().inverse());
+    const i=Math.max(1,Math.min(xmax,Math.round((p.x-L)/pw*(xmax-1)+1)));xh.setAttribute("x1",X(i));xh.setAttribute("x2",X(i));xh.setAttribute("visibility","visible");
+    showTip(ev,`<b>episode ${i}</b><br>`+m.arms.filter(a=>m.curves[a].length>=i).map(a=>`<span class="sw" style="background:${hue(ARM_HUE[a])}"></span>${esc(a)} ${pct(m.curves[a][i-1])}`).join("<br>"));});
+  host.querySelector("#hit").addEventListener("mouseleave",()=>{xh.setAttribute("visibility","hidden");hideTip();});
+}
+function renderLessons(m){
+  if(!m.lessonRows.length){$("#lessons").innerHTML='<div class="empty">No lessons in this log.</div>';return;}
+  const pr=p=>p==null?"–":p<.001?"<0.001":p.toFixed(3);
+  $("#lessons").innerHTML=`<table><tr><th>lesson</th><th>surface</th><th>edit</th><th>trigger</th><th>status</th><th class="num">treated</th><th class="num">control</th><th class="num">lift (pp)</th><th class="num">p</th></tr>`+m.lessonRows.map(l=>
+    `<tr title="${esc(l.rationale)}"><td class="mono">${esc(l.id)}</td><td><span class="sw" style="background:${hue(SURF_HUE[l.surface])}"></span>${esc(l.surface)}</td><td class="mono">${esc(l.op)} <span class="muted">${esc(JSON.stringify(l.params))}</span></td><td class="mono">${esc(l.trigger)}</td><td><span class="badge ${esc(l.status)}">${esc(l.status)}</span></td>`+
+    `<td class="num">${l.ts}/${l.tn} <span class="dim">${pct(l.tr)}</span></td><td class="num">${l.cs}/${l.cn} <span class="dim">${pct(l.cr)}</span></td><td class="num" style="color:${l.lift>0?"var(--good-text)":l.lift<0?"var(--bad)":"inherit"}">${l.lift==null?"–":(l.lift>0?"+":"")+num(l.lift)}</td><td class="num">${pr(l.p)}</td></tr>`).join("")+"</table>";
+}
+function renderTimeline(m){
+  const host=$("#timeline");
+  if(!m.ivs.length){host.innerHTML='<div class="empty">No interventions in this log.</div>';return;}
+  const W=560,H=220,L=36,R=12,T=10,B=26,pw=W-L-R,ph=H-T-B,N=Math.max(2,m.eps.length);
+  const ymax=Math.max(50,Math.ceil(Math.max(...m.ivs.map(v=>v.step||0))*1.05/50)*50),X=i=>L+i/(N-1)*pw,Y=s=>T+(1-s/ymax)*ph;
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="interventions by episode and step">`;
+  for(let k=0;k<=4;k++){const v=ymax*k/4;s+=`<line x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--grid)"/><text x="${L-6}" y="${Y(v)+4}" font-size="10" text-anchor="end" fill="var(--muted)">${Math.round(v)}</text>`;}
+  s+=`<line x1="${L}" x2="${W-R}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--axis)"/><text x="${L}" y="${H-6}" font-size="10" fill="var(--muted)">episode 1</text><text x="${W-R}" y="${H-6}" font-size="10" text-anchor="end" fill="var(--muted)">${m.eps.length}</text>`;
+  m.ivs.forEach((v,j)=>{const c=hue(SURF_HUE[v.surface]),good=ok(v.ep);
+    s+=`<circle cx="${X(v.idx).toFixed(1)}" cy="${Y(v.step||0).toFixed(1)}" r="4.5" fill="${good?c:"var(--surface)"}" stroke="${c}" stroke-width="2"/><circle data-i="${j}" cx="${X(v.idx).toFixed(1)}" cy="${Y(v.step||0).toFixed(1)}" r="11" fill="transparent"/>`;});
+  s+=`</svg><div class="legend">${Object.keys(SURF_HUE).map(k=>`<span><i style="border-color:${hue(SURF_HUE[k])}"></i>${k}</span>`).join("")}<span><span class="sw" style="background:var(--ink2)"></span>filled = episode succeeded</span><span><span class="sw" style="border:2px solid var(--ink2);background:none"></span>hollow = failed</span></div>`;
+  host.innerHTML=s;
+  host.querySelectorAll("circle[data-i]").forEach(el=>{
+    el.addEventListener("mousemove",ev=>{const v=m.ivs[+el.dataset.i];
+      showTip(ev,`<b>${esc(v.ep.episode_id)}</b> · arm ${esc(v.ep.condition)} · ${ok(v.ep)?"success":"failure"}<br>step ${v.step} · trigger <b>${esc(v.trigger)}</b><br>${esc(v.surface)} ${esc((v.edit||{}).op)} <span class="muted">${esc(JSON.stringify((v.edit||{}).params||{}))}</span>${v.rationale_text?`<br><span class="dim">${esc(v.rationale_text)}</span>`:""}`);});
+    el.addEventListener("mouseleave",hideTip);});
+}
+function renderEpisodes(m){
+  const recent=m.eps.slice(-15).reverse();
+  if(!recent.length){$("#episodes").innerHTML='<div class="empty">No episodes yet.</div>';return;}
+  $("#episodes").innerHTML=`<table><tr><th>episode</th><th>arm</th><th>task</th><th class="num">seed</th><th>result</th><th class="num">steps</th><th class="num">interv.</th><th class="num">applied</th></tr>`+recent.map(e=>
+    `<tr title="${esc(e.instruction_used||"")}"><td class="mono">${esc(e.episode_id)}</td><td><span class="sw" style="background:${hue(ARM_HUE[e.condition])}"></span>${esc(e.condition)}</td><td class="dim">${esc(e.task_id)}${e.held_out?' <span class="badge">held-out</span>':""}</td><td class="num">${e.seed}</td>`+
+    `<td><span class="badge ${ok(e)?"success":"failure"}">${ok(e)?"success":esc(e.outcome.termination||"failure")}</span></td><td class="num">${e.outcome.steps??"–"}</td><td class="num">${(e.interventions||[]).length}</td><td class="num">${(e.applied_lesson_ids||[]).length}<span class="dim">/${(e.retrieved_lesson_ids||[]).length}</span></td></tr>`).join("")+"</table>";
+}
+function render(records,source){
+  const m=analyse(records);
+  $("#src").textContent=`${source} · ${records.length} records`;
+  renderTiles(m);renderArms(m);renderCurves(m);renderLessons(m);renderTimeline(m);renderEpisodes(m);
+}
+
+// ---------- sample state (shown until a log is loaded) ----------
+function sample(){
+  let seed=0x9e3779b9;const R=()=>{seed|=0;seed=seed+0x6d2b79f5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};
+  const les=(id,surface,op,params,trigger,rationale)=>({type:"lesson",lesson_id:id,surface,trigger,edit:{op,params},rationale_text:rationale,status:"candidate",provenance:{coach_model:"sample"},evidence:{},ts:""});
+  const recs=[
+    les("les_3f2a91c0","S3","set_grasp_offset",{dx:0,dy:0,dz:-0.015},{task_family:"pick_place",object_class:"bowl",phase:"grasp",predicate:"object_height_below_rim"},"Gripper closed 1.5 cm above the rim on every failed grasp; descend lower before closing."),
+    les("les_8b1d44e7","S3","set_velocity_cap",{max_pos_delta:0.5,max_rot_delta:0.5},{task_family:"pick_place",object_class:"*",phase:"place",predicate:"ee_near_target"},"Bowl slid off the plate during the fast final approach."),
+    les("les_c07e5a12","S1","set_abort_condition",{subtask_id:"s2",predicate:"grasp_slipped",max_steps:80},{task_family:"pick_place",object_class:"mug",phase:"grasp",predicate:"grasp_slipped"},"Retry after a slipped grasp instead of carrying air to the plate."),
+    les("les_e4a9b301","S2","set_instruction",{instruction:"pick up the black bowl carefully"},{task_family:"*",object_class:"bowl",phase:"*",predicate:"always"},"Slower phrasing reduced knocked-over distractors.")];
+  const P={A:.38,B:.44,C:.5,D:.62,E:.45},SURF={A:[],B:["S1"],C:["S1","S2","S3"],D:["S1","S2","S3"],E:["S1","S2","S3"]},TASKS=["pick_bowl_to_plate","pick_mug_to_tray","stack_cup_on_saucer","push_box_to_edge"];
+  let i=0;
+  for(let round=0;round<40;round++)for(const arm of Object.keys(P)){i++;
+    const retrieved=arm==="A"||arm==="B"?[]:recs.slice(0,3).map(l=>l.lesson_id),applied=retrieved.filter(()=>R()<.5);
+    const succ=R()<P[arm]+(applied.includes("les_3f2a91c0")?.18:0)-(applied.includes("les_8b1d44e7")?.05:0),id=`ep_${i.toString(16).padStart(8,"0")}`,ivs=[];
+    if(SURF[arm].includes("S3")&&R()<.35)ivs.push({type:"intervention",episode_id:id,step:20+Math.floor(R()*140),trigger:R()<.7?"stall":"interval",surface:R()<.8?"S3":"S1",edit:{op:"set_abort_retry",params:{predicate:"grasp_slipped",max_retries:1,lift_m:0.08}},rationale_text:"Object not lifting with the gripper; open, lift and retry.",coach_model:"sample",latency_s:1.4,tokens_in:900,tokens_out:140});
+    recs.push({type:"episode",episode_id:id,suite:"mock",task_id:TASKS[round%4],seed:round,condition:arm,policy:"mock",surfaces_enabled:SURF[arm],retrieved_lesson_ids:retrieved,applied_lesson_ids:applied,retrieval_frozen_at:"",instruction_used:"put the black bowl on the plate",interventions:ivs,
+      outcome:{env_success:succ,steps:succ?60+Math.floor(R()*100):200,termination:succ?"success":"timeout",wall_s:2+R()*3},lessons_generated:[],held_out:false});}
+  const ev=(tn,ts,cn,cs)=>({trials:tn+cn,treated_n:tn,treated_successes:ts,control_n:cn,control_successes:cs});
+  recs.push({type:"lesson_status",lesson_id:"les_3f2a91c0",from_status:"candidate",to_status:"validated",reason:"gate",evidence:ev(60,42,58,26)});
+  recs.push({type:"lesson_status",lesson_id:"les_8b1d44e7",from_status:"candidate",to_status:"retired",reason:"gate",evidence:ev(55,26,61,31)});
+  return recs;
+}
+
+// ---------- loading ----------
+function loadText(text,name){const recs=parseJsonl(text);if(!recs.length){alert("No JSON records found in "+name);return;}render(recs,name);}
+$("#file").addEventListener("change",ev=>{const f=ev.target.files[0];if(f)f.text().then(t=>loadText(t,f.name));});
+let dragDepth=0;
+document.addEventListener("dragenter",ev=>{ev.preventDefault();dragDepth++;document.body.classList.add("dragging");});
+document.addEventListener("dragover",ev=>ev.preventDefault());
+document.addEventListener("dragleave",()=>{if(--dragDepth<=0){dragDepth=0;document.body.classList.remove("dragging");}});
+document.addEventListener("drop",ev=>{ev.preventDefault();dragDepth=0;document.body.classList.remove("dragging");const f=ev.dataTransfer.files[0];if(f)f.text().then(t=>loadText(t,f.name));});
+fetch("../logs/events.jsonl").then(r=>r.ok?r.text():Promise.reject(r.status)).then(t=>{const recs=parseJsonl(t);if(recs.length)render(recs,"logs/events.jsonl");else render(sample(),"sample data (log is empty)");})
+  .catch(()=>render(sample(),"sample data — open or drop an events.jsonl"));
+</script>
+</body>
+</html>
