@@ -32,6 +32,8 @@ class ConstraintSet:
     abort_predicate: str | None = None
     abort_max_retries: int = 1
     abort_lift_m: float = 0.08
+    # --- v3: temporal resampling of the action chunk (>1 = faster) ---
+    time_scale: float = 1.0
     # --- bookkeeping ---
     applied_edits: list[dict[str, Any]] = field(default_factory=list)
 
@@ -44,6 +46,7 @@ class ConstraintSet:
             and self.max_rot_delta >= 1.0
             and self.pre_grasp_waypoint is None
             and self.abort_predicate is None
+            and self.time_scale == 1.0
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -59,6 +62,7 @@ class ConstraintSet:
             "abort_predicate": self.abort_predicate,
             "abort_max_retries": self.abort_max_retries,
             "abort_lift_m": self.abort_lift_m,
+            "time_scale": self.time_scale,
             "applied_edits": list(self.applied_edits),
         }
 
@@ -72,7 +76,7 @@ class ConstraintSet:
         if d.get("approach_vector") is not None:
             c.approach_vector = np.asarray(d["approach_vector"], dtype=np.float32)
         for k in ("approach_half_angle_deg", "gripper_close_value", "max_pos_delta", "max_rot_delta",
-                  "pre_grasp_tol_m", "abort_predicate", "abort_max_retries", "abort_lift_m"):
+                  "pre_grasp_tol_m", "abort_predicate", "abort_max_retries", "abort_lift_m", "time_scale"):
             if k in d and d[k] is not None:
                 setattr(c, k, d[k])
         if d.get("pre_grasp_waypoint") is not None:

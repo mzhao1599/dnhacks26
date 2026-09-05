@@ -138,6 +138,7 @@ class Trigger(Record):
     object_class: str                        # e.g. "bowl", "*"
     phase: str                               # subtask skill name or "*"
     predicate: str                           # one of PREDICATES
+    environment_id: str | None = None        # v3: if set, the lesson only fires in this environment
 
 
 @dataclass
@@ -212,6 +213,17 @@ class Outcome(Record):
 
 
 @dataclass
+class EpisodeMetrics(Record):
+    """v3 per-episode cost inputs (analysis/cost.py). jerk is normalised by the Arm A reference."""
+    steps: int
+    success: bool
+    jerk: float                              # mean ||Δ²(ee_pos)|| / jerk_ref
+    force_proxy: float                       # mean max(0, ||a_t|| - 0.7 * a_max)
+    cost: float | None = None                # None until a cost_reference exists for the skill instance
+    mean_pos_delta: float = 0.0              # mean ||dpos|| per step, for the mastery story
+
+
+@dataclass
 class Episode(Record):
     episode_id: str
     suite: str
@@ -230,6 +242,12 @@ class Episode(Record):
     outcome: Outcome | None = None
     lessons_generated: list[str] = field(default_factory=list)   # lesson_ids from outer loop
     held_out: bool = False                   # held-out suites never generate lessons
+    # --- v3 ---
+    environment_id: str = ""                 # f"{suite}_{task_id}" + perturbation tag; keys the house model
+    skill_instance_versions: dict[str, int] = field(default_factory=dict)   # {skill_instance_id: version used}
+    s3_params: dict[str, float] = field(default_factory=dict)              # the S3 vector actually applied (params.py)
+    metrics: EpisodeMetrics | None = None
+    perturbation: dict[str, Any] = field(default_factory=dict)             # envs/perturb.py config, {} if none
     ts: str = field(default_factory=now_iso)
     type: str = "episode"
 
@@ -247,6 +265,113 @@ class Snapshot(Record):
     keyframe_indices: list[int]
     ts: str = field(default_factory=now_iso)
     type: str = "snapshot"
+
+
+# --------------------------------------------------------------------------- #
+# v3: sleep loop — skill instances, consolidations, drift, cost reference
+# --------------------------------------------------------------------------- #
+
+def skill_instance_id(skill: str, environment_id: str) -> str:
+    return f"si_{skill}__{environment_id}"
+
+
+@dataclass
+class GateResult(Record):
+    passed: bool
+    incumbent_cost: float
+    candidate_cost: float
+    n_seeds: int
+    incumbent_success: float = 0.0
+    candidate_success: float = 0.0
+    success_delta_pp: float = 0.0            # (candidate - incumbent) * 100
+
+
+@dataclass
+class Scorecard(Record):
+    n: int = 0
+    successes: int = 0
+    mean_steps: float | None = None
+    mean_jerk: float | None = None
+    mean_force_proxy: float | None = None
+    ewma_cost: float | None = None
+    baseline_cost: float | None = None       # gate cost at promotion; drift compares ewma against this
+    baseline_success_rate: float | None = None
+
+
+@dataclass
+class SkillInstance(Record):
+    """One versioned S3 parameter vector per (skill, object instance, environment). New version = new event.
+    Exactly one `incumbent` per skill_instance_id at any time (memory/house_model.py enforces the view)."""
+    skill_instance_id: str
+    environment_id: str
+    skill: str
+    object_instance_id: str
+    version: int
+    parent_version: int | None
+    status: Literal["incumbent", "candidate", "retired"]
+    params: dict[str, float]                 # execution/params.py S3Params.to_dict()
+    produced_by: dict[str, Any] = field(default_factory=dict)   # {"loop": "sleep"|"init"|"coach", "consolidation_id": ...}
+    gate: GateResult | None = None
+    scorecard: Scorecard = field(default_factory=Scorecard)
+    ts: str = field(default_factory=now_iso)
+    type: str = "skill_instance"
+
+
+@dataclass
+class SkillInstanceStatusChange(Record):
+    """Retire / re-instate without re-emitting params (append-only)."""
+    skill_instance_id: str
+    version: int
+    from_status: str
+    to_status: str
+    reason: str
+    ts: str = field(default_factory=now_iso)
+    type: str = "skill_instance_status"
+
+
+@dataclass
+class Consolidation(Record):
+    consolidation_id: str
+    phase: Literal["start", "end"]
+    skill_instance_id: str
+    trigger: Literal["manual", "scheduled", "drift"]
+    incumbent_version: int
+    optimizer: dict[str, Any] = field(default_factory=dict)     # {method, population, elites, iterations, seeds_per_candidate, pose_jitter_m}
+    rollouts: int = 0
+    wallclock_s: float = 0.0
+    best_candidate: dict[str, Any] | None = None                 # {"params": {...}, "opt_cost": float}
+    gate: GateResult | None = None
+    promoted_version: int | None = None
+    history: list[dict[str, Any]] = field(default_factory=list)  # per-iteration {iter, mean_cost, best_cost, sigma}
+    ts: str = field(default_factory=now_iso)
+    type: str = "consolidation"
+
+
+@dataclass
+class DriftTrigger(Record):
+    skill_instance_id: str
+    reason: Literal["ewma_cost_exceeds_baseline", "success_rate_drop"]
+    ewma_cost: float
+    baseline_cost: float
+    ratio: float
+    recent_success_rate: float
+    baseline_success_rate: float
+    episode_id: str = ""
+    ts: str = field(default_factory=now_iso)
+    type: str = "drift_trigger"
+
+
+@dataclass
+class CostReference(Record):
+    """Arm A references for cost normalisation, computed once in Phase 0 and frozen."""
+    skill_instance_id: str
+    environment_id: str
+    steps_ref: float
+    jerk_ref: float
+    n_episodes: int
+    source_condition: str = "A"
+    ts: str = field(default_factory=now_iso)
+    type: str = "cost_reference"
 
 
 # --------------------------------------------------------------------------- #
@@ -276,6 +401,12 @@ def _from(cls, d: dict):
             v = [_from(Intervention, i) for i in v]
         elif f.name == "outcome":
             v = _from(Outcome, v)
+        elif f.name == "metrics":
+            v = _from(EpisodeMetrics, v)
+        elif f.name == "gate":
+            v = _from(GateResult, v)
+        elif f.name == "scorecard":
+            v = _from(Scorecard, v)
         kw[f.name] = v
     return cls(**kw)
 
@@ -286,6 +417,11 @@ RECORD_TYPES = {
     "intervention": Intervention,
     "episode": Episode,
     "snapshot": Snapshot,
+    "skill_instance": SkillInstance,
+    "skill_instance_status": SkillInstanceStatusChange,
+    "consolidation": Consolidation,
+    "drift_trigger": DriftTrigger,
+    "cost_reference": CostReference,
 }
 
 
