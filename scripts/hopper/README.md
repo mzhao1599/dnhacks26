@@ -1,7 +1,7 @@
 # Fleet Memory on GMU Hopper
 
 Cluster facts: `ssh hopper` (user `ezhao2`, account `ezhao`, QOS `gpu`). Partition `gpuq`.
-Full A100 (`--gres=gpu:A100.80gb:1`) supports EGL rendering; MIG slices (`--gres=gpu:1g.10gb:1`)
+Full A100 (`--gres=gpu:A100.40gb:1`; the `A100.80gb` pool is queue-blocked) supports EGL; MIG slices (`--gres=gpu:1g.10gb:1`)
 do **not** — use `MUJOCO_GL=osmesa` there. Compute nodes have outbound internet. Never run
 MuJoCo or the policy on the login node.
 
@@ -101,6 +101,48 @@ PROBES_S2=probes/s2.txt PROBES_S3=probes/s3.jsonl N=30 sbatch scripts/hopper/pha
 `PROBES_S2`: one instruction paraphrase per line (`--probe-instruction`). `PROBES_S3`: one JSON
 `Edit` per line (`--probe-edit`), ops from `EDIT_OPS["S3"]` in `memory/schema.py`. Logs land in
 `logs/phase1/s{2,3}_probe<k>_events_<task>.jsonl`.
+
+## 4b. v3 (one fixed task, arm A → probes → sleep loop)
+
+**Use `--gres=gpu:A100.40gb:1`** (starts in seconds). `A100.80gb` is queue-blocked (jobs sit in
+`Resources`/`Priority` indefinitely); MIG slices need `MUJOCO_GL=osmesa` and are ~7x slower. Every v3
+sbatch below already requests `A100.40gb`, `-c 8 --mem=32G`.
+
+Full-episode smoke (writes one `SMOKE_RESULT {json}` line per seed with success, wall time, action stats):
+```bash
+sbatch scripts/hopper/smoke_v3.sbatch libero_10 0 0,1,2 520          # suite task seeds steps
+SWEEP="libero_goal 0 0,1,2 300;libero_10 3 0,1 520" sbatch scripts/hopper/smoke_v3.sbatch
+sbatch scripts/hopper/perturb_verify.sbatch libero_10 0             # reset(seed, perturbation) sanity -> PERTURB_OK
+```
+Perturbations are passed to `LiberoEnv.reset(seed, perturbation={...})`:
+`{"shift_xy":[dx,dy]}` (first object of interest), `{"jitter_m":s}` (all objects of interest),
+`{"distractor":true}` (moves a non-target object ~7 cm beside the target; best-effort). `env.last_perturbation`
+records before/after joint positions. `TaskInfo.objects` lists objects of interest first (target first,
+container/destination last).
+
+**Chosen v3 task: `libero_10` task 3** — "put the black bowl in the bottom drawer of the cabinet and
+close it" (slug `put_the_black_bowl_in_the_bottom_drawer_of_the_cabinet_and_close_it`, family
+`drawer_manipulation`). Objects (ooi first): `akita_black_bowl_1, white_cabinet_1, wine_bottle_1,
+wine_rack_1`. Smoke (2026-09-05, seeds 0-5): **6/6 success**, 207-288 steps, 98-136 s per episode.
+Other candidates: libero_10/2 stove+moka 3/5, libero_10/1 2-object basket 1/2, libero_10/0 0/3 (always
+gets the soup in, never the sauce), libero_goal/0 drawer 1/3.
+
+Phase 0 (arm A, 20 train seeds, 4 workers on one A100.40gb, writes `cost_reference` events):
+```bash
+sbatch scripts/hopper/phase0_v3.sbatch                     # defaults: SUITE=libero_10 TASK=3
+SUITE=libero_goal TASK=0 N=20 sbatch scripts/hopper/phase0_v3.sbatch
+# = python -m fleet_memory.runner.pool --env libero --policy smolvla --suite $SUITE --task $TASK --arm A \
+#     --n 20 --workers 4 --seed-set train --log $FM_LOGS/phase0/events.jsonl --make-reference
+```
+Phase 1 probes (same seeds, hand-set S3 params; `logs/probe/events_{good,bad}.jsonl`):
+```bash
+sbatch scripts/hopper/probe_v3.sbatch                      # good = {"time_scale":1.3}
+                                                           # bad  = {"grasp_offset_z":-0.02,"approach_offset_xyz":[0.03,0.03,0]}
+PROBES=probes/s3.jsonl sbatch scripts/hopper/probe_v3.sbatch   # extra: one S3-params JSON per line
+```
+Timing (A100.40gb, EGL, n_action_steps=1): env.step ~17 ms, policy.act ~0.5 s → ~0.5 s/step,
+~4.5 min per 520-step episode per worker. LLM backend: `env.sh` sources `~/.fm_secrets`
+(`GEMINI_API_KEY` there → Gemini; no key → `FM_LLM=mock`).
 
 ## 6. Monitor / pull logs back
 

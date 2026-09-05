@@ -286,8 +286,11 @@ def test_plots(log, tmp_path):
 
 def test_dashboard_static_file():
     html = open(os.path.join(ROOT, "dashboard", "index.html"), encoding="utf-8").read()
-    assert html.count("\n") <= 600
+    assert html.count("\n") <= 900
     assert "<script src" not in html and "<link" not in html and "https://" not in html   # no network deps
     assert 'type="file"' in html and "prefers-color-scheme" in html and "function sample()" in html
-    for panel in ("#arms", "#curves", "#lessons", "#timeline", "#episodes", "#tiles"):
+    for panel in ("#arms", "#curves", "#lessons", "#timeline", "#episodes", "#tiles",
+                  "#mastery", "#house", "#versions", "#consolidations", "#envsel"):          # v3 panels
         assert panel in html
+    for kind in ("skill_instance", "consolidation", "drift_trigger", "protocol_stage", "consolidation_id"):
+        assert kind in html                                        # v3 record types are read and rollouts excluded

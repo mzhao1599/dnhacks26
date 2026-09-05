@@ -51,12 +51,13 @@ fi
 export OMP_NUM_THREADS=${OMP_NUM_THREADS:-2}
 export MKL_NUM_THREADS=${MKL_NUM_THREADS:-2}
 
-# Secrets (chmod 600): a line like  export ANTHROPIC_API_KEY=sk-ant-...
+# Secrets (chmod 600): lines like  export ANTHROPIC_API_KEY=sk-ant-...  /  export GEMINI_API_KEY=...
+# agents/llm.py picks the backend from whichever key is set (ANTHROPIC first, then GEMINI).
 if [ -f "$HOME/.fm_secrets" ]; then
   # shellcheck disable=SC1090
   source "$HOME/.fm_secrets"
 fi
-if [ -z "${ANTHROPIC_API_KEY:-}" ]; then
+if [ -z "${ANTHROPIC_API_KEY:-}" ] && [ -z "${GEMINI_API_KEY:-}" ]; then
   export FM_LLM=${FM_LLM:-mock}
 fi
 

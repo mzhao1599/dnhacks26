@@ -40,17 +40,30 @@ svg{width:100%;height:auto;display:block;overflow:visible}
 .drop{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(42,120,214,.12);border:3px dashed var(--s1);font-size:20px;color:var(--ink);z-index:8}
 body.dragging .drop{display:flex}
 .empty{color:var(--muted);padding:12px 0}
+select{border:1px solid var(--border);background:var(--surface);color:var(--ink);padding:4px 8px;border-radius:6px;font:inherit;font-size:12px}
+.hrow{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.hrow h2{margin:0}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:12px}.kv b{font-weight:500;color:var(--ink2)}.kv span{font-family:ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums}
+.sub3{font-size:12px;font-weight:600;color:var(--ink2);margin:12px 0 6px}.sub3:first-child{margin-top:0}
+.spark{width:120px;height:28px;display:inline-block;vertical-align:middle}
+.badge.passed{color:var(--good-text);border-color:var(--good)}.badge.incumbent{color:var(--s1);border-color:var(--s1)}
+.stack{display:grid;gap:14px}
 footer{padding:0 24px 24px;color:var(--muted);font-size:12px;max-width:1400px;margin:0 auto}
 </style>
 </head>
 <body>
 <header>
-  <h1>Fleet Memory<span>v2 · event log</span></h1>
+  <h1>Fleet Memory<span>v3 · event log</span></h1>
   <div class="load"><span id="src">loading…</span><label class="btn">Open events.jsonl<input type="file" id="file" accept=".jsonl,.json,.txt,.log"></label></div>
 </header>
 <div class="drop">Drop <code>&nbsp;events.jsonl&nbsp;</code> to load it</div>
 <main>
   <section class="tiles" id="tiles"></section>
+  <section class="card"><div class="hrow"><h2>Mastery curve<span>cost (solid, left) &amp; steps (dashed, right) per episode · consolidation rollouts excluded · markers: consolidation ends, drift, protocol stages</span></h2><label class="dim">environment <select id="envsel"></select></label></div><div id="mastery"></div></section>
+  <section class="grid2">
+    <div class="card"><h2>House model<span>per environment: incumbent S3 vector, active lessons, drift triggers</span></h2><div class="wrap" id="house"></div></div>
+    <div class="card"><h2>Skill-instance versions<span>skill_instance events · gate = perturbation gate on disjoint seeds</span></h2><div class="wrap" id="versions"></div></div>
+  </section>
+  <section class="card"><h2>Consolidation log<span>sleep-loop runs · sparkline = best cost per CEM iteration</span></h2><div class="wrap" id="consolidations"></div></section>
   <section class="grid2">
     <div class="card"><h2>Success by arm<span>env predicate only · 95% Wilson CI</span></h2><div class="wrap" id="arms"></div></div>
     <div class="card"><h2>Success curves<span>rolling 20 episodes per arm</span></h2><div id="curves"></div></div>
@@ -61,7 +74,7 @@ footer{padding:0 24px 24px;color:var(--muted);font-size:12px;max-width:1400px;ma
     <div class="card"><h2>Recent episodes</h2><div class="wrap" id="episodes"></div></div>
   </section>
 </main>
-<footer>Reads <code>logs/events.jsonl</code> (append-only JSONL of lesson / lesson_status / episode / snapshot records). Metrics mirror <code>fleet_memory/analysis/metrics.py</code>. Nothing leaves the browser.</footer>
+<footer>Reads <code>logs/events.jsonl</code> (append-only JSONL of lesson / episode / skill_instance / consolidation / drift_trigger / protocol_stage records). Metrics mirror <code>fleet_memory/analysis/metrics.py</code> and <code>analysis/mastery.py</code>. Nothing leaves the browser.</footer>
 <div id="tip" class="tip" hidden></div>
 <script>
 "use strict";
@@ -117,7 +130,111 @@ function analyse(records){
   const ivs=[];eps.forEach((e,i)=>{for(const iv of e.interventions||[])ivs.push({...iv,ep:e,idx:i});});
   const D=byArm.D,B=byArm.B,tokD=ivs.filter(v=>v.ep.condition==="D").reduce((s,v)=>s+(v.tokens_in||0)+(v.tokens_out||0),0);
   const gain=(D&&B)?(D.rate-B.rate)*100:null;
-  return{eps,arms,byArm,curves,lessonRows,prec,rescue,ivs,eff:{gain,tokens:tokD,perPp:(gain&&gain>0)?tokD/gain:null}};
+  return{eps,arms,byArm,curves,lessonRows,prec,rescue,ivs,eff:{gain,tokens:tokD,perPp:(gain&&gain>0)?tokD/gain:null},lessons,...analyseV3(records,eps)};
+}
+
+// ---------- v3: mastery, house model, versions, consolidations (mirror of analysis/mastery.py) ----------
+const isRollout=e=>!!((e.perturbation||{}).consolidation_id);
+const envOfSi=id=>{const k=String(id||"").indexOf("__");return k<0?null:id.slice(k+2);};
+const ARM_HUE_V3={...ARM_HUE,P:7};
+function analyseV3(records,eps){
+  const envs={},si={},cons={},stages={},counts={},costRef={};
+  const env=e=>envs[e]||(envs[e]={mastery:[],rollouts:0,marks:[],perturbed:{}});
+  for(const r of records){
+    if(r.type==="episode"&&r.outcome){
+      if(!r.environment_id)continue;const v=env(r.environment_id);
+      if(isRollout(r)){v.rollouts++;continue;}
+      const vs=Object.values(r.skill_instance_versions||{});
+      v.mastery.push({i:v.mastery.length,ep:r,cost:(r.metrics||{}).cost??null,steps:r.outcome.steps??null,ok:ok(r),arm:r.condition,version:vs.length?Math.max(...vs):null});
+      counts[r.environment_id]=v.mastery.length;
+      if(Object.values(r.perturbation||{}).some(x=>x&&x!==0)){const p=v.perturbed[r.condition]||(v.perturbed[r.condition]={n:0,k:0});p.n++;p.k+=ok(r)?1:0;}
+    }else if(r.type==="skill_instance"){const s=si[r.skill_instance_id]||(si[r.skill_instance_id]={id:r.skill_instance_id,env:r.environment_id,versions:{},scorecards:{},drifts:[]});s.versions[r.version]={...r};}
+    else if(r.type==="skill_instance_status"){const s=si[r.skill_instance_id];if(s&&s.versions[r.version])s.versions[r.version].status=r.to_status;}
+    else if(r.type==="scorecard"){const s=si[r.skill_instance_id];if(s)s.scorecards[r.version]=r.scorecard;}
+    else if(r.type==="cost_reference")costRef[r.skill_instance_id]=r;
+    else if(r.type==="drift_trigger"){const s=si[r.skill_instance_id],e=s?s.env:envOfSi(r.skill_instance_id);if(s)s.drifts.push(r);if(e)env(e).marks.push({x:counts[e]||0,kind:"drift",label:"drift",tip:`${esc(r.reason)} · ewma ${num(r.ewma_cost,2)} vs ${num(r.baseline_cost,2)}`});}
+    else if(r.type==="consolidation"){const c=cons[r.consolidation_id]||(cons[r.consolidation_id]={id:r.consolidation_id,si:r.skill_instance_id});c[r.phase]=r;
+      if(r.phase==="end"){const e=(si[r.skill_instance_id]||{}).env||envOfSi(r.skill_instance_id);if(e)env(e).marks.push({x:counts[e]||0,kind:"consolidation",label:r.promoted_version!=null?`→ v${r.promoted_version}`:"gate ✗",tip:`${esc(r.consolidation_id)} · ${r.rollouts} rollouts · ${num(r.wallclock_s,0)} s`});}}
+    else if(r.type==="protocol_stage"){if(r.environment_id){const e=r.environment_id;(stages[e]=r.stage==="baseline"?{}:(stages[e]||{}))[r.stage]=r;env(e).marks.push({x:counts[e]||0,kind:"stage",label:r.stage,tip:`protocol stage: ${esc(r.stage)}`});}}
+  }
+  for(const s of Object.values(si)){const vs=Object.values(s.versions);s.incumbent=vs.find(v=>v.status==="incumbent")||vs[vs.length-1]||null;if(s.env)(env(s.env).sis||(env(s.env).sis=[])).push(s);}
+  const byId={};for(const e of eps)byId[e.episode_id]=e;
+  for(const[e,v]of Object.entries(envs))v.readapt=readapt(stages[e]||{},byId);
+  const envList=Object.keys(envs).sort((a,b)=>envs[b].mastery.length-envs[a].mastery.length);
+  const ends=Object.values(cons).filter(c=>c.end),promoted=ends.filter(c=>c.end.promoted_version!=null||(c.end.gate||{}).passed).length;
+  return{envs,envList,si,cons:Object.values(cons),costRef,gate:{attempted:ends.length,promoted,rate:ends.length?promoted/ends.length:null}};
+}
+function readapt(st,byId,w=5,tol=.1){   // recovered = first full rolling-w window at/after the peak within tol of the baseline mean
+  const cost=id=>((byId[id]||{}).metrics||{}).cost,ids=s=>((st[s]||{}).episode_ids||[]).filter(id=>cost(id)!=null);
+  const pre=ids("baseline").map(cost),post=[...ids("perturbed"),...ids("recovery")];
+  if(!pre.length||!post.length)return null;
+  const pc=pre.reduce((a,b)=>a+b,0)/pre.length,c=post.map(cost),roll=c.map((_,i)=>{const s=c.slice(Math.max(0,i-w+1),i+1);return s.reduce((a,b)=>a+b,0)/s.length;});
+  let peak=0;roll.forEach((v,i)=>{if(v>roll[peak])peak=i;});
+  let rec=null;for(let i=Math.max(peak,w-1);i<roll.length;i++)if(roll[i]<=(1+tol)*pc){rec=i;break;}
+  return{pre:pc,peak:roll[peak],n:post.length,rec,recId:rec==null?null:post[rec]};
+}
+function fmtParams(p){return Object.entries(p||{}).map(([k,v])=>`<b>${esc(k)}</b><span>${Array.isArray(v)?v.map(x=>num(x,3)).join(", "):num(v,k==="approach_cone_deg"?1:3)}</span>`).join("");}
+function renderMastery(m){
+  const host=$("#mastery"),e=m.env,v=e?m.envs[e]:null;
+  if(!v||!v.mastery.length){host.innerHTML='<div class="empty">No episodes carry an environment_id yet (v3 runs write one).</div>';return;}
+  const pts=v.mastery,N=pts.length,W=900,H=270,L=46,R=46,T=24,B=26,pw=W-L-R,ph=H-T-B;
+  const costs=pts.filter(p=>p.cost!=null).map(p=>p.cost),cmax=costs.length?Math.max(...costs)*1.08:1,smax=Math.max(1,...pts.map(p=>p.steps||0))*1.08;
+  const X=i=>L+(N>1?i/(N-1):.5)*pw,YC=c=>T+(1-c/cmax)*ph,YS=s=>T+(1-s/smax)*ph,arms=sortArms([...new Set(pts.map(p=>p.arm))]);
+  let s=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="cost and steps per episode">`;
+  for(let k=0;k<=4;k++){const y=T+ph*(1-k/4);s+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="var(--grid)"/><text x="${L-6}" y="${y+4}" font-size="10" text-anchor="end" fill="var(--muted)">${costs.length?(cmax*k/4).toFixed(2):""}</text><text x="${W-R+6}" y="${y+4}" font-size="10" fill="var(--muted)">${Math.round(smax*k/4)}</text>`;}
+  s+=`<text x="${L}" y="${H-6}" font-size="10" fill="var(--muted)">episode 1</text><text x="${W-R}" y="${H-6}" font-size="10" text-anchor="end" fill="var(--muted)">${N}</text>`;
+  const MK={consolidation:["var(--s7)",""],drift:["var(--bad)","3 3"],stage:["var(--axis)","6 3"]};
+  v.marks.forEach((mk,j)=>{const x=X(Math.max(0,Math.min(N-1,mk.x-.5))).toFixed(1),[c,d]=MK[mk.kind];
+    s+=`<line x1="${x}" x2="${x}" y1="${T-4}" y2="${T+ph}" stroke="${c}" stroke-width="1.5" ${d?`stroke-dasharray="${d}"`:""}/><text x="${x}" y="${T-8}" font-size="10" text-anchor="middle" fill="${c}">${esc(mk.label)}</text><rect data-m="${j}" x="${x-6}" y="${T-18}" width="12" height="${ph+18}" fill="transparent"/>`;});
+  for(const a of arms){const ap=pts.filter(p=>p.arm===a),c=hue(ARM_HUE_V3[a]);
+    s+=`<polyline points="${ap.filter(p=>p.steps!=null).map(p=>`${X(p.i).toFixed(1)},${YS(p.steps).toFixed(1)}`).join(" ")}" fill="none" stroke="${c}" stroke-width="1.2" stroke-dasharray="4 3" opacity=".55"/>`;
+    const cp=ap.filter(p=>p.cost!=null);
+    s+=`<polyline points="${cp.map(p=>`${X(p.i).toFixed(1)},${YC(p.cost).toFixed(1)}`).join(" ")}" fill="none" stroke="${c}" stroke-width="2" stroke-linejoin="round"/>`;
+    s+=cp.map(p=>`<circle data-i="${p.i}" cx="${X(p.i).toFixed(1)}" cy="${YC(p.cost).toFixed(1)}" r="${p.ok?3:3.5}" fill="${p.ok?c:"var(--surface)"}" stroke="${c}" stroke-width="1.5"/>`).join("");}
+  s+="</svg>";
+  const ra=v.readapt,raTxt=!ra?"":ra.rec==null?` · <b>not recovered</b> in ${ra.n} post-perturbation episodes (pre ${num(ra.pre,2)} → peak ${num(ra.peak,2)})`:` · readaptation: pre ${num(ra.pre,2)} → peak ${num(ra.peak,2)}, <b>recovered after ${ra.rec+1} episodes</b> (${esc(ra.recId)})`;
+  s+=`<div class="legend">${arms.map(a=>`<span><i style="border-color:${hue(ARM_HUE_V3[a])}"></i>${esc(a)} <span class="muted">n=${pts.filter(p=>p.arm===a).length}</span></span>`).join("")}<span class="muted">filled = success · hollow = failure · ${v.rollouts} consolidation rollouts hidden${raTxt}</span></div>`;
+  host.innerHTML=s;
+  host.querySelectorAll("circle[data-i]").forEach(el=>{el.addEventListener("mousemove",ev=>{const p=pts[+el.dataset.i];
+    showTip(ev,`<b>${esc(p.ep.episode_id)}</b> · arm ${esc(p.arm)} · ${p.ok?"success":"failure"}<br>cost ${num(p.cost,3)} · steps ${p.steps??"–"}${p.version!=null?` · v${p.version}`:""}<br><span class="dim">${esc(JSON.stringify(p.ep.s3_params||{}))}</span>`);});el.addEventListener("mouseleave",hideTip);});
+  host.querySelectorAll("rect[data-m]").forEach(el=>{el.addEventListener("mousemove",ev=>showTip(ev,v.marks[+el.dataset.m].tip));el.addEventListener("mouseleave",hideTip);});
+}
+function renderHouse(m){
+  const host=$("#house"),e=m.env,v=e?m.envs[e]:null;
+  if(!v){host.innerHTML='<div class="empty">No environment selected.</div>';return;}
+  let s=`<div class="stack">`;
+  for(const si of v.sis||[]){const inc=si.incumbent,sc=inc?(si.scorecards[inc.version]||inc.scorecard||{}):{},ref=m.costRef[si.id];
+    s+=`<div><div class="sub3">${esc(si.id)} <span class="badge incumbent">v${inc?inc.version:"–"} incumbent</span> <span class="dim">${Object.keys(si.versions).length} version${Object.keys(si.versions).length===1?"":"s"}${ref?` · ref steps ${num(ref.steps_ref,0)} / jerk ${num(ref.jerk_ref,4)}`:" · no cost reference"}</span></div>`;
+    if(inc)s+=`<div class="kv">${fmtParams(inc.params)}</div><div class="dim" style="margin-top:4px">scorecard: n ${sc.n??0} · success ${sc.n?pct((sc.successes||0)/sc.n):"–"} · ewma cost ${num(sc.ewma_cost,3)} · baseline ${num(sc.baseline_cost,3)} · steps ${num(sc.mean_steps)}</div>`;
+    if(si.drifts.length)s+=`<div class="dim" style="margin-top:4px">drift triggers: `+si.drifts.map(d=>`<span class="badge failure" title="${esc(d.episode_id)}">${esc(d.reason)} ×${num(d.ratio,2)}</span>`).join(" ")+"</div>";
+    s+="</div>";}
+  if(!(v.sis||[]).length)s+=`<div class="empty">No skill instance for this environment yet.</div>`;
+  const les=Object.values(m.lessons).filter(l=>l.status!=="retired"&&((l.trigger||{}).environment_id==null||l.trigger.environment_id===e));
+  s+=`<div><div class="sub3">Active lessons <span class="dim">${les.length}</span></div>`+(les.length?`<table><tr><th>lesson</th><th>surface</th><th>edit</th><th>status</th><th>scope</th></tr>`+les.map(l=>`<tr><td class="mono">${esc(l.lesson_id)}</td><td><span class="sw" style="background:${hue(SURF_HUE[l.surface])}"></span>${esc(l.surface)}</td><td class="mono">${esc((l.edit||{}).op)} <span class="muted">${esc(JSON.stringify((l.edit||{}).params||{}))}</span></td><td><span class="badge ${esc(l.status||"candidate")}">${esc(l.status||"candidate")}</span></td><td class="dim">${(l.trigger||{}).environment_id?"this env":"global"}</td></tr>`).join("")+"</table>":`<div class="empty">none</div>`)+"</div>";
+  const ps=Object.entries(v.perturbed);if(ps.length)s+=`<div class="dim">perturbed-episode success: ${sortArms(ps.map(x=>x[0])).map(a=>`${esc(a)} ${pct(v.perturbed[a].k/v.perturbed[a].n)} (n=${v.perturbed[a].n})`).join(" · ")}</div>`;
+  host.innerHTML=s+"</div>";
+}
+function renderVersions(m){
+  const rows=Object.values(m.si).flatMap(s=>Object.values(s.versions)).sort((a,b)=>a.skill_instance_id.localeCompare(b.skill_instance_id)||a.version-b.version);
+  if(!rows.length){$("#versions").innerHTML='<div class="empty">No skill_instance events yet.</div>';return;}
+  $("#versions").innerHTML=`<table><tr><th>skill instance</th><th class="num">v</th><th>status</th><th>by</th><th>gate</th><th class="num">cost inc → cand</th><th class="num">Δ success</th></tr>`+rows.map(r=>{const g=r.gate;
+    return`<tr title="${esc(JSON.stringify(r.params))}"><td class="mono">${esc(r.skill_instance_id)}</td><td class="num">${r.version}${r.parent_version!=null?`<span class="dim"> ← ${r.parent_version}</span>`:""}</td><td><span class="badge ${esc(r.status)}">${esc(r.status)}</span></td><td class="dim">${esc((r.produced_by||{}).loop||"?")}${(r.produced_by||{}).consolidation_id?` <span class="mono">${esc(r.produced_by.consolidation_id)}</span>`:""}</td>`+
+      (g?`<td><span class="badge ${g.passed?"passed":"failure"}">${g.passed?"passed":"failed"}</span> <span class="dim">n=${g.n_seeds}</span></td><td class="num">${num(g.incumbent_cost,3)} → ${num(g.candidate_cost,3)}</td><td class="num">${(g.success_delta_pp>0?"+":"")+num(g.success_delta_pp)} pp</td>`:`<td class="dim">–</td><td></td><td></td>`)+"</tr>";}).join("")+"</table>";
+}
+function spark(h){const xs=(h||[]).map(x=>x.best_cost??x.mean_cost).filter(x=>x!=null);if(xs.length<2)return"";const lo=Math.min(...xs),hi=Math.max(...xs),W=120,H=28;
+  const pts=xs.map((v,i)=>`${(4+i/(xs.length-1)*(W-8)).toFixed(1)},${(H-4-(hi>lo?(v-lo)/(hi-lo):.5)*(H-8)).toFixed(1)}`).join(" ");
+  return`<svg class="spark" viewBox="0 0 ${W} ${H}"><polyline points="${pts}" fill="none" stroke="var(--s7)" stroke-width="1.5"/><circle cx="${pts.split(" ").pop().split(",")[0]}" cy="${pts.split(" ").pop().split(",")[1]}" r="2" fill="var(--s7)"/></svg>`;}
+function renderConsolidations(m){
+  const cs=m.cons;if(!cs.length){$("#consolidations").innerHTML='<div class="empty">No consolidations yet.</div>';return;}
+  $("#consolidations").innerHTML=`<table><tr><th>consolidation</th><th>skill instance</th><th>trigger</th><th>optimizer</th><th class="num">rollouts</th><th class="num">wall (s)</th><th>best cost</th><th>gate</th><th>result</th><th>history</th></tr>`+cs.map(c=>{const e=c.end||{},st=c.start||{},o=e.optimizer||st.optimizer||{},g=e.gate,h=e.history||[];
+    return`<tr><td class="mono">${esc(c.id)}</td><td class="mono">${esc(c.si)}</td><td class="dim">${esc(e.trigger||st.trigger||"?")}</td><td class="dim">${esc(o.method||"?")}${o.population?` pop ${o.population} × ${o.iterations} it`:""}</td><td class="num">${e.rollouts??"–"}</td><td class="num">${num(e.wallclock_s,0)}</td><td class="num">${num(((e.best_candidate||{}).opt_cost),3)}</td>`+
+      `<td>${g?`<span class="badge ${g.passed?"passed":"failure"}">${g.passed?"passed":"failed"}</span> <span class="dim">${num(g.incumbent_cost,2)} → ${num(g.candidate_cost,2)}</span>`:c.end?"–":'<span class="badge">running</span>'}</td><td>${e.promoted_version!=null?`<span class="badge incumbent">promoted v${e.promoted_version}</span>`:c.end?`<span class="dim">kept v${e.incumbent_version}</span>`:""}</td><td title="${esc(h.map(x=>`it${x.iter}: mean ${num(x.mean_cost,3)} best ${num(x.best_cost,3)}`).join("\n"))}">${spark(h)||'<span class="dim">–</span>'}</td></tr>`;}).join("")+"</table>";
+}
+function renderV3(m){
+  const sel=$("#envsel");if(!m.env||!m.envs[m.env])m.env=m.envList[0]||null;
+  sel.innerHTML=m.envList.map(e=>`<option value="${esc(e)}"${e===m.env?" selected":""}>${esc(e)} (${m.envs[e].mastery.length})</option>`).join("")||"<option>–</option>";
+  sel.onchange=()=>{m.env=sel.value;renderMastery(m);renderHouse(m);};
+  renderMastery(m);renderHouse(m);renderVersions(m);renderConsolidations(m);
 }
 
 // ---------- tooltip ----------
@@ -134,7 +251,8 @@ function renderTiles(m){
     +tile("Best arm",best?`${best} · ${pct(m.byArm[best].rate)}`:"–",best?`n=${m.byArm[best].n} · CI ${ci(m.byArm[best].ci)}`:"no episodes")
     +tile("Lesson precision",pct(p.precision),`${p.validated} validated · ${p.retired} retired · ${p.candidate} candidate`)
     +tile("Rescue rate",pct(r.rate),r.n?`${r.k}/${r.n} intervened episodes succeeded · CI ${ci(r.ci)}`:"no interventions")
-    +tile("Coach tokens / pp",e.perPp==null?"–":Math.round(e.perPp).toLocaleString(),e.gain==null?"needs arms B and D":`D − B = ${num(e.gain)} pp · ${e.tokens.toLocaleString()} tokens`);
+    +tile("Coach tokens / pp",e.perPp==null?"–":Math.round(e.perPp).toLocaleString(),e.gain==null?"needs arms B and D":`D − B = ${num(e.gain)} pp · ${e.tokens.toLocaleString()} tokens`)
+    +tile("Sleep loop",m.gate.attempted?`${m.gate.promoted}/${m.gate.attempted} promoted`:"–",`${m.envList.length} environment${m.envList.length===1?"":"s"} · ${Object.keys(m.si).length} skill instance${Object.keys(m.si).length===1?"":"s"} · gate pass ${pct(m.gate.rate)}`);
 }
 function renderArms(m){
   if(!m.arms.length){$("#arms").innerHTML='<div class="empty">No episodes yet.</div>';return;}
@@ -199,7 +317,7 @@ function renderEpisodes(m){
 function render(records,source){
   const m=analyse(records);
   $("#src").textContent=`${source} · ${records.length} records`;
-  renderTiles(m);renderArms(m);renderCurves(m);renderLessons(m);renderTimeline(m);renderEpisodes(m);
+  renderTiles(m);renderV3(m);renderArms(m);renderCurves(m);renderLessons(m);renderTimeline(m);renderEpisodes(m);
 }
 
 // ---------- sample state (shown until a log is loaded) ----------
@@ -217,11 +335,35 @@ function sample(){
     const retrieved=arm==="A"||arm==="B"?[]:recs.slice(0,3).map(l=>l.lesson_id),applied=retrieved.filter(()=>R()<.5);
     const succ=R()<P[arm]+(applied.includes("les_3f2a91c0")?.18:0)-(applied.includes("les_8b1d44e7")?.05:0),id=`ep_${i.toString(16).padStart(8,"0")}`,ivs=[];
     if(SURF[arm].includes("S3")&&R()<.35)ivs.push({type:"intervention",episode_id:id,step:20+Math.floor(R()*140),trigger:R()<.7?"stall":"interval",surface:R()<.8?"S3":"S1",edit:{op:"set_abort_retry",params:{predicate:"grasp_slipped",max_retries:1,lift_m:0.08}},rationale_text:"Object not lifting with the gripper; open, lift and retry.",coach_model:"sample",latency_s:1.4,tokens_in:900,tokens_out:140});
+    const steps=succ?60+Math.floor(R()*100):200,jerk=.8+R()*.5,fp=R()*.1;
     recs.push({type:"episode",episode_id:id,suite:"mock",task_id:TASKS[round%4],seed:round,condition:arm,policy:"mock",surfaces_enabled:SURF[arm],retrieved_lesson_ids:retrieved,applied_lesson_ids:applied,retrieval_frozen_at:"",instruction_used:"put the black bowl on the plate",interventions:ivs,
-      outcome:{env_success:succ,steps:succ?60+Math.floor(R()*100):200,termination:succ?"success":"timeout",wall_s:2+R()*3},lessons_generated:[],held_out:false});}
+      outcome:{env_success:succ,steps,termination:succ?"success":"timeout",wall_s:2+R()*3},lessons_generated:[],held_out:false,environment_id:"mock_"+TASKS[round%4],metrics:{steps,success:succ,jerk,force_proxy:fp,cost:steps/130+.5*jerk+.5*fp+3*(succ?0:1)}});}
   const ev=(tn,ts,cn,cs)=>({trials:tn+cn,treated_n:tn,treated_successes:ts,control_n:cn,control_successes:cs});
   recs.push({type:"lesson_status",lesson_id:"les_3f2a91c0",from_status:"candidate",to_status:"validated",reason:"gate",evidence:ev(60,42,58,26)});
   recs.push({type:"lesson_status",lesson_id:"les_8b1d44e7",from_status:"candidate",to_status:"retired",reason:"gate",evidence:ev(55,26,61,31)});
+  // v3: one environment through the P protocol (baseline -> perturbed -> drift -> consolidation -> recovery)
+  const ENV="mock_pick_bowl_to_plate",SI="si_pick_bowl_to_plate__"+ENV,P0={approach_offset_xyz:[0,0,0],pregrasp_height:.05,grasp_offset_z:0,time_scale:1,velocity_cap:1,gripper_cmd:1,approach_cone_deg:45};
+  const P1={...P0,approach_offset_xyz:[.004,-.002,0],grasp_offset_z:-.013,time_scale:1.28,velocity_cap:.82,approach_cone_deg:32};
+  recs.push({type:"cost_reference",skill_instance_id:SI,environment_id:ENV,steps_ref:132,jerk_ref:.0021,n_episodes:40,source_condition:"A"});
+  recs.push({type:"skill_instance",skill_instance_id:SI,environment_id:ENV,skill:"pick_bowl_to_plate",object_instance_id:"black_bowl",version:1,parent_version:null,status:"incumbent",params:P0,produced_by:{loop:"init"},gate:null,scorecard:{}});
+  const ids={baseline:[],perturbed:[],recovery:[]},pep=(stage,c,ver,pert)=>{i++;const id=`ep_${i.toString(16).padStart(8,"0")}`,succ=c<2.2,steps=Math.round(c*70+R()*20);ids[stage].push(id);
+    recs.push({type:"episode",episode_id:id,suite:"mock",task_id:"pick_bowl_to_plate",seed:i,condition:"P",policy:"mock",surfaces_enabled:["S1","S3"],retrieved_lesson_ids:[],applied_lesson_ids:[],retrieval_frozen_at:"",interventions:[],outcome:{env_success:succ,steps,termination:succ?"success":"timeout",wall_s:3},environment_id:ENV,skill_instance_versions:{[SI]:ver},s3_params:ver===1?P0:P1,metrics:{steps,success:succ,jerk:1,force_proxy:.05,cost:c},perturbation:pert});};
+  for(let k=0;k<12;k++)pep("baseline",1.05+R()*.25,1,{});
+  recs.push({type:"protocol_stage",stage:"baseline",environment_id:ENV,si_id:SI,ts:"",episode_ids:ids.baseline});
+  for(let k=0;k<12;k++){pep("perturbed",2.1+R()*.6,1,{shift_xy:[.06,0]});
+    if(k===5){recs.push({type:"drift_trigger",skill_instance_id:SI,reason:"ewma_cost_exceeds_baseline",ewma_cost:2.31,baseline_cost:1.17,ratio:1.97,recent_success_rate:.33,baseline_success_rate:.92,episode_id:ids.perturbed[k]});
+      recs.push({type:"consolidation",consolidation_id:"con_5e1d2a90",phase:"start",skill_instance_id:SI,trigger:"drift",incumbent_version:1,optimizer:{method:"cem",population:16,elites:4,iterations:4,seeds_per_candidate:2,pose_jitter_m:.015}});
+      for(let j=0;j<8;j++){i++;recs.push({type:"episode",episode_id:`ep_${i.toString(16).padStart(8,"0")}`,suite:"mock",task_id:"pick_bowl_to_plate",seed:3000+j,condition:"B",policy:"mock",surfaces_enabled:["S3"],retrieved_lesson_ids:[],applied_lesson_ids:[],retrieval_frozen_at:"",interventions:[],outcome:{env_success:j%3>0,steps:150,termination:"success",wall_s:3},environment_id:ENV,skill_instance_versions:{[SI]:1},s3_params:P1,metrics:{steps:150,success:true,jerk:1,force_proxy:.05,cost:1.6},perturbation:{shift_xy:[.06,0],jitter_m:.015,consolidation_id:"con_5e1d2a90"}});}
+      const gate={passed:true,incumbent_cost:2.31,candidate_cost:1.24,n_seeds:8,incumbent_success:.38,candidate_success:.88,success_delta_pp:50};
+      recs.push({type:"skill_instance",skill_instance_id:SI,environment_id:ENV,skill:"pick_bowl_to_plate",object_instance_id:"black_bowl",version:2,parent_version:1,status:"incumbent",params:P1,produced_by:{loop:"sleep",consolidation_id:"con_5e1d2a90"},gate,scorecard:{baseline_cost:1.24,baseline_success_rate:.88}});
+      recs.push({type:"skill_instance_status",skill_instance_id:SI,version:1,from_status:"incumbent",to_status:"retired",reason:"promoted v2"});
+      recs.push({type:"consolidation",consolidation_id:"con_5e1d2a90",phase:"end",skill_instance_id:SI,trigger:"drift",incumbent_version:1,optimizer:{method:"cem",population:16,elites:4,iterations:4},rollouts:144,wallclock_s:412,best_candidate:{params:P1,opt_cost:1.19},gate,promoted_version:2,history:[2.02,1.71,1.42,1.27].map((m,it)=>({iter:it,mean_cost:m,best_cost:m-.15-.02*it,sigma_mean:.3*Math.pow(.8,it)}))});}}
+  recs.push({type:"protocol_stage",stage:"perturbed",environment_id:ENV,si_id:SI,ts:"",episode_ids:ids.perturbed});
+  for(let k=0;k<12;k++)pep("recovery",Math.max(1.1,1.9-.22*k)+R()*.2,2,{shift_xy:[.06,0]});
+  recs.push({type:"protocol_stage",stage:"recovery",environment_id:ENV,si_id:SI,ts:"",episode_ids:ids.recovery});
+  recs.push({type:"scorecard",skill_instance_id:SI,version:2,scorecard:{n:12,successes:11,mean_steps:88,mean_jerk:1,mean_force_proxy:.05,ewma_cost:1.21,baseline_cost:1.24,baseline_success_rate:.88}});
+  recs.push({type:"consolidation",consolidation_id:"con_9a77c013",phase:"start",skill_instance_id:SI,trigger:"manual",incumbent_version:2,optimizer:{method:"cem",population:16,elites:4,iterations:4}});
+  recs.push({type:"consolidation",consolidation_id:"con_9a77c013",phase:"end",skill_instance_id:SI,trigger:"manual",incumbent_version:2,optimizer:{method:"cem",population:16,elites:4,iterations:4},rollouts:144,wallclock_s:398,best_candidate:{params:P1,opt_cost:1.2},gate:{passed:false,incumbent_cost:1.21,candidate_cost:1.23,n_seeds:8,incumbent_success:.88,candidate_success:.88,success_delta_pp:0},promoted_version:null,history:[1.3,1.26,1.24,1.23].map((m,it)=>({iter:it,mean_cost:m,best_cost:m-.03,sigma_mean:.3*Math.pow(.8,it)}))});
   return recs;
 }
 

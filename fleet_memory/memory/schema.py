@@ -387,9 +387,9 @@ def _from(cls, d: dict):
         if f.name not in d:
             continue
         v = d[f.name]
-        if f.name == "trigger":
+        if f.name == "trigger" and isinstance(v, dict):      # Lesson.trigger; Intervention.trigger is a str
             v = _from(Trigger, v)
-        elif f.name == "edit":
+        elif f.name == "edit" and isinstance(v, dict):
             v = _from(Edit, v)
         elif f.name == "evidence":
             v = _from(Evidence, v)

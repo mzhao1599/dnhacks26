@@ -1,0 +1,101 @@
+"""Homing: before the VLA gets control, drive the end-effector back to the canonical LIBERO start pose
+(+ an optimizable delta) with a scripted controller. This is the S3 edit that targets the LIBERO-Plus
+"robot initial state" collapse: the VLA memorised trajectories from one start distribution, so we put
+it back there first.
+
+Deviation from the spec (which says joint-space): LIBERO's action interface is OSC delta-pose and the
+VLA's proprio input is EE pose (pos + axis-angle + gripper), not joints. Homing therefore runs in EE
+space — same mechanism, and it restores exactly the state the policy conditions on. Homing steps count
+toward the episode's steps (and therefore its cost): homing is not free.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+
+import numpy as np
+
+from fleet_memory.envs.base import Env, Obs
+from fleet_memory.execution.envelope import DEFAULT_ENVELOPE, POS_SCALE_M, Envelope
+
+ROT_SCALE_RAD = 0.5   # |drot| = 1 -> 0.5 rad per step (robosuite OSC_POSE default)
+
+# Canonical LIBERO start pose, read from an unperturbed reset (libero_10 task 0, init state 0) in Phase 0.
+# All LIBERO suites share the same robot start configuration; object layouts differ, the arm does not.
+CANONICAL_EE_POS = np.array([-0.0461, -0.0036, 0.7020], np.float32)
+CANONICAL_EE_QUAT_XYZW = np.array([0.99964, -0.00045, -0.02694, -0.00012], np.float32)
+
+
+def quat_to_rotvec(q_xyzw: np.ndarray) -> np.ndarray:
+    from scipy.spatial.transform import Rotation as R
+    return R.from_quat(np.asarray(q_xyzw, np.float64)).as_rotvec()
+
+
+def rotation_error(q_cur_xyzw: np.ndarray, q_tgt_xyzw: np.ndarray) -> np.ndarray:
+    """Axis-angle (rad) that rotates current into target, expressed in the world frame."""
+    from scipy.spatial.transform import Rotation as R
+    r_cur = R.from_quat(np.asarray(q_cur_xyzw, np.float64))
+    r_tgt = R.from_quat(np.asarray(q_tgt_xyzw, np.float64))
+    return (r_tgt * r_cur.inv()).as_rotvec()
+
+
+@dataclass
+class HomingTarget:
+    pos: np.ndarray                          # (3,) world
+    quat_xyzw: np.ndarray                    # (4,)
+
+    @classmethod
+    def canonical(cls, delta: np.ndarray | None = None) -> "HomingTarget":
+        """Canonical start pose plus an optional 6-D delta [dx, dy, dz, drx, dry, drz] (m, rad)."""
+        from scipy.spatial.transform import Rotation as R
+        d = np.zeros(6) if delta is None else np.asarray(delta, np.float64).reshape(6)
+        pos = CANONICAL_EE_POS + d[:3]
+        quat = (R.from_rotvec(d[3:]) * R.from_quat(CANONICAL_EE_QUAT_XYZW)).as_quat()
+        return cls(pos=pos.astype(np.float32), quat_xyzw=quat.astype(np.float32))
+
+
+@dataclass
+class HomingResult:
+    steps: int
+    reached: bool
+    final_pos_err_m: float
+    final_rot_err_rad: float
+    ee_positions: list[np.ndarray] = field(default_factory=list)
+    actions: list[np.ndarray] = field(default_factory=list)
+
+
+class Homing:
+    """Proportional EE-space controller. Gripper stays open. Every action passes the envelope."""
+
+    def __init__(self, target: HomingTarget, envelope: Envelope | None = None, k_pos: float = 0.6,
+                 k_rot: float = 0.6, tol_pos_m: float = 0.01, tol_rot_rad: float = 0.05, max_steps: int = 40):
+        self.target, self.envelope = target, envelope or DEFAULT_ENVELOPE
+        self.k_pos, self.k_rot = k_pos, k_rot
+        self.tol_pos, self.tol_rot, self.max_steps = tol_pos_m, tol_rot_rad, max_steps
+
+    def action_for(self, obs: Obs) -> tuple[np.ndarray, float, float]:
+        pos_err = self.target.pos - np.asarray(obs.ee_pos, np.float64)
+        rot_err = rotation_error(obs.ee_quat, self.target.quat_xyzw)
+        a = np.zeros(7, np.float32)
+        a[0:3] = np.clip(self.k_pos * pos_err / POS_SCALE_M, -1.0, 1.0)
+        a[3:6] = np.clip(self.k_rot * rot_err / ROT_SCALE_RAD, -1.0, 1.0)
+        a[6] = -1.0
+        a, _ = self.envelope.clamp(a, obs.ee_pos)
+        return a, float(np.linalg.norm(pos_err)), float(np.linalg.norm(rot_err))
+
+    def run(self, env: Env, obs: Obs) -> tuple[Obs, HomingResult, bool]:
+        """Step the env until within tolerance or max_steps. Returns (obs, result, done)."""
+        res = HomingResult(steps=0, reached=False, final_pos_err_m=0.0, final_rot_err_rad=0.0)
+        done = False
+        for _ in range(self.max_steps):
+            a, pe, re = self.action_for(obs)
+            res.final_pos_err_m, res.final_rot_err_rad = pe, re
+            if pe < self.tol_pos and re < self.tol_rot:
+                res.reached = True
+                break
+            res.ee_positions.append(np.asarray(obs.ee_pos, np.float32).copy())
+            res.actions.append(a.copy())
+            obs, done, _ = env.step(a)
+            res.steps += 1
+            if done:
+                break
+        return obs, res, done

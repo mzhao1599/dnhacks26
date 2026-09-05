@@ -48,7 +48,7 @@ Cost (analysis/cost.py): `1.0*steps/steps_ref + 0.5*jerk + 0.5*force_proxy + 3.0
 - Plain Python 3.12, numpy. No framework, no DB, no orchestration layer.
 - `fleet_memory/memory/schema.py` is the contract. Change it only deliberately; everything imports from it.
 - Everything must run end-to-end with `--env mock --policy mock --llm mock` on a laptop. Real runs happen on Hopper.
-- LLM calls go through `agents/llm.py`. Backend is picked by key: `ANTHROPIC_API_KEY` → Claude (planner `claude-haiku-4-5-20251001`, coach `claude-sonnet-5`); `GEMINI_API_KEY` → Gemini (planner `gemini-2.5-flash`, coach `gemini-2.5-pro`, override via `FM_PLANNER_MODEL`/`FM_COACH_MODEL`); neither → deterministic offline mock. `FM_LLM=mock|anthropic|gemini` forces one. On Hopper, keys live in `~/.fm_secrets` (sourced by `scripts/hopper/env.sh`).
+- LLM calls go through `agents/llm.py`. Backend is picked by key: `ANTHROPIC_API_KEY` → Claude (planner `claude-haiku-4-5-20251001`, coach `claude-sonnet-5`); `GEMINI_API_KEY` → Gemini (planner `gemini-3.7-flash`, coach `gemini-3.1-pro-preview`; `gemini-2.5-pro` is 404 for new keys, override via `FM_PLANNER_MODEL`/`FM_COACH_MODEL`); neither → deterministic offline mock. `FM_LLM=mock|anthropic|gemini` forces one. On Hopper, keys live in `~/.fm_secrets` (sourced by `scripts/hopper/env.sh`).
 - Actions are LIBERO/robosuite OSC_POSE: `float32[7]` = `[dx, dy, dz, droll, dpitch, dyaw, gripper]`, each in [-1, 1]; gripper>0 = close.
 - Log every event via `memory/store.py:EventStore.append(record)`; records are dataclasses from `schema.py` serialised with `to_dict()`.
 
