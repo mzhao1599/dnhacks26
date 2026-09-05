@@ -16,8 +16,12 @@ from collections import Counter, defaultdict
 from typing import Any
 
 from fleet_memory.memory.schema import Record
+# v3 (analysis/mastery.py): mastery_curve, gate_pass_rate, readaptation, perturbed_success, versions, ...
+from fleet_memory.analysis.mastery import (environment_lines, environment_report, environments,  # noqa: F401
+                                           gate_pass_rate, is_rollout, mastery_curve, perturbed_success,
+                                           readaptation, versions)
 
-ARM_ORDER = ["A", "B", "C", "D", "E", "F", "D_S1", "D_S2", "D_S3"]
+ARM_ORDER = ["A", "B", "C", "D", "P", "E", "F", "D_S1", "D_S2", "D_S3"]
 STATUSES = ("candidate", "validated", "retired")
 
 
@@ -296,7 +300,8 @@ def all_metrics(store) -> dict[str, Any]:
     return {"success_by_arm": success_by_arm(store), "lesson_precision": lesson_precision(store),
             "lessons": lesson_rows(store), "rescue_rate": rescue_rate(store),
             "intervention_efficiency": intervention_efficiency(store), "latency_cost": latency_cost(store),
-            "surface_ablation": surface_ablation(store)}
+            "surface_ablation": surface_ablation(store), "gate_pass_rate": gate_pass_rate(store),
+            "environments": environment_report(store)}
 
 
 def _pct(x) -> str:
@@ -312,7 +317,7 @@ def _num(x, nd=1) -> str:
 
 
 def results_table(store) -> str:
-    """Markdown summary: arms, ablation, lessons, interventions, latency."""
+    """Markdown summary: arms, ablation, lessons, interventions, latency, sleep loop, environments."""
     sba, prec, resc, eff, lat, abl = (success_by_arm(store), lesson_precision(store), rescue_rate(store),
                                       intervention_efficiency(store), latency_cost(store), surface_ablation(store))
     L = ["## Success by arm", "| arm | n | successes | rate | 95% CI |", "|---|---|---|---|---|"]
@@ -343,6 +348,7 @@ def results_table(store) -> str:
         L += [f"| {a} | {r['n']} | {_num(r['mean_steps'])} | {_num(r['mean_wall_s'], 2)} | "
               f"{_num(r['interventions_per_episode'], 2)} | {_num(r['coach_s_per_episode'], 2)} | "
               f"{_num(r['tokens_per_episode'], 0)} |" for a, r in lat.items()]
+    L += environment_lines(store)   # v3: sleep loop + per-environment mastery / readaptation
     return "\n".join(L)
 
 

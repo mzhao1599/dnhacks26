@@ -20,6 +20,9 @@ class EventStore:
             os.makedirs(d, exist_ok=True)
         self._cache_key: tuple | None = None       # (size, mtime_ns) of the file the cache was read from
         self._cache: list[dict] = []
+        self._offset = 0                           # bytes of the file already parsed into _cache (append-only => resume here)
+        self._episodes: list[Episode] = []         # hydrated once per record; extended incrementally
+        self._episodes_scanned = 0                 # how many records of _cache have been scanned for episodes
 
     # ------------------------------------------------------------------ write
     def append(self, record: Record | dict) -> None:
@@ -47,19 +50,25 @@ class EventStore:
             return []
         key = (st.st_size, st.st_mtime_ns)
         if key != self._cache_key:
-            out: list[dict] = []
+            if st.st_size < self._offset:          # truncated/replaced: start over
+                self._cache, self._offset = [], 0
+                self._episodes, self._episodes_scanned = [], 0
             with open(self.path, "rb") as f:
-                for line in f:
-                    line = line.strip()
-                    if not line:
-                        continue
-                    try:
-                        d = json.loads(line)
-                    except ValueError:
-                        continue
-                    if isinstance(d, dict):
-                        out.append(d)
-            self._cache, self._cache_key = out, key
+                f.seek(self._offset)
+                data = f.read()
+            end = data.rfind(b"\n") + 1            # only consume complete lines; a torn tail is re-read next time
+            for line in data[:end].split(b"\n"):
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    d = json.loads(line)
+                except ValueError:
+                    continue
+                if isinstance(d, dict):
+                    self._cache.append(d)
+            self._offset += end
+            self._cache_key = key
         return list(self._cache)
 
     def iter_type(self, t: str) -> Iterator[dict]:
@@ -87,13 +96,16 @@ class EventStore:
         return out
 
     def episodes(self) -> list[Episode]:
-        out: list[Episode] = []
-        for d in self.iter_type("episode"):
-            try:
-                out.append(record_from_dict(d))
-            except (KeyError, TypeError):
-                continue
-        return out
+        """Hydrated Episode records, in file order. Each record is hydrated once (append-only log)."""
+        recs = self.read_all()
+        for d in recs[self._episodes_scanned:]:
+            if d.get("type") == "episode":
+                try:
+                    self._episodes.append(record_from_dict(d))
+                except (KeyError, TypeError):
+                    continue
+        self._episodes_scanned = len(recs)
+        return list(self._episodes)
 
     def snapshots(self) -> list[dict]:
         return list(self.iter_type("snapshot"))

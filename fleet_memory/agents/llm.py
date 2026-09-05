@@ -31,8 +31,8 @@ COACH_MODEL = "claude-sonnet-5"
 
 # Role-equivalent Gemini models, overridable with FM_PLANNER_MODEL / FM_COACH_MODEL.
 GEMINI_MODELS = {
-    PLANNER_MODEL: os.environ.get("FM_PLANNER_MODEL", "gemini-2.5-flash"),
-    COACH_MODEL: os.environ.get("FM_COACH_MODEL", "gemini-2.5-pro"),
+    PLANNER_MODEL: os.environ.get("FM_PLANNER_MODEL", "gemini-3.7-flash"),
+    COACH_MODEL: os.environ.get("FM_COACH_MODEL", "gemini-3.1-pro-preview"),   # 2.5-pro is 404 for new keys
 }
 
 log = logging.getLogger(__name__)

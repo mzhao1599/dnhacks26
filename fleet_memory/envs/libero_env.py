@@ -167,6 +167,7 @@ class LiberoEnv:
         self._objects: list[str] | None = None
         self.last_seed: int | None = None
         self.init_state_index: int | None = None
+        self.last_perturbation: dict[str, Any] = {}
 
     # ---- lifecycle ----------------------------------------------------------------
     @property
@@ -201,9 +202,13 @@ class LiberoEnv:
         )
 
     def object_names(self) -> list[str]:
+        """Scene objects, objects of interest FIRST (target object(s) first, destination/container
+        last, as ordered in the BDDL ``obj_of_interest``), then the remaining objects in sim order."""
         if self._objects is None:
             self._ensure_env()
-            self._objects = list(self._env.env.obj_body_id.keys())
+            all_names = list(self._env.env.obj_body_id.keys())
+            ooi = [n for n in self._env.env.obj_of_interest if n in all_names]
+            self._objects = ooi + [n for n in all_names if n not in ooi]
         return list(self._objects)
 
     @property
@@ -211,7 +216,16 @@ class LiberoEnv:
         self._ensure_env()
         return list(self._env.env.obj_of_interest)
 
-    def reset(self, seed: int) -> Obs:
+    def envelope(self):
+        """The immutable safety envelope (execution.envelope.DEFAULT_ENVELOPE); never optimised."""
+        from fleet_memory.execution.envelope import DEFAULT_ENVELOPE
+        return DEFAULT_ENVELOPE
+
+    def reset(self, seed: int, perturbation: dict[str, Any] | None = None) -> Obs:
+        """Deterministic reset; optional post-reset perturbation (see ``envs/perturb.py``):
+        ``{"shift_xy":[dx,dy]}`` (first object of interest), ``{"jitter_m": s}`` (all objects of
+        interest), ``{"distractor": true}`` (best-effort). What was actually applied is recorded in
+        ``self.last_perturbation``."""
         self._ensure_env()
         self.last_seed = int(seed)
         self.init_state_index = int(seed) % self.n_init_states
@@ -226,6 +240,10 @@ class LiberoEnv:
         self._objects = None
         obs = self._make_obs(raw)
         self._last_obs = obs
+        self.last_perturbation = {}
+        if perturbation:
+            from fleet_memory.envs.perturb import apply_perturbation
+            obs, self.last_perturbation = apply_perturbation(self, perturbation, default_seed=int(seed))
         return obs
 
     def step(self, action: np.ndarray) -> tuple[Obs, bool, dict[str, Any]]:

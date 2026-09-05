@@ -126,9 +126,9 @@ def run(env, shim, tracker, steps=120):
     return obs
 
 
-def make(policy, cs=None, enabled=True):
+def make(policy, cs=None, enabled=True, blend_mode="blend"):
     env, tracker = StubEnv(), Tracker(TASK, stall_k=40)
-    shim = ExecutionShim(policy, cs or ConstraintSet(), TASK, tracker, enabled=enabled)
+    shim = ExecutionShim(policy, cs or ConstraintSet(), TASK, tracker, enabled=enabled, blend_mode=blend_mode)
     return env, tracker, shim
 
 
@@ -177,7 +177,7 @@ def test_approach_cone_only_near_target_and_open():
 def test_waypoint_controller_reaches_then_hands_back():
     cs = apply_edit(ConstraintSet(), S3_PROBE_EDITS[3])          # dz=0.06, tol 0.015
     pol = ScriptedPolicy()
-    env, tracker, shim = make(pol, cs)
+    env, tracker, shim = make(pol, cs, blend_mode="override")    # v2 waypoint controller
     obs = env.obs()
     tracker.update(obs, env.subconds())
     shim.reset(TASK.language, "bowl")

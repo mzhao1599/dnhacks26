@@ -1,0 +1,16 @@
+{
+  "note": "Three disjoint seed sets. LiberoEnv maps a seed to a LIBERO init state via seed % 50, so the sets are disjoint at BOTH the seed level and the init-state level: optimization uses init states 0-29, the promotion gate 30-39, benchmark evaluation 40-49. Eval init states are never seen by the optimizer or the gate. Hand-rolled pose jitter is applied only to opt/gate rollouts, never to eval.",
+  "init_states_per_task": 50,
+  "sets": {
+    "opt":  {"init_state_range": [0, 30],  "seed_base": 3000},
+    "gate": {"init_state_range": [30, 40], "seed_base": 4000},
+    "eval": {"init_state_range": [40, 50], "seed_base": 5000}
+  },
+  "benchmark": {
+    "suite": "libero_spatial",
+    "tasks": [0, 1, 2, 3, 4],
+    "n_eval_per_task": 10,
+    "perturbation_dimension": "robot_init",
+    "arms": ["BM-0", "BM-1", "BM-2", "BM-3", "BM-4"]
+  }
+}
