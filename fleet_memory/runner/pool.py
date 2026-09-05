@@ -146,9 +146,11 @@ def maybe_sleep(store: EventStore, cfg: RunConfig, workers: int, trigger: str = 
     if not drift_pending(store, cfg.skill_instance_id):
         return None
     from fleet_memory.runner.consolidate import ConsolidationConfig, consolidate
-    print(f"  drift pending for {cfg.skill_instance_id}: consolidating (medium)", flush=True)
-    return consolidate(store, cfg.skill_instance_id, template=cfg, cfg=ConsolidationConfig.medium(workers=workers),
-                       trigger=trigger)
+    import os
+    preset = os.environ.get("FM_AUTO_SLEEP", "medium")           # small|medium|full — wall-clock knob for auto-sleep
+    ccfg = {"small": ConsolidationConfig.small, "medium": ConsolidationConfig.medium, "full": ConsolidationConfig}[preset](workers=workers)
+    print(f"  drift pending for {cfg.skill_instance_id}: consolidating ({preset})", flush=True)
+    return consolidate(store, cfg.skill_instance_id, template=cfg, cfg=ccfg, trigger=trigger)
 
 
 def run_batches(store: EventStore, cfgs: list[RunConfig], workers: int, gate_every: int = 0, auto_sleep: bool = False,
