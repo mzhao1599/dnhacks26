@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+logs/*.jsonl
+logs/runs/
+*.mp4
+.pytest_cache/
+.DS_Store
+.env

@@ -1,0 +1,16 @@
+[project]
+name = "fleet-memory"
+version = "0.2.0"
+description = "Coaching-driven, weight-frozen improvement for a VLA policy (SmolVLA on LIBERO)"
+requires-python = ">=3.12"
+dependencies = ["numpy", "anthropic", "scipy"]
+
+[project.optional-dependencies]
+sim = ["lerobot[smolvla,libero]==0.6.1", "sentence-transformers", "pandas", "matplotlib"]
+dev = ["pytest"]
+
+[tool.setuptools.packages.find]
+include = ["fleet_memory*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
