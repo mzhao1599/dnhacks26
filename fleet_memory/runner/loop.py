@@ -15,6 +15,10 @@ from fleet_memory.execution.detectors import Tracker, evaluate_predicate
 from fleet_memory.memory.schema import Intervention, Plan, Subtask
 
 MOVE_XY_M = 0.05      # move/place: EE (or target) within this xy radius of the destination
+# Invariant 9: the coach never sets a continuous S3 value (grasp offset, waypoint, caps, aperture, cone):
+# those dims belong to the optimizer's vector and its perturbation gate. The only S3 edit a coach may apply
+# to the shim is the discrete recovery op. Anything else it emits is logged as a proposal, never applied.
+S3_COACH_OPS = frozenset({"set_abort_retry"})
 
 
 @dataclass
@@ -76,6 +80,8 @@ def _apply_intervention(iv: Intervention, plan: Plan, st: Subtask, shim, task: T
             shim.set_target(st.target_object)
         return ok
     if iv.surface == "S3":
+        if iv.edit.op not in S3_COACH_OPS:       # continuous S3 value from the coach: proposal only (invariant 9)
+            return False
         try:
             shim.set_constraints(apply_edit(shim.constraints, iv.edit))
             return True

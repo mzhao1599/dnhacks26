@@ -193,10 +193,14 @@ def reset_env(env, cfg: RunConfig) -> Obs:
 
 
 def s3_vector(cfg: RunConfig, arm: Condition, store: EventStore):
-    """(S3Params, incumbent|None): explicit cfg.s3_params > incumbent (arm.use_incumbent_s3) > identity."""
+    """(S3Params, incumbent|None): explicit cfg.s3_params > incumbent (arm.use_incumbent_s3) > identity.
+    The incumbent is only returned when the episode actually runs on its vector: an explicit-params episode
+    (benchmark BM-2/BM-4, --s3-params) must not be attributed to its version, scorecard or drift detector."""
     inc = incumbent_of(store, cfg.skill_instance_id) if arm.use_incumbent_s3 else None
     if cfg.s3_params:
-        return S3Params.from_dict(cfg.s3_params), inc
+        vec = S3Params.from_dict(cfg.s3_params)
+        same = inc is not None and np.allclose(vec.to_array(), S3Params.from_dict(inc.params).to_array())
+        return vec, (inc if same else None)
     if inc is not None:
         return S3Params.from_dict(inc.params), inc
     return S3Params.identity(), None
@@ -206,7 +210,7 @@ def build_constraints(cfg: RunConfig, arm: Condition, vec: S3Params, applied: li
     base = ConstraintSet()
     if "S3" in arm.surfaces:
         for l in applied:
-            if l.surface == "S3":
+            if l.surface == "S3" and l.edit.op in loop.S3_COACH_OPS:   # continuous S3 lessons never reach the shim (inv. 9)
                 try:
                     base = apply_edit(base, l.edit)
                 except Exception as ex:
