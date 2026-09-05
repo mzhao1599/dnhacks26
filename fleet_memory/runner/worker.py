@@ -173,6 +173,16 @@ def retrieve_lessons(store: EventStore, task: TaskInfo, arm: Condition, environm
     return out[:RETRIEVE_K]
 
 
+def seed_policy_rng(seed: int) -> None:
+    np.random.seed(seed % (2 ** 32))
+    try:
+        import torch
+        torch.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+    except ImportError:
+        pass
+
+
 def reset_env(env, cfg: RunConfig) -> Obs:
     params = inspect.signature(env.reset).parameters
     if "perturbation" in params or any(p.kind == p.VAR_KEYWORD for p in params.values()):
@@ -264,7 +274,10 @@ def run_episode(cfg: RunConfig, env=None, policy=None, store: EventStore | None 
     frozen_at = now_iso()
     applied = [l for l in retrieved
                if l.status == "validated" or lifecycle.assign_arm(l.lesson_id, cfg.seed, cfg.task_id) == "treated"]
-    # (2) reset (+ perturbation)
+    # (2) reset (+ perturbation). Also seed the policy's RNG: flow-matching VLAs draw noise per inference, so
+    # without this "same seed" only fixes the scene. With it, arms on the same seed share the policy's draws
+    # (common random numbers) — a pass-through shim reproduces arm A exactly, and the gate compares like with like.
+    seed_policy_rng(cfg.seed)
     obs = reset_env(env, cfg)
     task = env.task_info()                      # objects may change after a perturbation (distractor)
     # (3) plan
