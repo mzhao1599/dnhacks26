@@ -1,10 +1,13 @@
-3483 episode records, 748 held-out evaluation episodes (init states 40-49, no consolidation_id)
+3605 episode records, 808 held-out evaluation episodes (init states 40-49, no consolidation_id)
 
 environment                                                arm                                draws          k/n   rate       95% CI  steps seeds
 libero_spatial_0 (stock)                                   BM-0 stock camera                  draws 1-5   44/50     88% [  76,   94]     91 5040-5249
 libero_spatial_0_plus_camera_0_0_100_2_354                 BM-1 camera moved, raw policy      draws 1-5    7/50     14% [   7,   26]    208 5040-5249
+libero_spatial_0_plus_camera_0_0_100_2_354                 BM-1 camera moved, raw policy      draws 6-8 (cycle 2)   4/20     20% [   8,   42]    196 5290-5349
 libero_spatial_0_plus_camera_0_0_100_2_354                 BM-2 identity file                 draws 1-5    3/50      6% [   2,   16]    214 5040-5249
+libero_spatial_0_plus_camera_0_0_100_2_354                 BM-2 identity file                 draws 6-8 (cycle 2)   2/20     10% [   3,   30]    211 5290-5349
 libero_spatial_0_plus_camera_0_0_100_2_354                 BM-3 promoted file                 draws 1-5   29/50     58% [  44,   71]    156 5040-5249
+libero_spatial_0_plus_camera_0_0_100_2_354                 BM-3 promoted file                 draws 6-8 (cycle 2)  10/20     50% [  30,   70]    164 5290-5349
 libero_spatial_0_plus_camera_0_0_100_2_354_act             BM-1 camera moved, raw policy      draws 1-5    4/50      8% [   3,   19]    212 5040-5249
 libero_spatial_0_plus_camera_0_0_100_2_354_act             BM-2 identity file                 draws 1-5    6/50     12% [   6,   24]    207 5040-5249
 libero_spatial_0_plus_camera_0_0_100_2_354_act             BM-3 promoted file                 draws 1-5    7/49     14% [   7,   27]    214 5040-5249

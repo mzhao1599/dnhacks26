@@ -194,7 +194,8 @@ Second probe on the CPU tier (own numerics, same 10 layouts): stock 8/10 · tilt
 ****Second sleep cycle on task 0 (from v2, half budget: CEM 16 × 3 iterations, K=4, one A100, 232 rollouts, 14 min):** the fresh-seed
 validation chose the **incumbent** (v2 cost 2.02 vs 2.48 / 2.88 / 2.91 / 3.40 for the final mean and the per-iteration bests), so no
 candidate reached the gate and v2 stays — the same refusal behaviour the strong gate showed on the robot-init tasks. Held-out re-eval of
-v2 on 2 fresh noise draws: PENDING.
+v2 on 2 fresh noise draws (n=20/arm): BM-1 4/20 = 20% · BM-2 2/20 = 10% · **BM-3 (v2) 10/20 = 50%** [30, 70] — the cycle-1 result
+replicates. **Pooled over both runs (n=70/arm): BM-1 11/70 = 16% [9, 26] · BM-2 5/70 = 7% · BM-3 39/70 = 56% [44, 67].**
 
 **Protocol P with a camera bump — unattended recovery achieved** (task 0, arm B, `--perturb-env` view `0_0_100_2_354`, n=15/stage,
 `medium` auto-sleep, 16-seed gate, one A100): baseline (stock camera) **10/15 = 67%** (cost 2.43–2.86) → camera tilted **2/10 = 20%**
