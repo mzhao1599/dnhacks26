@@ -53,6 +53,8 @@ class RunConfig:
     record_trace: bool = False
     env_kwargs: dict[str, Any] = field(default_factory=dict)
     policy_kwargs: dict[str, Any] = field(default_factory=dict)
+    record_video: str | None = None          # directory: write <episode_id>.mp4 (agentview | wrist, overlay)
+    video_label: str = ""                    # overlay label, e.g. "BM-4 perturbed + homing"
 
     @property
     def environment_id(self) -> str:
@@ -295,17 +297,24 @@ def run_episode(cfg: RunConfig, env=None, policy=None, store: EventStore | None 
         loop_envelope = envelope
     # (4b) v3.1 homing: an S3 parameter, so only when the shim is on. Scripted EE-space controller drives the arm
     # back to the canonical start (+delta) BEFORE the VLA acts; its steps/actions count toward the episode's cost.
+    rec = None
+    if cfg.record_video:
+        from fleet_memory.runner.video import FrameRecorder, s3_summary
+        rec = FrameRecorder(label=cfg.video_label or f"arm {cfg.arm} · {cfg.suite} {cfg.task_id} · seed {cfg.seed}",
+                            subtitle=task.language, s3_summary=s3_summary(vec.to_dict() if arm.shim else None))
+        rec.on_step(obs, 0, "start")
+    on_step = rec.on_step if rec is not None else None
     homing_res = None
     if arm.shim and vec.homing_on and cfg.env_kind != "mock":
         from fleet_memory.execution.homing import Homing, HomingTarget
-        obs, homing_res, _ = Homing(HomingTarget.canonical(vec.homing_delta(), env=env), envelope).run(env, obs)
+        obs, homing_res, _ = Homing(HomingTarget.canonical(vec.homing_delta(), env=env), envelope).run(env, obs, on_step=on_step)
     # (5) subtask loop
     coach = _agent("inner") if arm.inner_loop else None
     error = None
     try:
         res = loop.run_subtasks(env, obs, plan, shim, tracker, task, episode_id=episode_id, surfaces=list(arm.surfaces),
                                 coach=coach, max_steps=cfg.max_steps, keyframe_every=cfg.keyframe_every,
-                                envelope=loop_envelope, base_constraints=constraints)
+                                envelope=loop_envelope, base_constraints=constraints, on_step=on_step)
     except Exception as ex:                     # a crashed episode is still an episode (termination="error")
         log.exception("episode %s crashed", episode_id)
         res, error = loop.LoopResult(), f"{type(ex).__name__}: {ex}"
@@ -315,6 +324,10 @@ def run_episode(cfg: RunConfig, env=None, policy=None, store: EventStore | None 
         res.actions = list(homing_res.actions) + list(res.actions)
     # (6) outcome from the env predicate ONLY
     success = bool(env.success_flag())
+    if rec is not None:
+        rec.finish(success, res.steps)
+        out = rec.write(os.path.join(cfg.record_video, f"{episode_id}.mp4"))
+        log.info("video written: %s", out)
     outcome = Outcome(env_success=success, steps=res.steps, termination="error" if error else res.termination,
                       wall_s=time.perf_counter() - t0, error=error)
     # (7) metrics
