@@ -47,9 +47,9 @@ init states 40–49 per task, never seen by the optimizer (0–29) or the gate (
 | task | BM-0 standard | BM-1 perturbed | BM-2 + untrained shim | BM-4 + hand-set homing | BM-3 after ONE unattended sleep |
 |---|---|---|---|---|---|
 | 0 | 9/10 | 5/10 | 4/10 | 4/10 | 5/10 (gate: 17%→67% on gate seeds; eval: no change) |
-| 1 | 6/10 | 0/10 | 0/10 | 2/10 | gate refused → cycle 2: PENDING |
+| 1 | 6/10 | 0/10 | 0/10 | 2/10 | cycle 1 refused; cycle 2 refused (17%→0%) — stays v1 |
 | 2 | 10/10 | 0/10 | 0/10 | 0/10 | 0/10 (gate passed on cost only, 0%→0%) |
-| 3 | 9/10 | 2/10 | 2/10 | 3/10 | gate refused → cycle 2: PENDING |
+| 3 | 9/10 | 2/10 | 2/10 | 3/10 | cycle 1 refused; cycle 2 (σ₀=0.5) passed 4.11→3.65 → eval PENDING |
 | 4 | 6/10 | 0/10 | 0/10 | 1/10 | gate refused → cycle 2: PENDING |
 | **pooled** | **40/50 = 80%** | **7/50 = 14% [7, 26]** | 6/50 = 12% | **10/50 = 20% [11, 33]** | 5/20 on tasks 0+2 (= BM-1 there) |
 
@@ -82,7 +82,7 @@ the S1 planner neither helps nor hurts this single-skill task once it stops trun
   analyst dashboard: https://claude.ai/code/artifact/5f1ec73c-fd21-4b6b-845b-a4b1f8432c2e · rebuild: `scripts/pull_logs.sh`,
   `scripts/build_demo_page.py`, then publish `dashboard/demo_artifact.html` / `dashboard/artifact.html`.
 - Held-out mastery (LIBERO-10 task 3, layouts 20–39, n=40/arm): A 78% [62, 88] / 302 steps / cost 2.03 → **v2 80% [65, 90] /
-  278 steps / cost 1.95**; v3 PENDING. Homing alone at n=50 (task 0, all layouts): BM-1 26% [16, 40] → BM-4 34% [22, 48]; task 3 PENDING.
+  278 steps / cost 1.95** → v3 68% [52, 80] / 335 steps / cost 2.31 (a gate false-positive at n=12; regressed). Homing alone, all 50 layouts of tasks 0+3 (n=100/arm, no optimizer): **BM-1 27% [19, 36] → BM-4 33% [25, 43]** — +6 pp, CIs overlap: real but small.
 
 ## Honesty lines
 - Base numbers are ours (SmolVLA), on LIBERO-Plus's exact robot-init perturbation; the CVPR table is π₀/OpenVLA.
