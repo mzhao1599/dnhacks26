@@ -14,27 +14,27 @@
 <text x="120.4" y="278" font-size="12" font-weight="600" fill="#141a22" text-anchor="middle">BM-0</text>
 <text x="120.4" y="294" font-size="11" fill="#5c6670" text-anchor="middle">stock camera</text>
 <text x="120.4" y="310" font-size="11" fill="#8a939e" text-anchor="middle">44/50</text>
-<rect x="213.1" y="232.6" width="72.1" height="27.4" rx="3" fill="#c73e3e"/>
-<line x1="249.2" x2="249.2" y1="246.4" y2="208.7" stroke="#141a22" stroke-width="1.5"/>
-<line x1="244.2" x2="254.2" y1="246.4" y2="246.4" stroke="#141a22" stroke-width="1.5"/><line x1="244.2" x2="254.2" y1="208.7" y2="208.7" stroke="#141a22" stroke-width="1.5"/>
-<text x="249.2" y="200.7" font-size="13" font-weight="600" fill="#141a22" text-anchor="middle">14%</text>
+<rect x="213.1" y="229.2" width="72.1" height="30.8" rx="3" fill="#c73e3e"/>
+<line x1="249.2" x2="249.2" y1="242.3" y2="209.1" stroke="#141a22" stroke-width="1.5"/>
+<line x1="244.2" x2="254.2" y1="242.3" y2="242.3" stroke="#141a22" stroke-width="1.5"/><line x1="244.2" x2="254.2" y1="209.1" y2="209.1" stroke="#141a22" stroke-width="1.5"/>
+<text x="249.2" y="201.1" font-size="13" font-weight="600" fill="#141a22" text-anchor="middle">16%</text>
 <text x="249.2" y="278" font-size="12" font-weight="600" fill="#141a22" text-anchor="middle">BM-1</text>
 <text x="249.2" y="294" font-size="11" fill="#5c6670" text-anchor="middle">camera tilted 6°</text>
-<text x="249.2" y="310" font-size="11" fill="#8a939e" text-anchor="middle">7/50</text>
-<rect x="341.9" y="248.2" width="72.1" height="11.8" rx="3" fill="#c98a12"/>
-<line x1="378.0" x2="378.0" y1="256.0" y2="228.2" stroke="#141a22" stroke-width="1.5"/>
-<line x1="373.0" x2="383.0" y1="256.0" y2="256.0" stroke="#141a22" stroke-width="1.5"/><line x1="373.0" x2="383.0" y1="228.2" y2="228.2" stroke="#141a22" stroke-width="1.5"/>
-<text x="378.0" y="220.2" font-size="13" font-weight="600" fill="#141a22" text-anchor="middle">6%</text>
+<text x="249.2" y="310" font-size="11" fill="#8a939e" text-anchor="middle">11/70</text>
+<rect x="341.9" y="246.0" width="72.1" height="14.0" rx="3" fill="#c98a12"/>
+<line x1="378.0" x2="378.0" y1="253.9" y2="229.3" stroke="#141a22" stroke-width="1.5"/>
+<line x1="373.0" x2="383.0" y1="253.9" y2="253.9" stroke="#141a22" stroke-width="1.5"/><line x1="373.0" x2="383.0" y1="229.3" y2="229.3" stroke="#141a22" stroke-width="1.5"/>
+<text x="378.0" y="221.3" font-size="13" font-weight="600" fill="#141a22" text-anchor="middle">7%</text>
 <text x="378.0" y="278" font-size="12" font-weight="600" fill="#141a22" text-anchor="middle">BM-2</text>
 <text x="378.0" y="294" font-size="11" fill="#5c6670" text-anchor="middle">+ untrained layer</text>
-<text x="378.0" y="310" font-size="11" fill="#8a939e" text-anchor="middle">3/50</text>
-<rect x="470.7" y="146.3" width="72.1" height="113.7" rx="3" fill="#3b5bdb"/>
-<line x1="506.8" x2="506.8" y1="173.3" y2="121.6" stroke="#141a22" stroke-width="1.5"/>
-<line x1="501.8" x2="511.8" y1="173.3" y2="173.3" stroke="#141a22" stroke-width="1.5"/><line x1="501.8" x2="511.8" y1="121.6" y2="121.6" stroke="#141a22" stroke-width="1.5"/>
-<text x="506.8" y="113.6" font-size="13" font-weight="600" fill="#141a22" text-anchor="middle">58%</text>
+<text x="378.0" y="310" font-size="11" fill="#8a939e" text-anchor="middle">5/70</text>
+<rect x="470.7" y="150.8" width="72.1" height="109.2" rx="3" fill="#3b5bdb"/>
+<line x1="506.8" x2="506.8" y1="173.6" y2="129.2" stroke="#141a22" stroke-width="1.5"/>
+<line x1="501.8" x2="511.8" y1="173.6" y2="173.6" stroke="#141a22" stroke-width="1.5"/><line x1="501.8" x2="511.8" y1="129.2" y2="129.2" stroke="#141a22" stroke-width="1.5"/>
+<text x="506.8" y="121.2" font-size="13" font-weight="600" fill="#141a22" text-anchor="middle">56%</text>
 <text x="506.8" y="278" font-size="12" font-weight="600" fill="#141a22" text-anchor="middle">BM-3</text>
 <text x="506.8" y="294" font-size="11" fill="#5c6670" text-anchor="middle">+ one sleep cycle</text>
-<text x="506.8" y="310" font-size="11" fill="#8a939e" text-anchor="middle">29/50</text>
+<text x="506.8" y="310" font-size="11" fill="#8a939e" text-anchor="middle">39/70</text>
 <rect x="599.5" y="228.6" width="72.1" height="31.4" rx="3" fill="#8fa0e6"/>
 <line x1="635.6" x2="635.6" y1="243.7" y2="204.1" stroke="#141a22" stroke-width="1.5"/>
 <line x1="630.6" x2="640.6" y1="243.7" y2="243.7" stroke="#141a22" stroke-width="1.5"/><line x1="630.6" x2="640.6" y1="204.1" y2="204.1" stroke="#141a22" stroke-width="1.5"/>
