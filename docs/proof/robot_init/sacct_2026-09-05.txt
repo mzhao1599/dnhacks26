@@ -1,0 +1,76 @@
+bm_9561168.out
+bm_9561169.out
+bm_9561170.out
+bm_9561354.out
+bm_9561355.out
+bm_9561368.out
+bm_9561369.out
+bmfollow_9561733.out
+q_cycle2-task3_9565562.out
+q_mastery-heldout-rep2_9565559.out
+q_reps-task2_9565563.out
+q_reps-task2b_9566227.out
+q_reps-task3-rep2_9565561.out
+q_reps-task4_9565564.out
+---
+JobID                                   JobName  Partition        NodeList               Start                 End    Elapsed      State                                AllocTRES 
+------------ ---------------------------------- ---------- --------------- ------------------- ------------------- ---------- ---------- ---------------------------------------- 
+9559350                                    bash     normal          hop057 2026-09-05T16:59:05 2026-09-05T16:59:07   00:00:02  COMPLETED            billing=1,cpu=1,mem=1G,node=1 
+9559400                         probe_A100.40gb       gpuq          dgx001 2026-09-05T17:14:31 2026-09-05T17:14:34   00:00:03  COMPLETED billing=80,cpu=2,gres/gpu:a100.40gb=1,g+ 
+9559402                           probe_1g.10gb       gpuq          gpu020 2026-09-05T17:14:31 2026-09-05T17:14:33   00:00:02  COMPLETED billing=20,cpu=2,gres/gpu:1g.10gb=1,gre+ 
+9559403                           probe_3g.40gb       gpuq          gpu021 2026-09-05T17:14:31 2026-09-05T17:14:34   00:00:03  COMPLETED billing=40,cpu=2,gres/gpu:3g.40gb=1,gre+ 
+9559619                                 fm-diag       gpuq          gpu021 2026-09-05T17:40:30 2026-09-05T17:40:34   00:00:04  COMPLETED billing=20,cpu=2,gres/gpu:1g.10gb=1,gre+ 
+9559631                             fm-smokemig       gpuq          gpu021 2026-09-05T17:42:41 2026-09-05T17:45:11   00:02:30  COMPLETED billing=20,cpu=4,gres/gpu:1g.10gb=1,gre+ 
+9559639                              fm-smoke40       gpuq          dgx001 2026-09-05T17:43:14 2026-09-05T17:45:43   00:02:29  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9559705                               fm-smoke3       gpuq          dgx001 2026-09-05T17:55:21 2026-09-05T18:09:19   00:13:58  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9559706                               fm-smoke3       gpuq          dgx001 2026-09-05T17:55:21 2026-09-05T18:08:29   00:13:08  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9559707                               fm-smoke3       gpuq          dgx001 2026-09-05T17:55:21 2026-09-05T18:07:36   00:12:15  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9559730                              fm-perturb       gpuq          dgx001 2026-09-05T17:57:20 2026-09-05T17:58:15   00:00:55  COMPLETED billing=80,cpu=4,gres/gpu:a100.40gb=1,g+ 
+9559848                               fm-smoke3       gpuq          dgx001 2026-09-05T18:08:58 2026-09-05T18:16:26   00:07:28  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9559849                               fm-smoke3       gpuq          dgx001 2026-09-05T18:08:58 2026-09-05T18:19:31   00:10:33  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9560496                             fm-nat-diag       gpuq          dgx001 2026-09-05T18:57:44 2026-09-05T18:58:28   00:00:44  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9560510                               fm-phase0       gpuq          dgx001 2026-09-05T18:58:17 2026-09-05T19:01:57   00:03:40  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9560511                               fm-pilot1       gpuq          dgx001 2026-09-05T18:58:17 2026-09-05T19:04:58   00:06:41  COMPLETED billing=80,cpu=4,gres/gpu:a100.40gb=1,g+ 
+9560542                            fm-plus-diag       gpuq          dgx001 2026-09-05T19:01:29 2026-09-05T19:02:09   00:00:40  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9560559                         fm-plus-smolvla       gpuq          dgx001 2026-09-05T19:02:01 2026-09-05T19:17:06   00:15:05  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9560569                              fm-p2sleep       gpuq          dgx001 2026-09-05T19:03:05 2026-09-05T19:31:18   00:28:13  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9560577                                 fm-pi05       gpuq          dgx001 2026-09-05T19:05:14 2026-09-05T19:08:43   00:03:29  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9560813                                  fm-p1b       gpuq          dgx001 2026-09-05T19:14:21 2026-09-05T19:32:00   00:17:39  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9560814                              fm-sleep31       gpuq          dgx001 2026-09-05T19:17:34 2026-09-05T20:35:41   01:18:07  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9560979                              fm-bmprobe       gpuq          dgx001 2026-09-05T19:23:29 2026-09-05T19:26:51   00:03:22  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9561095                          fm-homdiag-cpu     normal          hop058 2026-09-05T19:26:40 2026-09-05T19:27:47   00:01:07  COMPLETED           billing=8,cpu=4,mem=16G,node=1 
+9561168                                  fm-bm0       gpuq          dgx001 2026-09-05T19:32:00 2026-09-05T19:52:53   00:20:53  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9561169                                  fm-bm1       gpuq          dgx001 2026-09-05T19:32:00 2026-09-05T19:54:56   00:22:56  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9561170                                  fm-bm2       gpuq          dgx001 2026-09-05T19:32:00 2026-09-05T19:55:01   00:23:01  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9561354                                  fm-bm3       gpuq          gpu013 2026-09-05T19:36:51 2026-09-05T19:37:02   00:00:11  COMPLETED billing=40,cpu=8,gres/gpu:3g.40gb=1,gre+ 
+9561355                                  fm-bm4       gpuq          gpu014 2026-09-05T19:36:51 2026-09-05T19:37:05   00:00:14  COMPLETED billing=40,cpu=8,gres/gpu:3g.40gb=1,gre+ 
+9561368                                  fm-bm3       gpuq          gpu013 2026-09-05T19:37:56 2026-09-05T20:29:06   00:51:10  COMPLETED billing=40,cpu=8,gres/gpu:3g.40gb=1,gre+ 
+9561369                                  fm-bm4       gpuq          gpu014 2026-09-05T19:37:56 2026-09-05T20:29:37   00:51:41  COMPLETED billing=40,cpu=8,gres/gpu:3g.40gb=1,gre+ 
+9561378                                fm-protP       gpuq          gpu014 2026-09-05T19:38:28 2026-09-05T21:23:32   01:45:04  COMPLETED billing=40,cpu=8,gres/gpu:3g.40gb=1,gre+ 
+9561379                                 fm-armC       gpuq          gpu014 2026-09-05T19:38:28 2026-09-05T19:45:33   00:07:05  COMPLETED billing=40,cpu=8,gres/gpu:3g.40gb=1,gre+ 
+9561544                              fm-bm0wide       gpuq          gpu013 2026-09-05T19:43:49 2026-09-05T20:36:03   00:52:14  COMPLETED billing=40,cpu=8,gres/gpu:3g.40gb=1,gre+ 
+9561611                                fm-armC2       gpuq          gpu014 2026-09-05T19:47:33 2026-09-05T19:59:04   00:11:31  COMPLETED billing=40,cpu=8,gres/gpu:3g.40gb=1,gre+ 
+9561733                             fm-bmfollow       gpuq          dgx001 2026-09-05T20:29:59 2026-09-05T21:40:18   01:10:19  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9563644                                 fm-armA       gpuq          dgx001 2026-09-05T20:50:00 2026-09-05T20:56:23   00:06:23  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9563855                              fm-bmpower       gpuq          dgx001 2026-09-05T21:01:04 2026-09-05T21:15:26   00:14:22  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9563856                              fm-mastery       gpuq          dgx001 2026-09-05T21:01:04 2026-09-05T21:13:44   00:12:40  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9563888                                fm-video       gpuq          dgx001 2026-09-05T21:07:54 2026-09-05T21:10:53   00:02:59  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9564260                               fm-bmreps       gpuq          dgx001 2026-09-05T21:16:52 2026-09-05T21:32:37   00:15:45  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9564261                               fm-video2       gpuq          dgx001 2026-09-05T21:16:52 2026-09-05T21:19:14   00:02:22  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9564675                                  fm-g24       gpuq          dgx001 2026-09-05T21:29:02 2026-09-05T22:00:59   00:31:57  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9565190                                fm-reps3       gpuq          dgx001 2026-09-05T21:45:20 2026-09-05T21:59:21   00:14:01  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9565191                                 fm-armD       gpuq          gpu013 2026-09-05T21:45:20 2026-09-05T21:45:32   00:00:12  COMPLETED billing=40,cpu=8,gres/gpu:3g.40gb=1,gre+ 
+9565192                               fm-cycle2       gpuq          dgx001 2026-09-05T22:01:07 2026-09-05T22:45:34   00:44:27  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9565228                                 fm-armD       gpuq          dgx001 2026-09-05T21:46:55 2026-09-05T21:53:06   00:06:11  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9565230                               fm-reps0b       gpuq          dgx001 2026-09-05T21:47:58 2026-09-05T22:06:17   00:18:19  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9565559             q-a100-mastery-heldout-rep2       gpuq          dgx001 2026-09-05T21:53:13 2026-09-05T22:06:14   00:13:01  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9565560             q-a100-armC-perturbed-task0       gpuq          dgx001 2026-09-05T21:59:32 2026-09-05T22:05:11   00:05:39  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9565561                  q-a100-reps-task3-rep2       gpuq          dgx001 2026-09-05T22:05:20 2026-09-05T22:22:44   00:17:24  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9565562                     q-a100-cycle2-task3       gpuq          dgx001 2026-09-05T22:06:23 2026-09-05T22:48:01   00:41:38  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9565563                        q-mig-reps-task2       gpuq          gpu013 2026-09-05T21:52:42 2026-09-05T21:52:55   00:00:13  COMPLETED billing=40,cpu=8,gres/gpu:3g.40gb=1,gre+ 
+9565564                        q-mig-reps-task4       gpuq          gpu014 2026-09-05T21:52:42 2026-09-05T22:28:42   00:36:00  COMPLETED billing=40,cpu=8,gres/gpu:3g.40gb=1,gre+ 
+9565857                  q-a100-mastery2-phase0       gpuq          dgx001 2026-09-05T22:06:23 2026-09-05T22:10:35   00:04:12  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9565866                   q-a100-mastery2-sleep       gpuq          dgx001 2026-09-05T22:10:37 2026-09-05T22:43:35   00:32:58  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9566227                       q-mig-reps-task2b       gpuq          gpu013 2026-09-05T22:27:15 2026-09-05T23:02:33   00:35:18  COMPLETED billing=40,cpu=8,gres/gpu:3g.40gb=1,gre+ 
+9566263                   q-a100-protocolP-25mm       gpuq          dgx001 2026-09-05T22:28:15 2026-09-05T23:00:47   00:32:32  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
+9566264              q-a100-armD-task0-coachfix       gpuq          dgx001 2026-09-05T22:43:41 2026-09-05T23:11:10   00:27:29  COMPLETED billing=80,cpu=8,gres/gpu:a100.40gb=1,g+ 
