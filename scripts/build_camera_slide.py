@@ -4,11 +4,15 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import FancyBboxPatch
 
 # task 0, LIBERO-Plus camera viewpoint 0_0_100_2_354 (camera in place, axis turned 2° sideways / 6° down), n=50 per arm, 95% Wilson CI
+import json, os, sys
 rows = [("stock\ncamera",             44, 50, "#a9a9a9"),
         ("camera\ntilted 6°",          7, 50, "#c8433b"),
         ("+untrained\nlayer",          3, 50, "#4b3aa8"),
         ("+sleep, camera\ndims frozen", 8, 50, "#4b3aa8"),
         ("+1 sleep\ncycle",           29, 50, "#3d7fd8")]
+# optional 6th bar: "+2 sleep cycles" = BM-3 of the rep_offset-5 run (cycle 2, v3), passed as k n on the command line
+if len(sys.argv) == 3:
+    rows.append(("+2 sleep\ncycles", int(sys.argv[1]), int(sys.argv[2]), "#2f6fd1"))
 
 def wilson(k, n, z=1.96):
     p = k / n; d = 1 + z*z/n; c = p + z*z/(2*n); h = z * ((p*(1-p) + z*z/(4*n)) / n) ** 0.5
