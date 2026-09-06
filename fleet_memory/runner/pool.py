@@ -3,7 +3,10 @@
 python -m fleet_memory.runner.pool --env mock --policy mock --suite mock --task pick_bowl_to_plate --arm A \
     --n 40 --workers 4 --seed-set train --log logs/x.jsonl [--tasks a,b] [--probe-instruction S] [--probe-edit JSON]
     [--s3-params JSON] [--perturb JSON] [--tag ENVTAG] [--skill NAME] [--gate-every 10] [--auto-sleep]
-    [--make-reference] [--protocol P --n-stage 20 --perturb JSON]
+    [--make-reference] [--protocol P --n-stage 20 (--perturb JSON | --perturb-env JSON)]
+    [--perturb-env JSON]   LIBERO-Plus env config, e.g. {"dimension":"camera","view":"0_0_100_2_354"}: in protocol P
+                           the perturbed + recovery stages (and the drift-triggered sleep) run in that env while the
+                           baseline keeps the stock env; outside protocol P every episode runs in it.
 """
 from __future__ import annotations
 
@@ -174,14 +177,40 @@ def run_batches(store: EventStore, cfgs: list[RunConfig], workers: int, gate_eve
 def stage_event(store: EventStore, cfg: RunConfig, stage: str, eps: list[Episode]) -> dict:
     ev = {"type": "protocol_stage", "stage": stage, "environment_id": cfg.environment_id,
           "si_id": cfg.skill_instance_id, "ts": now_iso(), "episode_ids": [e.episode_id for e in eps],
-          "perturbation": dict(cfg.perturbation or {}), "condition": cfg.arm}
+          "perturbation": dict(cfg.perturbation or {}), "perturb_env": (cfg.env_kwargs or {}).get("config"),
+          "env_kind": cfg.env_kind, "condition": cfg.arm}
     store.append(ev)
     return ev
 
 
-def run_protocol(store: EventStore, base: RunConfig, perturb: dict, n_stage: int, workers: int, gate_every: int,
-                 seed_name: str = "train") -> dict[str, list[Episode]]:
-    """baseline (no perturb) -> perturbed (+auto-sleep) -> recovery (perturb persists, +auto-sleep)."""
+def perturbed_env_fields(perturb_env: dict | None) -> dict[str, Any]:
+    """RunConfig overrides that move an episode into a LIBERO-Plus env ({} when no env perturbation)."""
+    if not perturb_env:
+        return {}
+    return {"env_kind": "libero_plus", "env_kwargs": {"config": dict(perturb_env)}}
+
+
+def stage_configs(base: RunConfig, perturb: dict | None, perturb_env: dict | None, seeds: list[int],
+                  n_stage: int) -> list[tuple[str, list[RunConfig], bool]]:
+    """[(stage, cfgs, auto_sleep)] for baseline -> perturbed -> recovery, n_stage seeds each, in order.
+    The baseline keeps the base env and no perturbation; the perturbed and recovery stages carry the object
+    perturbation dict (envs/perturb.py) and/or the LIBERO-Plus env config (camera bump, robot init, ...).
+    environment_id / skill_instance_id come from suite/task/tag only, so all three stages share one instance —
+    and because run_batches hands its batch cfg to the auto-sleep as the template, the sleep runs in the
+    perturbed env too."""
+    pe = perturbed_env_fields(perturb_env)
+    stages = [("baseline", None, {}, False), ("perturbed", perturb, pe, True), ("recovery", perturb, pe, True)]
+    out = []
+    for i, (name, pert, fields, sleep) in enumerate(stages):
+        cfgs = [dataclasses.replace(base, seed=s, perturbation=pert, **fields) for s in seeds[i * n_stage:(i + 1) * n_stage]]
+        out.append((name, cfgs, sleep))
+    return out
+
+
+def run_protocol(store: EventStore, base: RunConfig, perturb: dict | None, n_stage: int, workers: int, gate_every: int,
+                 seed_name: str = "train", perturb_env: dict | None = None) -> dict[str, list[Episode]]:
+    """baseline (stock env, no perturb) -> perturbed (+auto-sleep) -> recovery (perturbation persists, +auto-sleep).
+    `perturb` = object perturbation dict, `perturb_env` = LIBERO-Plus env config; either or both."""
     seeds = seed_set(seed_name, 3 * n_stage)
     out: dict[str, list[Episode]] = {}
     if cost_reference_of(store, base.skill_instance_id) is None:
@@ -190,9 +219,7 @@ def run_protocol(store: EventStore, base: RunConfig, perturb: dict, n_stage: int
         make_reference(store, ref_eps, base.skill_instance_id, base.environment_id)
         out["reference"] = ref_eps
     ensure_incumbent(store, base)
-    stages = [("baseline", None, False), ("perturbed", perturb, True), ("recovery", perturb, True)]
-    for i, (name, pert, sleep) in enumerate(stages):
-        cfgs = [dataclasses.replace(base, seed=s, perturbation=pert) for s in seeds[i * n_stage:(i + 1) * n_stage]]
+    for name, cfgs, sleep in stage_configs(base, perturb, perturb_env, seeds, n_stage):
         eps = run_batches(store, cfgs, workers, gate_every=gate_every or 10, auto_sleep=sleep, label=name)
         stage_event(store, cfgs[0], name, eps)
         out[name] = eps
@@ -215,7 +242,9 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--probe-instruction", default=None)
     ap.add_argument("--probe-edit", default=None, help="JSON edit or list of edits")
     ap.add_argument("--s3-params", default=None, help="JSON S3Params dict")
-    ap.add_argument("--perturb", default=None, help="JSON perturbation dict")
+    ap.add_argument("--perturb", default=None, help="JSON object-perturbation dict (envs/perturb.py)")
+    ap.add_argument("--perturb-env", default=None,
+                    help='JSON LIBERO-Plus env config, e.g. {"dimension":"camera","view":"0_0_100_2_354"} (see module doc)')
     ap.add_argument("--tag", default="", help="environment tag (suffix of environment_id)")
     ap.add_argument("--skill", default=None)
     ap.add_argument("--max-steps", type=int, default=None)
@@ -244,11 +273,15 @@ def main(argv: list[str] | None = None) -> int:
                          log_path=a.log, probe_instruction=a.probe_instruction, probe_edits=edits, held_out=a.held_out,
                          max_steps=a.max_steps, s3_params=_json(a.s3_params), perturbation=_json(a.perturb),
                          skill=a.skill, environment_tag=a.tag, record_trace=a.record_trace)
+        perturb_env = _json(a.perturb_env)
         if a.protocol == "P":
-            if not base.perturbation:
-                raise SystemExit("--protocol P needs --perturb JSON")
-            run_protocol(store, base, base.perturbation, a.n_stage, a.workers, a.gate_every, a.seed_set)
+            if not base.perturbation and not perturb_env:
+                raise SystemExit("--protocol P needs --perturb JSON and/or --perturb-env JSON")
+            run_protocol(store, base, base.perturbation, a.n_stage, a.workers, a.gate_every, a.seed_set,
+                         perturb_env=perturb_env)
             continue
+        if perturb_env:                              # plain batch: every episode in the perturbed env
+            base = dataclasses.replace(base, **perturbed_env_fields(perturb_env))
         if get_arm(a.arm).use_incumbent_s3:          # B/D: v1 identity incumbent so episodes carry a version
             ensure_incumbent(store, base)
         cfgs = [dataclasses.replace(base, seed=s) for s in seed_set(a.seed_set, a.n)]
