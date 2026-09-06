@@ -91,12 +91,16 @@ def pooled_reps(recs):
     from collections import defaultdict
     acc = defaultdict(lambda: defaultdict(lambda: {"k": 0, "n": 0, "steps": 0.0}))
     meta = defaultdict(lambda: {"reps": 0, "n_runs": 0})
+    vec_of = defaultdict(dict)                 # task -> {json(s3_params): arm label}; BM-3 differs by promoted version
     for r in recs:
         if r.get("type") != "benchmark_reps":
             continue
         t = str(r.get("task"))
         meta[t]["reps"] += int(r.get("reps") or 0); meta[t]["n_runs"] += 1
         for arm, v in (r.get("results") or {}).items():
+            if arm == "BM-3" and v.get("s3_params") is not None:   # one sleep cycle vs two: never pool across versions
+                key = json.dumps(v["s3_params"], sort_keys=True)
+                arm = vec_of[t].setdefault(key, "BM-3" if not vec_of[t] else f"BM-3.{len(vec_of[t]) + 1}")
             a = acc[t][arm]; a["k"] += int(v["k"]); a["n"] += int(v["n"]); a["steps"] += float(v.get("mean_steps", 0)) * int(v["n"])
     out = {}
     for t, arms in acc.items():
@@ -168,7 +172,7 @@ def bars_svg(results):
         yy = H - pad - (H - 2 * pad) * y / 100
         parts.append(f'<line x1="{pad}" x2="{W - pad}" y1="{yy:.1f}" y2="{yy:.1f}" class="grid"/>'
                      f'<text x="{pad - 6}" y="{yy + 4:.1f}" class="tick" text-anchor="end">{y}%</text>')
-    colors = {"BM-0": "var(--muted)", "BM-1": "var(--bad)", "BM-2": "var(--warn)", "BM-3": "var(--accent)", "BM-4": "var(--good)", "BM-3w": "var(--accent)"}
+    colors = {"BM-0": "var(--muted)", "BM-1": "var(--bad)", "BM-2": "var(--warn)", "BM-3": "var(--accent)", "BM-3.2": "var(--accent)", "BM-4": "var(--good)", "BM-3w": "var(--accent)"}
     for i, r in enumerate(results):
         x = pad + i * bw + bw * 0.2
         rate = 100 * r["rate"]
@@ -185,7 +189,8 @@ def bars_svg(results):
 
 
 ARM_NAMES = {"BM-0": "standard start", "BM-1": "perturbed start", "BM-2": "perturbed + untrained layer",
-             "BM-3": "perturbed + one sleep cycle", "BM-4": "perturbed + hand-set homing", "BM-3w": "perturbed + wide-search sleep"}
+             "BM-3": "perturbed + one sleep cycle", "BM-3.2": "perturbed + two sleep cycles (v3)", "BM-4": "perturbed + hand-set homing",
+             "BM-3w": "perturbed + wide-search sleep"}
 
 
 def build(inline: bool) -> str:
@@ -196,7 +201,7 @@ def build(inline: bool) -> str:
     reps_all, reps = reps, (reps or {}).get("0")
     reps_rows = []
     if reps:
-        for arm in ("BM-0", "BM-1", "BM-2", "BM-4", "BM-3", "BM-3w"):
+        for arm in ("BM-0", "BM-1", "BM-2", "BM-4", "BM-3", "BM-3.2", "BM-3w"):
             r = reps["results"].get(arm)
             if r: reps_rows.append({"arm": arm, **r})
         by = {**by, **{r["arm"]: r for r in reps_rows if r["arm"] in ("BM-0", "BM-1", "BM-2", "BM-3", "BM-4")}}
@@ -260,12 +265,14 @@ def build(inline: bool) -> str:
     if reps_rows:
         r1 = next(r for r in reps_rows if r["arm"] == "BM-1"); r3 = next((r for r in reps_rows if r["arm"] == "BM-3"), None)
         line = ""
+        r32 = next((r for r in reps_rows if r["arm"] == "BM-3.2"), None)
         if r3:
+            two = (f' → after a second cycle (24-seed gate) <b>{100 * r32["rate"]:.0f}%</b> [{100 * r32["ci"][0]:.0f}, {100 * r32["ci"][1]:.0f}] (n={r32["n"]})' if r32 else "")
             line = (f'<p class="verdict">Perturbed <b>{100 * r1["rate"]:.0f}%</b> → after one unattended sleep <b>{100 * r3["rate"]:.0f}%</b> '
-                    f'(n={r1["n"]} each, intervals {"do not overlap" if r3["ci"][0] > r1["ci"][1] else "overlap"}) — '
+                    f'(n={r1["n"]} / {r3["n"]}, intervals {"do not overlap" if r3["ci"][0] > r1["ci"][1] else "overlap"}){two} — '
                     f'<span class="chip {"pass" if r3["ci"][0] > r1["ci"][1] else "partial"}">{"pass" if r3["ci"][0] > r1["ci"][1] else "partial"}</span> by the pre-registered rule.</p>')
         headline_html = (f'<section class="chart"><h2>Headline: LIBERO-Spatial task {reps["task"]}, 10 held-out layouts × {reps["reps"]} policy-noise draws</h2>'
-                         f'<p class="sub">n={r1["n"]} per arm, pooled over {reps["n_runs"]} independent runs · the 10 evaluation layouts were never seen by the optimizer or the gate · 95% Wilson intervals</p>'
+                         f'<p class="sub">pooled over {reps["n_runs"]} independent runs (BM-3 kept per promoted version) · the 10 evaluation layouts were never seen by the optimizer or the gate · 95% Wilson intervals</p>'
                          f'{bars_svg(reps_rows)}<p class="legend">{" · ".join(f"<b>{r["arm"]}</b> {ARM_NAMES[r["arm"]]}" for r in reps_rows)}</p>{line}</section>')
     return f'''<title>Fleet Memory Demo</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">

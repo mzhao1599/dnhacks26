@@ -15,19 +15,20 @@ Vision-language-action models (here: [SmolVLA](https://huggingface.co/lerobot/sm
 
 ## The result
 
-<p align="center"><img src="docs/media/headline.svg" width="720" alt="Bar chart: BM-0 80%, BM-1 22%, BM-2 27%, BM-4 34%, BM-3 54%"></p>
+<p align="center"><img src="docs/media/headline.svg" width="720" alt="Bar chart: BM-0 80%, BM-1 22%, BM-2 27%, BM-4 34%, BM-3 54%, BM-3 cycle 2 70%"></p>
 
 | arm | what it is | success (n) | 95% CI |
 |---|---|---|---|
 | BM-0 | standard start, frozen VLA | **80%** (40/50) | [67, 89] |
-| BM-1 | perturbed start, frozen VLA — *the collapse* | **22%** (22/100) | [15, 31] |
-| BM-2 | perturbed + the shim with untrained defaults | 27% (27/100) | [19, 36] |
-| BM-4 | perturbed + hand-set homing (a human typed the number) | 34% (34/100) | [25, 44] |
-| **BM-3** | **perturbed + ONE unattended sleep cycle** | **54%** (54/100) | **[44, 64]** |
+| BM-1 | perturbed start, frozen VLA — *the collapse* | **22%** (33/150) | [16, 29] |
+| BM-2 | perturbed + the shim with untrained defaults | 27% (40/150) | [20, 34] |
+| BM-4 | perturbed + hand-set homing (a human typed the number) | 37% (55/150) | [29, 45] |
+| **BM-3** | **perturbed + ONE unattended sleep cycle (v2)** | **54%** (54/100) | **[44, 64]** |
+| **BM-3.2** | **a second unattended sleep cycle, 24-seed gate (v3)** | **70%** (35/50) | **[56, 81]** |
 
-BM-3 vs BM-1: **2.45×**, intervals disjoint, replicated across two independent 50-episode runs on 10 evaluation layouts the optimizer and the gate never saw. The optimizer found homing on its own *and* beat the human's hand-set version (54% vs 34%): its vector also slows the chunks (time scale 0.85), lowers the grasp by 1.8 cm and narrows the approach cone.
+BM-3 vs BM-1: **2.45×** after one cycle, intervals disjoint, replicated across two independent 50-episode runs on 10 evaluation layouts the optimizer and the gate never saw; a second unattended cycle took it to **70%** on a third independent run (BM-1 on that run: 22% again). The optimizer found homing on its own *and* beat the human's hand-set version (54% vs 37%): its vector also slows the chunks (time scale 0.85, then 0.76), lowers the grasp by ~1.5 cm and narrows the approach cone. The mastery curve on the perturbed environment is **22% → 54% → 70%**, every step through the gate.
 
-It does not always work, and the repo says so: on the harder task 3 (perturbation 0.2 rad) one sleep cycle came out ≈ baseline (30% → 26%, n=100), and a 6 cm object shift is outside what this parameter file can express (recovery 0/15). Every number, with n and interval, is in **[`docs/RESULTS.md`](docs/RESULTS.md)**.
+It does not always work, and the repo says so: on the harder task 3 (perturbation 0.2 rad) one sleep cycle came out exactly at baseline (27% → 27%, n=150) and the strong gate correctly refused a second one, and a 6 cm object shift is outside what this parameter file can express (recovery 0/15). Every number, with n and interval, is in **[`docs/RESULTS.md`](docs/RESULTS.md)**.
 
 ## How it works
 
@@ -49,7 +50,7 @@ flowchart LR
 * **The policy never changes.** Everything that changes is one versioned, gated parameter file per (skill, environment) — a `skill_instance` record in the log.
 * **Success is the environment's predicate, nothing else.** No LLM ever decides whether an episode succeeded.
 * **Three disjoint seed sets** (`fleet_memory/runner/seeds.json`): the optimizer sees layouts 0–29, the gate 30–39, the evaluation 40–49. The numbers above are all on 40–49.
-* **The gate is the product.** Across the night it refused 7 of 11 candidate vectors; every refusal held up on later held-out evidence. The weak (12-seed) gate let two false positives through; the strong gate (24 seeds × 4 draws) has let none through. See `docs/RESULTS.md` "Gate tally".
+* **The gate is the product.** Across the night it refused 7 of 13 candidate vectors; every refusal held up on later held-out evidence. The weak (12-seed) gate let two false positives through (both ≈ baseline at n=100); every decision of the strong gate (24 seeds × 4 draws) — two promotions, two refusals — held up. See `docs/RESULTS.md` "Gate tally".
 * **An LLM coach exists but is optional** (Gemini or Claude, `agents/`): it writes discrete plans and lessons, may *propose* continuous values, and cannot apply them — only the optimizer's gate writes the S3 file. On this benchmark it contributed nothing measurable, and that is reported too.
 
 The nine invariants the code is written against are in [`AGENTS.md`](AGENTS.md) (vendor-neutral) / [`CLAUDE.md`](CLAUDE.md).

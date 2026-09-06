@@ -8,9 +8,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
 from build_demo_page import ARM_NAMES, pooled_reps, read_jsonl  # noqa: E402
 
-COL = {"BM-0": "#8a939e", "BM-1": "#c73e3e", "BM-2": "#c98a12", "BM-4": "#1f8a4c", "BM-3": "#3b5bdb"}
+COL = {"BM-0": "#8a939e", "BM-1": "#c73e3e", "BM-2": "#c98a12", "BM-4": "#1f8a4c", "BM-3": "#3b5bdb", "BM-3.2": "#1d3aa8"}
 LABEL = {"BM-0": "standard start", "BM-1": "perturbed start", "BM-2": "+ untrained layer",
-         "BM-4": "+ hand-set homing", "BM-3": "+ one sleep cycle"}
+         "BM-4": "+ hand-set homing", "BM-3": "+ one sleep cycle", "BM-3.2": "+ two sleep cycles"}
 
 
 def chart(rows, title, sub, path):
@@ -50,9 +50,9 @@ def chart(rows, title, sub, path):
 if __name__ == "__main__":
     reps = pooled_reps(read_jsonl(os.path.join(ROOT, "logs", "hopper", "benchmark", "reps.jsonl")))
     t0 = reps["0"]
-    rows = [{"arm": a, **t0["results"][a]} for a in ("BM-0", "BM-1", "BM-2", "BM-4", "BM-3") if a in t0["results"]]
+    rows = [{"arm": a, **t0["results"][a]} for a in ("BM-0", "BM-1", "BM-2", "BM-4", "BM-3", "BM-3.2") if a in t0["results"]]
     os.makedirs(os.path.join(ROOT, "docs", "media"), exist_ok=True)
     p = chart(rows, "LIBERO-Spatial task 0 under LIBERO-Plus robot-init perturbation (frozen SmolVLA)",
-              f"10 held-out layouts × {t0['reps']} policy-noise draws, {t0['n_runs']} independent runs · bars = success, whiskers = 95% Wilson CI",
+              f"10 held-out layouts × fresh policy-noise draws, {t0['n_runs']} independent runs, BM-3 per promoted version · whiskers = 95% Wilson CI",
               os.path.join(ROOT, "docs", "media", "headline.svg"))
     print(p, [(r["arm"], r["k"], r["n"]) for r in rows])
