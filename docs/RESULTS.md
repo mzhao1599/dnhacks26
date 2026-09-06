@@ -66,7 +66,13 @@ and gate never saw):**
 | **BM-3 perturbed + ONE unattended sleep** | **25/50 = 50%** | **[37, 63]** | 162 |
 | BM-3w perturbed + wide-search sleep (separate instance) | 21/50 = 42% | [29, 56] | 179 |
 
-BM-3 vs BM-1: 2.5×, intervals disjoint → **pass** by §13.5 on task 0. The optimizer's vector (homing + time_scale 0.85 +
+BM-3 vs BM-1: 2.5×, intervals disjoint → **pass** by §13.5 on task 0.
+
+**Same protocol on task 3** (r=0.2 perturbation; its BM-3 came from a cycle-2 promotion gated at n=12):
+BM-1 16/50 = 32% [21, 46] · BM-2 17/50 = 34% · BM-4 hand-set homing 10/50 = **20%** (homing *hurts* here) ·
+BM-3 9/50 = **18%** [10, 31] — a **false-positive promotion**: the n=12 gate accepted a vector that is worse held-out.
+With mastery v3 that is two harmful promotions from the 12-seed gate; the strong gate (24 seeds, K=4) has so far
+promoted nothing false (mastery cycle from v2: validation kept the incumbent). The strong-gate re-run on task 3 is queued. The optimizer's vector (homing + time_scale 0.85 +
 grasp offset −1.8 cm + cone 34°) beats hand-set homing alone (50% vs 34%): it found more than the switch.
 
 Verdict by the spec's own rule (§13.5), all five tasks at n=10: **collapse reproduced (80% → 14%)**; the untrained shim adds nothing
