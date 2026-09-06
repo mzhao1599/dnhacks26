@@ -7,32 +7,39 @@
 <line x1="56" x2="700" y1="162.0" y2="162.0" stroke="#eceef1"/><text x="48" y="166.0" font-size="11" fill="#8a939e" text-anchor="end">50%</text>
 <line x1="56" x2="700" y1="113.0" y2="113.0" stroke="#eceef1"/><text x="48" y="117.0" font-size="11" fill="#8a939e" text-anchor="end">75%</text>
 <line x1="56" x2="700" y1="64.0" y2="64.0" stroke="#eceef1"/><text x="48" y="68.0" font-size="11" fill="#8a939e" text-anchor="end">100%</text>
-<rect x="91.4" y="87.5" width="90.2" height="172.5" rx="3" fill="#8a939e"/>
-<line x1="136.5" x2="136.5" y1="110.7" y2="75.0" stroke="#141a22" stroke-width="1.5"/>
-<line x1="131.5" x2="141.5" y1="110.7" y2="110.7" stroke="#141a22" stroke-width="1.5"/><line x1="131.5" x2="141.5" y1="75.0" y2="75.0" stroke="#141a22" stroke-width="1.5"/>
-<text x="136.5" y="67.0" font-size="13" font-weight="600" fill="#141a22" text-anchor="middle">88%</text>
-<text x="136.5" y="278" font-size="12" font-weight="600" fill="#141a22" text-anchor="middle">BM-0</text>
-<text x="136.5" y="294" font-size="11" fill="#5c6670" text-anchor="middle">stock camera</text>
-<text x="136.5" y="310" font-size="11" fill="#8a939e" text-anchor="middle">44/50</text>
-<rect x="252.4" y="232.6" width="90.2" height="27.4" rx="3" fill="#c73e3e"/>
-<line x1="297.5" x2="297.5" y1="246.4" y2="208.7" stroke="#141a22" stroke-width="1.5"/>
-<line x1="292.5" x2="302.5" y1="246.4" y2="246.4" stroke="#141a22" stroke-width="1.5"/><line x1="292.5" x2="302.5" y1="208.7" y2="208.7" stroke="#141a22" stroke-width="1.5"/>
-<text x="297.5" y="200.7" font-size="13" font-weight="600" fill="#141a22" text-anchor="middle">14%</text>
-<text x="297.5" y="278" font-size="12" font-weight="600" fill="#141a22" text-anchor="middle">BM-1</text>
-<text x="297.5" y="294" font-size="11" fill="#5c6670" text-anchor="middle">camera tilted 6°</text>
-<text x="297.5" y="310" font-size="11" fill="#8a939e" text-anchor="middle">7/50</text>
-<rect x="413.4" y="248.2" width="90.2" height="11.8" rx="3" fill="#c98a12"/>
-<line x1="458.5" x2="458.5" y1="256.0" y2="228.2" stroke="#141a22" stroke-width="1.5"/>
-<line x1="453.5" x2="463.5" y1="256.0" y2="256.0" stroke="#141a22" stroke-width="1.5"/><line x1="453.5" x2="463.5" y1="228.2" y2="228.2" stroke="#141a22" stroke-width="1.5"/>
-<text x="458.5" y="220.2" font-size="13" font-weight="600" fill="#141a22" text-anchor="middle">6%</text>
-<text x="458.5" y="278" font-size="12" font-weight="600" fill="#141a22" text-anchor="middle">BM-2</text>
-<text x="458.5" y="294" font-size="11" fill="#5c6670" text-anchor="middle">+ untrained layer</text>
-<text x="458.5" y="310" font-size="11" fill="#8a939e" text-anchor="middle">3/50</text>
-<rect x="574.4" y="146.3" width="90.2" height="113.7" rx="3" fill="#3b5bdb"/>
-<line x1="619.5" x2="619.5" y1="173.3" y2="121.6" stroke="#141a22" stroke-width="1.5"/>
-<line x1="614.5" x2="624.5" y1="173.3" y2="173.3" stroke="#141a22" stroke-width="1.5"/><line x1="614.5" x2="624.5" y1="121.6" y2="121.6" stroke="#141a22" stroke-width="1.5"/>
-<text x="619.5" y="113.6" font-size="13" font-weight="600" fill="#141a22" text-anchor="middle">58%</text>
-<text x="619.5" y="278" font-size="12" font-weight="600" fill="#141a22" text-anchor="middle">BM-3</text>
-<text x="619.5" y="294" font-size="11" fill="#5c6670" text-anchor="middle">+ one sleep cycle</text>
-<text x="619.5" y="310" font-size="11" fill="#8a939e" text-anchor="middle">29/50</text>
+<rect x="84.3" y="87.5" width="72.1" height="172.5" rx="3" fill="#8a939e"/>
+<line x1="120.4" x2="120.4" y1="110.7" y2="75.0" stroke="#141a22" stroke-width="1.5"/>
+<line x1="115.4" x2="125.4" y1="110.7" y2="110.7" stroke="#141a22" stroke-width="1.5"/><line x1="115.4" x2="125.4" y1="75.0" y2="75.0" stroke="#141a22" stroke-width="1.5"/>
+<text x="120.4" y="67.0" font-size="13" font-weight="600" fill="#141a22" text-anchor="middle">88%</text>
+<text x="120.4" y="278" font-size="12" font-weight="600" fill="#141a22" text-anchor="middle">BM-0</text>
+<text x="120.4" y="294" font-size="11" fill="#5c6670" text-anchor="middle">stock camera</text>
+<text x="120.4" y="310" font-size="11" fill="#8a939e" text-anchor="middle">44/50</text>
+<rect x="213.1" y="232.6" width="72.1" height="27.4" rx="3" fill="#c73e3e"/>
+<line x1="249.2" x2="249.2" y1="246.4" y2="208.7" stroke="#141a22" stroke-width="1.5"/>
+<line x1="244.2" x2="254.2" y1="246.4" y2="246.4" stroke="#141a22" stroke-width="1.5"/><line x1="244.2" x2="254.2" y1="208.7" y2="208.7" stroke="#141a22" stroke-width="1.5"/>
+<text x="249.2" y="200.7" font-size="13" font-weight="600" fill="#141a22" text-anchor="middle">14%</text>
+<text x="249.2" y="278" font-size="12" font-weight="600" fill="#141a22" text-anchor="middle">BM-1</text>
+<text x="249.2" y="294" font-size="11" fill="#5c6670" text-anchor="middle">camera tilted 6°</text>
+<text x="249.2" y="310" font-size="11" fill="#8a939e" text-anchor="middle">7/50</text>
+<rect x="341.9" y="248.2" width="72.1" height="11.8" rx="3" fill="#c98a12"/>
+<line x1="378.0" x2="378.0" y1="256.0" y2="228.2" stroke="#141a22" stroke-width="1.5"/>
+<line x1="373.0" x2="383.0" y1="256.0" y2="256.0" stroke="#141a22" stroke-width="1.5"/><line x1="373.0" x2="383.0" y1="228.2" y2="228.2" stroke="#141a22" stroke-width="1.5"/>
+<text x="378.0" y="220.2" font-size="13" font-weight="600" fill="#141a22" text-anchor="middle">6%</text>
+<text x="378.0" y="278" font-size="12" font-weight="600" fill="#141a22" text-anchor="middle">BM-2</text>
+<text x="378.0" y="294" font-size="11" fill="#5c6670" text-anchor="middle">+ untrained layer</text>
+<text x="378.0" y="310" font-size="11" fill="#8a939e" text-anchor="middle">3/50</text>
+<rect x="470.7" y="146.3" width="72.1" height="113.7" rx="3" fill="#3b5bdb"/>
+<line x1="506.8" x2="506.8" y1="173.3" y2="121.6" stroke="#141a22" stroke-width="1.5"/>
+<line x1="501.8" x2="511.8" y1="173.3" y2="173.3" stroke="#141a22" stroke-width="1.5"/><line x1="501.8" x2="511.8" y1="121.6" y2="121.6" stroke="#141a22" stroke-width="1.5"/>
+<text x="506.8" y="113.6" font-size="13" font-weight="600" fill="#141a22" text-anchor="middle">58%</text>
+<text x="506.8" y="278" font-size="12" font-weight="600" fill="#141a22" text-anchor="middle">BM-3</text>
+<text x="506.8" y="294" font-size="11" fill="#5c6670" text-anchor="middle">+ one sleep cycle</text>
+<text x="506.8" y="310" font-size="11" fill="#8a939e" text-anchor="middle">29/50</text>
+<rect x="599.5" y="228.6" width="72.1" height="31.4" rx="3" fill="#8fa0e6"/>
+<line x1="635.6" x2="635.6" y1="243.7" y2="204.1" stroke="#141a22" stroke-width="1.5"/>
+<line x1="630.6" x2="640.6" y1="243.7" y2="243.7" stroke="#141a22" stroke-width="1.5"/><line x1="630.6" x2="640.6" y1="204.1" y2="204.1" stroke="#141a22" stroke-width="1.5"/>
+<text x="635.6" y="196.1" font-size="13" font-weight="600" fill="#141a22" text-anchor="middle">16%</text>
+<text x="635.6" y="278" font-size="12" font-weight="600" fill="#141a22" text-anchor="middle">BM-3</text>
+<text x="635.6" y="294" font-size="11" fill="#5c6670" text-anchor="middle">+ sleep, calibration frozen</text>
+<text x="635.6" y="310" font-size="11" fill="#8a939e" text-anchor="middle">8/50</text>
 </svg>
