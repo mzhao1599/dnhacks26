@@ -41,3 +41,9 @@ cam-t0-moved-a80 | a80 | export FM_LLM=mock; python scripts/exp/camera_cycle.py 
 # --- unattended recovery after a camera bump (protocol P: baseline stock camera -> tilted -6 deg -> drift -> auto-sleep -> recovery) ---
 protocolP-camera-t0-a80 | a80 | export FM_LLM=mock FM_AUTO_SLEEP=medium; python -m fleet_memory.runner.pool --env libero --policy smolvla --suite libero_spatial --task 0 --arm B --protocol P --n-stage 15 --perturb-env '{"dimension":"camera","view":"0_0_100_2_354"}' --workers 4 --log $FM_LOGS/protocol_cam/events.jsonl
 protocolP-camera-t0-a100 | a100 | export FM_LLM=mock FM_AUTO_SLEEP=medium; python -m fleet_memory.runner.pool --env libero --policy smolvla --suite libero_spatial --task 0 --arm B --protocol P --n-stage 15 --perturb-env '{"dimension":"camera","view":"0_0_100_2_354"}' --workers 4 --log $FM_LOGS/protocol_cam/events.jsonl
+# --- cpu tier (normal partition, no GPU; ~1/3 MIG slice per 32-core node, own numerics -> arms compared within a job only) ---
+cam-t2-tilt-cpu | cpu | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --task 2 --view 0_0_100_6_6 --bm0 --reps 5 --workers 16
+cam-t3-tilt-cpu | cpu | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --task 3 --view 0_0_100_8_6 --bm0 --reps 5 --workers 16
+cam-t4-tilt-cpu | cpu | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --task 4 --view 0_0_100_10_6 --bm0 --reps 5 --workers 16
+cam-t0-moved-cpu | cpu | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --view 11_15_100_0_0 --bm0 --reps 5 --workers 16
+cam-probe-cpu | cpu | export FM_LLM=mock; python scripts/exp/camera_probe.py 0 1 16

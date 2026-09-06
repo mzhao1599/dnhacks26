@@ -47,7 +47,7 @@ def main():
         cfg = cfgs[a.config_index]
     tag = f"plus_camera_{cfg['view']}" + ("_act" if a.act else "")
     lock_dir = L + "/locks"; os.makedirs(lock_dir, exist_ok=True)
-    lock = f"{lock_dir}/t{a.task}_{tag}.lock"
+    lock = f"{lock_dir}/t{a.task}_{tag}_c{a.cycles}_r{a.rep_offset}.lock"
     try:
         fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, f"{os.environ.get('SLURM_JOB_ID', '?')}\n".encode()); os.close(fd)
     except FileExistsError:
