@@ -166,7 +166,8 @@ def test_consolidate_promotes_when_gate_passes(tmp_path):
     tpl = FakeCfg(log_path=store.path, perturbation={"shift_xy": [0.02, 0.0]})
     si_id = skill_instance_id("pick_bowl_to_plate", C.environment_id_of(tpl))
     runner = FakeRunner(store, si_id, hm)
-    cfg = C.ConsolidationConfig.small(iterations=6, population=24, workers=1)
+    # v3.2 added 4 camera-calibration dims; freeze them so this stays the 17-dim quadratic the budget was tuned for
+    cfg = C.ConsolidationConfig.small(iterations=6, population=24, workers=1, frozen_dims=list(P.CALIB_NAMES))
     end = C.consolidate(store, si_id, tpl, cfg, trigger="drift", run_many=runner, rng=np.random.default_rng(0))
 
     assert end.phase == "end" and end.trigger == "drift" and end.incumbent_version == 1

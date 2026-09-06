@@ -7,7 +7,7 @@ rsync -aq --include='*/' --include='*.jsonl' --include='*.png' --exclude='*' hop
 python3 - <<'PY'
 import glob, json, os
 parts = ["logs/hopper/phase0/events.jsonl", "logs/hopper/probe_v31/*.jsonl", "logs/hopper/v31/events.jsonl",
-         "logs/hopper/benchmark/events.jsonl", "logs/hopper/protocol/events.jsonl", "logs/hopper/armC/events.jsonl"]
+         "logs/hopper/benchmark/events.jsonl", "logs/hopper/bench_camera/*.jsonl", "logs/hopper/protocol/events.jsonl", "logs/hopper/armC/events.jsonl"]
 n = 0
 with open("logs/demo.jsonl", "w") as out:
     for pat in parts:

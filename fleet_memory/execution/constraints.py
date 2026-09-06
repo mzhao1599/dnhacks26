@@ -36,6 +36,9 @@ class ConstraintSet:
     time_scale: float = 1.0
     # --- v3.1: approach-phase blending strength; 0 = approach shaping off (waypoint/cone/offset inert) ---
     blend_alpha: float = 0.0
+    # --- v3.2: camera calibration {roll_deg, zoom, shift_xy} warped onto the external camera frame before the
+    #     policy sees it (execution/calib.py); None = identity ---
+    image_calib: dict[str, Any] | None = None
     # --- bookkeeping ---
     applied_edits: list[dict[str, Any]] = field(default_factory=list)
 
@@ -49,6 +52,7 @@ class ConstraintSet:
             and self.pre_grasp_waypoint is None
             and self.abort_predicate is None
             and self.time_scale == 1.0
+            and not self.image_calib
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -66,6 +70,7 @@ class ConstraintSet:
             "abort_lift_m": self.abort_lift_m,
             "time_scale": self.time_scale,
             "blend_alpha": self.blend_alpha,
+            "image_calib": None if not self.image_calib else dict(self.image_calib),
             "applied_edits": list(self.applied_edits),
         }
 
@@ -84,6 +89,8 @@ class ConstraintSet:
                 setattr(c, k, d[k])
         if d.get("pre_grasp_waypoint") is not None:
             c.pre_grasp_waypoint = np.asarray(d["pre_grasp_waypoint"], dtype=np.float32)
+        if d.get("image_calib"):
+            c.image_calib = dict(d["image_calib"])
         c.applied_edits = list(d.get("applied_edits", []))
         return c
 

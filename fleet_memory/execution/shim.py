@@ -7,6 +7,9 @@ Transforms, in order per act():
                       blend_mode="blend" (v3 default): during the APPROACH PHASE only (gripper open and
                       ||ee-target|| < params.APPROACH_RADIUS_M) and until the waypoint is reached,
                       dpos = (1-alpha)*dpos_vla + alpha*dpos_toward(target+pre_grasp_waypoint)
+  (-1) camera calib   v3.2: constraints.image_calib (roll/zoom/shift) is warped onto obs.images["agentview"]
+                      before the policy sees it (execution/calib.py). Only the policy's copy changes; the
+                      tracker, phase detector and envelope keep the env's observation.
   (0) time_scale      the policy chunk is resampled in time: cumsum of the 6 delta dims, linear
                       interpolation onto round(k/time_scale) rows (>=1), diff back; gripper by nearest
   (2) grasp offset    the first close the policy commands near the target is held while a controller
@@ -26,6 +29,7 @@ import numpy as np
 
 from fleet_memory.envs.base import Obs, TaskInfo
 from fleet_memory.execution import params as s3
+from fleet_memory.execution.calib import calibrate_obs
 from fleet_memory.execution.constraints import ConstraintSet
 from fleet_memory.execution.detectors import Tracker, evaluate_predicate, gripper_closed
 from fleet_memory.execution.envelope import Envelope
@@ -153,7 +157,7 @@ class ExecutionShim:
         if self._pending is not None:
             chunk, self._pending = self._pending, None
         else:
-            chunk = self._time_scale(clip_action(self.policy.act(obs)).reshape(-1, 7).copy(), cs)   # (0)
+            chunk = self._time_scale(clip_action(self.policy.act(self._calibrated(obs, cs))).reshape(-1, 7).copy(), cs)   # (0)
         near = evaluate_predicate("ee_near_target", obs, self.target, self.tracker)
         if near and not closed and not self._offset_done and np.any(cs.grasp_offset) and tgt is not None:
             close_rows = np.flatnonzero(chunk[:, 6] > 0)
@@ -203,10 +207,21 @@ class ExecutionShim:
         self._pending: np.ndarray | None = None  # policy rows held back by the offset controller
         self._retry: dict | None = None
         self._ctrl_steps = 0
+        self._calib_logged = False
         self.phase = "policy"
 
     def _event(self, kind: str, **kw) -> None:
         self.events.append({"t": self._t, "kind": kind, **kw})
+
+    def _calibrated(self, obs: Obs, cs: ConstraintSet) -> Obs:
+        """(-1) the policy's view of the external camera, re-calibrated by cs.image_calib (identity: obs itself)."""
+        calib = getattr(cs, "image_calib", None)
+        if not calib:
+            return obs
+        if not self._calib_logged:
+            self._calib_logged = True
+            self._event("image_calib_active", **{k: v for k, v in calib.items()})
+        return calibrate_obs(obs, calib)
 
     def _emit(self, chunk: ActionChunk) -> ActionChunk:
         chunk = clip_action(chunk).reshape(-1, 7)

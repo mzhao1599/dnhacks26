@@ -2,7 +2,8 @@
 # Keep our GPU slots full from a task queue. Runs on the Hopper login node (only sbatch/squeue, no compute):
 #   nohup bash scripts/hopper/queue_runner.sh > logs/queue_runner.log 2>&1 &
 # Queue file: scripts/hopper/queue.txt, one task per line:   name | tier | command
-#   tier = a100 | mig ; command runs inside `--wrap` after the standard env prefix (see PREFIX below).
+#   tier = a100 | mig (3g.40gb) | mig1 (1g.10gb) | mig2 (2g.20gb); command runs inside `--wrap` after the standard
+#   env prefix (see PREFIX below). All mig* tiers share the MAX_MIG cap and the osmesa prefix.
 # Lines starting with # are ignored. A task is submitted once (recorded in logs/queue.done) when
 # fewer than MAX_A100 / MAX_MIG of our jobs are running+pending on that tier. Append lines any time.
 set -u
@@ -11,7 +12,7 @@ REPO=$ROOT/dnhacks26
 Q=$REPO/scripts/hopper/queue.txt
 DONE=$ROOT/logs/queue.done
 MAX_A100=${MAX_A100:-6}
-MAX_MIG=${MAX_MIG:-2}
+MAX_MIG=${MAX_MIG:-3}
 POLL=${POLL:-60}
 mkdir -p $ROOT/logs/slurm; touch "$DONE"
 PREFIX_A100='source scripts/hopper/env.sh; export FM_POLICY_KWARGS="{\"n_action_steps\":10}" FM_LIBERO_PLUS=/scratch/ezhao2/fleet-memory/LIBERO-plus PYTHONPATH=$FM_REPO; cd $FM_REPO;'
@@ -37,8 +38,9 @@ while true; do
     esac
     if [ "$tier" = "a100" ] && [ "$na" -lt "$MAX_A100" ]; then
       jid=$(sbatch --parsable $dep -p gpuq -q gpu --gres=gpu:A100.40gb:1 -c 8 --mem=48G -t 04:00:00 -J "q-a100-$name" -o "$ROOT/logs/slurm/q_${name}_%j.out" --wrap "$PREFIX_A100 $cmd; echo QTASK_DONE $name") && { echo "$name" >> "$DONE"; echo "$(date +%H:%M) submitted $name ($jid) on a100 ${dep}"; na=$((na+1)); }
-    elif [ "$tier" = "mig" ] && [ "$nm" -lt "$MAX_MIG" ]; then
-      jid=$(sbatch --parsable $dep -p gpuq -q gpu --gres=gpu:3g.40gb:1 -c 8 --mem=48G -t 04:00:00 -J "q-mig-$name" -o "$ROOT/logs/slurm/q_${name}_%j.out" --wrap "$PREFIX_MIG $cmd; echo QTASK_DONE $name") && { echo "$name" >> "$DONE"; echo "$(date +%H:%M) submitted $name ($jid) on mig ${dep}"; nm=$((nm+1)); }
+    elif { [ "$tier" = "mig" ] || [ "$tier" = "mig1" ] || [ "$tier" = "mig2" ]; } && [ "$nm" -lt "$MAX_MIG" ]; then
+      case "$tier" in mig1) gres=gpu:1g.10gb:1;; mig2) gres=gpu:2g.20gb:1;; *) gres=gpu:3g.40gb:1;; esac
+      jid=$(sbatch --parsable $dep -p gpuq -q gpu --gres=$gres -c 8 --mem=48G -t 04:00:00 -J "q-mig-$name" -o "$ROOT/logs/slurm/q_${name}_%j.out" --wrap "$PREFIX_MIG $cmd; echo QTASK_DONE $name") && { echo "$name" >> "$DONE"; echo "$(date +%H:%M) submitted $name ($jid) on $tier ($gres) ${dep}"; nm=$((nm+1)); }
     fi
   done < "$Q"
   sleep "$POLL"
