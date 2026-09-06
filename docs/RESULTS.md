@@ -191,6 +191,11 @@ Second probe on the CPU tier (own numerics, same 10 layouts): stock 8/10 · tilt
 | 3 | `0_0_100_8_6` | 33/50 = **66%** [52, 78], 131 steps | 4/50 = **8%** [3, 19], 209 steps | 4/50 = 8% [3, 19], 209 steps | **9/50 = 18%** [10, 31], 200 steps — partial (2.3×, intervals overlap) | passed: 4.12 → 3.75, success 12.5% → 20.8% (+8.3 pp) on 24 gate layouts (504 rollouts, 35 min) | v2: `cam_roll` −10.1° (the view turns the axis 8° about z), `cam_shift_xy` = (+0.22, +0.14), `cam_zoom` 0.98, `time_scale` 0.82, `gripper_cmd` 0.82 |
 | 4 | `0_0_100_10_6` | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
 
+****Second sleep cycle on task 0 (from v2, half budget: CEM 16 × 3 iterations, K=4, one A100, 232 rollouts, 14 min):** the fresh-seed
+validation chose the **incumbent** (v2 cost 2.02 vs 2.48 / 2.88 / 2.91 / 3.40 for the final mean and the per-iteration bests), so no
+candidate reached the gate and v2 stays — the same refusal behaviour the strong gate showed on the robot-init tasks. Held-out re-eval of
+v2 on 2 fresh noise draws: PENDING.
+
 **Protocol P with a camera bump — unattended recovery achieved** (task 0, arm B, `--perturb-env` view `0_0_100_2_354`, n=15/stage,
 `medium` auto-sleep, 16-seed gate, one A100): baseline (stock camera) **10/15 = 67%** (cost 2.43–2.86) → camera tilted **2/10 = 20%**
 (cost 4.59) → `drift_trigger` fired (EWMA 4.70 vs baseline 2.43, ratio 1.94) → auto-sleep: 568 rollouts, 32 min, gate **passed**
