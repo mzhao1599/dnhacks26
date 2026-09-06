@@ -1,0 +1,12 @@
+# name | tier | command   (runs after the env prefix; keep names unique — a name is submitted once)
+# --- evidence that strengthens the current story ---
+mastery-heldout-rep2 | a100 | export FM_LLM=mock; python scripts/exp/mastery_heldout.py
+armC-perturbed-task0 | a100 | unset FM_LLM; python scripts/exp/arm_d.py 0 C
+reps-task3-rep2 | a100 | export FM_LLM=mock; python scripts/exp/bm_reps.py 3 5 5 --bm0
+cycle2-task3 | a100 | export FM_LLM=mock; python -m fleet_memory.runner.benchmark --policy smolvla --suite libero_spatial --tasks 3 --dimension robot_init --config-index 0 --arms BM-3 --consolidate small --cem '{"population":24,"elites":6,"iterations":4,"seeds_per_candidate":4,"gate_seeds":24}' --n-per-task 10 --workers 4 --log $FM_LOGS/benchmark/events.jsonl; python scripts/exp/bm_reps.py 3 5 10
+# --- second LIBERO-10 task for mastery breadth (phase0 -> one sleep -> held-out eval) ---
+mastery2-phase0 | a100 | export FM_LLM=mock; python -m fleet_memory.runner.pool --env libero --policy smolvla --suite libero_10 --task 0 --arm A --n 20 --workers 4 --seed-set train --log $FM_LOGS/mastery2/events.jsonl --make-reference
+mastery2-sleep | a100 | export FM_LLM=mock; python -m fleet_memory.runner.consolidate --env libero --policy smolvla --suite libero_10 --task 0 --log $FM_LOGS/mastery2/events.jsonl --small --workers 4 --trigger manual; python -m fleet_memory.runner.pool --env libero --policy smolvla --suite libero_10 --task 0 --arm B --n 20 --workers 4 --seed-set train --log $FM_LOGS/mastery2/events.jsonl
+# --- MIG-tier (slow renderer): cheap breadth ---
+reps-task2 | mig | export FM_LLM=mock; python scripts/exp/bm_reps.py 2 3
+reps-task4 | mig | export FM_LLM=mock; python scripts/exp/bm_reps.py 4 3

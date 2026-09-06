@@ -18,7 +18,7 @@ def incumbent(log, si_id):
     return best["params"] if best else None
 
 
-def main(task="0", reps=2, workers=4):
+def main(task="0", reps=2, workers=4, arms_wanted=("B", "D")):
     L = os.environ["FM_LOGS"] + "/benchmark"
     store = EventStore(L + "/armD.jsonl")
     cfg = [c for c in list_configs("robot_init", "libero_spatial") if str(c.get("base_task_idx")) == task][0]
@@ -27,7 +27,11 @@ def main(task="0", reps=2, workers=4):
                      log_path=L + "/armD.jsonl", env_kwargs={"config": cfg}, environment_tag="plus_robot_init_0_armD", s3_params=v)
     seeds = [5040 + i + 50 * r for r in range(reps) for i in range(10)]
     res = {}
-    for name, c in {"B (vector only)": base, "D (vector + planner + coach)": dataclasses.replace(base, arm="D")}.items():
+    all_arms = {"B": ("B (vector only)", base),
+                "C": ("C (planner + coach, no vector)", dataclasses.replace(base, arm="C", s3_params=None)),
+                "D": ("D (vector + planner + coach)", dataclasses.replace(base, arm="D"))}
+    for key in arms_wanted:
+        name, c = all_arms[key]
         eps = run_many([dataclasses.replace(c, seed=s) for s in seeds], workers)
         k = sum(e.outcome.env_success for e in eps); lo, hi = wilson_ci(k, len(eps))
         iv = sum(len(e.interventions) for e in eps)
@@ -38,4 +42,4 @@ def main(task="0", reps=2, workers=4):
 
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else "0")
+    main(sys.argv[1] if len(sys.argv) > 1 else "0", arms_wanted=tuple(sys.argv[2].split(",")) if len(sys.argv) > 2 else ("B", "D"))
