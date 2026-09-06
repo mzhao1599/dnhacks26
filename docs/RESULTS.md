@@ -25,41 +25,54 @@ identity = pure pass-through). Arm A vs identity-B disagree per seed in both dir
 hence per-episode policy seeding. Homing must target the env's own reset pose (LIBERO-10 starts at z≈1.17, not the
 0.70 an early adapter reported).
 
-## 3. Sleep loop on the real env (LIBERO-10 task 3)
-- v3.0 semantics (blending on by default): CEM 16×2×4 + gate 16 seeds, 192 rollouts, 25 min → **gate passed, v1→v2
-  promoted** (incumbent cost 3.56 → lower); arm B after sleep 55%/380 steps — i.e. it merely undid the harmful
-  default (v1 was handicapped), not an improvement over the raw VLA.
-- v3.1 semantics (identity = pass-through), cycle 1: opt-cost 1.75 on its 2 seeds/candidate, but on the 12 fresh
-  gate seeds **3.53 vs incumbent 2.09, −37 pp** → **gate refused**. Winner's curse at K=2 seeds; the gate is the whole
-  defence and it worked. Cycle 2/3: PENDING.
-- Gate resolution at n=12–16 seeds and ~50% success is ±20 pp: fine for large effects (homing), not for
-  time-scale-sized ones. Report gate pass rate honestly.
+## 3. Sleep loop on the real env — mastery (LIBERO-10 task 3, arm B = shim + incumbent, 20 train seeds after each cycle)
+| cycle | gate | incumbent after | arm B success | steps | cost |
+|---|---|---|---|---|---|
+| — (identity v1) | — | v1 | 65% [43, 82] | 341 | 2.46 |
+| 1 | refused (cand 3.53 vs 2.09 on gate seeds, −37 pp) | v1 | — | — | — |
+| 2 | passed | **v2** | **80% [58, 92]** | **275** | **1.95** |
+| 3 | passed | v3 | 60% [39, 78] | 354 | 2.57 |
 
-## 4. LIBERO-Plus robot-initial-state benchmark (LIBERO-Spatial, our own base numbers — π₀.₅ adapter unverified)
-Perturbation = LIBERO-Plus `initstate_N` (joint qpos offset r=0.1 rad, seed-42 table), re-applied after
-`set_init_state` (their loop's `set_init_state` overwrites it; only the OSC nullspace target survives — see
-`scripts/hopper/LIBERO_PLUS.md`). Eval seeds = init states 40–49, never seen by optimizer (0–29) or gate (30–39).
+The gate is the whole defence and it works (cycle 1: a lucky-on-2-seeds candidate refused), but its resolution at
+n=12–16 seeds and ~50% success is ±20 pp: cycle 3's promotion regressed on the train seeds. Gate pass rate 2/3.
+The mastery curve is v1 2.46 → v2 1.95 → v3 2.57: not monotone; report as measured. (An earlier v3.0-semantics
+cycle also promoted, 3.56 → lower, but its v1 was the harmful blending default, so that was undoing damage, not mastery.)
+Seeded arm A baseline on the same seeds: PENDING (Phase 0's 55%/378 predates policy seeding).
 
-Task 0 probe (10 eval seeds each):
-| arm | success | steps |
-|---|---|---|
-| BM-0 standard | 8/10 | 102 |
-| BM-1 perturbed | 3/10 | 178 |
-| BM-2 perturbed + untrained shim | 4/10 | 161 |
-| BM-4 perturbed + hand-set homing | 6/10 | 136 |
+## 4. LIBERO-Plus robot-initial-state benchmark (LIBERO-Spatial, SmolVLA, our own base numbers)
+Perturbation = LIBERO-Plus `initstate_N` joint offset (r=0.1 rad, seed-42 table; task 3 drew r=0.2), re-applied
+after `set_init_state` (their loop's `set_init_state` overwrites it — `scripts/hopper/LIBERO_PLUS.md`). Eval seeds =
+init states 40–49 per task, never seen by the optimizer (0–29) or the gate (30–39). Policy noise seeded per episode.
 
-BM-3 (perturbed + consolidated incumbent after ONE unattended sleep on opt/gate seeds): PENDING per task 0–4; pooled
-n=50 via `python -m fleet_memory.runner.benchmark --aggregate`. During CEM on task 0, homing-on rollouts succeeded
-50% vs 29% homing-off and the population drifted toward homing (the optimizer is finding the switch). Tasks 1–2 are
-hard for this policy even with EE-space homing (≤6%): the joint configuration still differs, which changes the
-wrist-camera view — a limit of EE-space homing that joint-space homing on a real controller would not have.
+| task | BM-0 standard | BM-1 perturbed | BM-2 + untrained shim | BM-4 + hand-set homing | BM-3 after ONE unattended sleep |
+|---|---|---|---|---|---|
+| 0 | 9/10 | 5/10 | 4/10 | 4/10 | 5/10 (gate: 17%→67% on gate seeds; eval: no change) |
+| 1 | 6/10 | 0/10 | 0/10 | 2/10 | gate refused → cycle 2: PENDING |
+| 2 | 10/10 | 0/10 | 0/10 | 0/10 | 0/10 (gate passed on cost only, 0%→0%) |
+| 3 | 9/10 | 2/10 | 2/10 | 3/10 | gate refused → cycle 2: PENDING |
+| 4 | 6/10 | 0/10 | 0/10 | 1/10 | gate refused → cycle 2: PENDING |
+| **pooled** | **40/50 = 80%** | **7/50 = 14% [7, 26]** | 6/50 = 12% | **10/50 = 20% [11, 33]** | 5/20 on tasks 0+2 (= BM-1 there) |
+
+Wide-search variant (task 0, σ₀=0.5, separate skill instance, MIG/OSMesa renderer): BM-1 3/10 → BM-4 5/10 →
+**BM-3 7/10** (gate passed 2.94 → 2.72). Same 10 eval layouts; renderer differs from the A100 run, so BM-1 differs too.
+
+Verdict by the spec's own rule (§13.5): **collapse reproduced (80% → 14%)**; the untrained shim adds nothing
+(BM-2 ≈ BM-1); hand-set homing recovers 6 points pooled (**partial**, CIs overlap); one unattended sleep found homing
+on task 0 (gate +50 pp) but the eval layouts did not confirm it (**fail on the main run, partial on the wide run**).
+Per-seed view: on task 0 BM-1 succeeds on layouts 40–44 and fails 45–49; homing flips that (fails 40–42, rescues
+47–49) — it moves which layouts succeed rather than expanding the set, and 10 layouts per task cannot resolve that.
+BM-1 vs BM-4 on all 50 init states of tasks 0 and 3 (n=100/arm; hand-set → no held-out concern): PENDING.
+Tasks 1–2 are hard even with EE-space homing: the joint configuration still differs (wrist-camera view), a limit
+joint-space homing on a real controller would not have.
 
 ## 5. Arm C (Gemini planner `gemini-3.7-flash` + inner coach `gemini-3.1-pro-preview`), LIBERO-10 task 3
-First run (12 seeds): 17%, 173 mean steps — plans were sensible (reach/grasp/lift/place/close, canonical instruction,
-no prose leaks, 0 interventions) but the planner's per-subtask step budgets (~460 total) truncated the VLA.
-Fixed (plan exhaustion no longer ends the episode); rerun on 20 seeds: PENDING.
+First run (12 seeds): 17%, 173 mean steps — plans sensible (reach/grasp/lift/place/close, canonical instruction,
+no prose leaks, 0 interventions) but per-subtask step budgets (~460 total) truncated the VLA. Fixed (plan exhaustion
+no longer ends the episode). Rerun, 20 seeds: **75% [53, 89], 295 steps** — i.e. ≈ the identity-shim arm (80%/294):
+the S1 planner neither helps nor hurts this single-skill task once it stops truncating.
 
-## 6. Protocol P (baseline → shift bowl 6 cm → drift → auto-sleep → recovery), LIBERO-Spatial task 0: PENDING.
+## 6. Protocol P (LIBERO-Spatial task 0): baseline 8/15 (cost 3.00, 144 steps) → bowl shifted 6 cm → 1/5 →
+**drift_trigger fired unattended** (EWMA cost 4.43 vs baseline 2.37) → auto-sleep (small) running; recovery stage PENDING.
 
 ## Honesty lines
 - Base numbers are ours (SmolVLA), on LIBERO-Plus's exact robot-init perturbation; the CVPR table is π₀/OpenVLA.
