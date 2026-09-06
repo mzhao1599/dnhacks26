@@ -10,7 +10,7 @@ ROOT=/scratch/ezhao2/fleet-memory
 REPO=$ROOT/dnhacks26
 Q=$REPO/scripts/hopper/queue.txt
 DONE=$ROOT/logs/queue.done
-MAX_A100=${MAX_A100:-4}
+MAX_A100=${MAX_A100:-6}
 MAX_MIG=${MAX_MIG:-2}
 POLL=${POLL:-60}
 mkdir -p $ROOT/logs/slurm; touch "$DONE"
@@ -25,12 +25,20 @@ while true; do
   na=$(count a100); nm=$(count mig)
   while IFS= read -r line; do
     [ -z "$line" ] && continue; case "$line" in \#*) continue;; esac
-    name=$(echo "$line" | cut -d'|' -f1 | xargs); tier=$(echo "$line" | cut -d'|' -f2 | xargs); cmd=$(echo "$line" | cut -d'|' -f3- | sed 's/^ *//')
+    name=$(echo "$line" | cut -d'|' -f1 | xargs); tierf=$(echo "$line" | cut -d'|' -f2 | xargs); cmd=$(echo "$line" | cut -d'|' -f3- | sed 's/^ *//')
     grep -qx "$name" "$DONE" && continue
+    # tier field: "a100" | "mig", optionally followed by "after=<name>" -> slurm afterany dependency on that
+    # task's job (looked up by job name while it is still queued/running; no-op once it has finished).
+    tier=${tierf%% *}; dep=""
+    case "$tierf" in *after=*)
+      after=${tierf##*after=}
+      djid=$(squeue -u ezhao2 -h -o "%i %j" | awk -v a="q-a100-$after" -v m="q-mig-$after" -v r="$after" '$2==a||$2==m||$2==r{print $1; exit}')
+      [ -n "$djid" ] && dep="--dependency=afterany:$djid";;
+    esac
     if [ "$tier" = "a100" ] && [ "$na" -lt "$MAX_A100" ]; then
-      jid=$(sbatch --parsable -p gpuq -q gpu --gres=gpu:A100.40gb:1 -c 8 --mem=48G -t 04:00:00 -J "q-a100-$name" -o "$ROOT/logs/slurm/q_${name}_%j.out" --wrap "$PREFIX_A100 $cmd; echo QTASK_DONE $name") && { echo "$name" >> "$DONE"; echo "$(date +%H:%M) submitted $name ($jid) on a100"; na=$((na+1)); }
+      jid=$(sbatch --parsable $dep -p gpuq -q gpu --gres=gpu:A100.40gb:1 -c 8 --mem=48G -t 04:00:00 -J "q-a100-$name" -o "$ROOT/logs/slurm/q_${name}_%j.out" --wrap "$PREFIX_A100 $cmd; echo QTASK_DONE $name") && { echo "$name" >> "$DONE"; echo "$(date +%H:%M) submitted $name ($jid) on a100 ${dep}"; na=$((na+1)); }
     elif [ "$tier" = "mig" ] && [ "$nm" -lt "$MAX_MIG" ]; then
-      jid=$(sbatch --parsable -p gpuq -q gpu --gres=gpu:3g.40gb:1 -c 8 --mem=48G -t 04:00:00 -J "q-mig-$name" -o "$ROOT/logs/slurm/q_${name}_%j.out" --wrap "$PREFIX_MIG $cmd; echo QTASK_DONE $name") && { echo "$name" >> "$DONE"; echo "$(date +%H:%M) submitted $name ($jid) on mig"; nm=$((nm+1)); }
+      jid=$(sbatch --parsable $dep -p gpuq -q gpu --gres=gpu:3g.40gb:1 -c 8 --mem=48G -t 04:00:00 -J "q-mig-$name" -o "$ROOT/logs/slurm/q_${name}_%j.out" --wrap "$PREFIX_MIG $cmd; echo QTASK_DONE $name") && { echo "$name" >> "$DONE"; echo "$(date +%H:%M) submitted $name ($jid) on mig ${dep}"; nm=$((nm+1)); }
     fi
   done < "$Q"
   sleep "$POLL"

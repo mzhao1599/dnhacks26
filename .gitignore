@@ -8,3 +8,5 @@ logs/runs/
 .pytest_cache/
 .DS_Store
 .env
+logs/hopper/**/*.jsonl
+dashboard/artifact.html

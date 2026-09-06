@@ -8,5 +8,9 @@ cycle2-task3 | a100 | export FM_LLM=mock; python -m fleet_memory.runner.benchmar
 mastery2-phase0 | a100 | export FM_LLM=mock; python -m fleet_memory.runner.pool --env libero --policy smolvla --suite libero_10 --task 0 --arm A --n 20 --workers 4 --seed-set train --log $FM_LOGS/mastery2/events.jsonl --make-reference
 mastery2-sleep | a100 | export FM_LLM=mock; python -m fleet_memory.runner.consolidate --env libero --policy smolvla --suite libero_10 --task 0 --log $FM_LOGS/mastery2/events.jsonl --small --workers 4 --trigger manual; python -m fleet_memory.runner.pool --env libero --policy smolvla --suite libero_10 --task 0 --arm B --n 20 --workers 4 --seed-set train --log $FM_LOGS/mastery2/events.jsonl
 # --- MIG-tier (slow renderer): cheap breadth ---
-reps-task2 | mig | export FM_LLM=mock; python scripts/exp/bm_reps.py 2 3
+reps-task2b | mig | export FM_LLM=mock; python scripts/exp/bm_reps.py 2 3
 reps-task4 | mig | export FM_LLM=mock; python scripts/exp/bm_reps.py 4 3
+# --- in-plan: recovery objective (protocol P) with a shift the S3 vector can express (2.5 cm < the ±3 cm approach-offset bound; the 6 cm run was 0/15) ---
+protocolP-25mm | a100 | export FM_LLM=mock FM_AUTO_SLEEP=small; python -m fleet_memory.runner.pool --env libero --policy smolvla --suite libero_spatial --task 0 --arm B --protocol P --n-stage 15 --perturb '{"shift_xy":[0.025,0.0]}' --workers 4 --log $FM_LOGS/protocol25/events.jsonl
+# --- in-plan: arm D (the system) on perturbed task 0 with the coach JSON-truncation fix (agents/llm.py) ---
+armD-task0-coachfix | a100 | unset FM_LLM; python scripts/exp/arm_d.py 0 B,C,D
