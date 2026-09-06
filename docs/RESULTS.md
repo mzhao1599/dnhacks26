@@ -181,7 +181,7 @@ cache, fixed in `runner/pool.py`).
 **Sleep cycle + held-out reps (10 eval layouts × 5 noise draws, n=50/arm), strong gate (24 gate layouts × 4 draws):**
 | task | view | BM-0 stock | BM-1 camera moved | BM-2 identity shim | BM-3 after one sleep | gate | promoted vector |
 |---|---|---|---|---|---|---|---|
-| 0 | `0_0_100_2_354` (tilt −6°) | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
+| 0 | `0_0_100_2_354` (tilt −6°) | PENDING | PENDING | PENDING | PENDING | **passed**: cost 4.04 → 1.89, success 12.5% → 66.7% (+54 pp) on 24 gate layouts; 504 rollouts, 31 min on an A100 | v2: `cam_shift_xy` = (−0.17, −0.18) (frame moved up/left by ~17% — the direction that undoes the tilt), `cam_zoom` 1.09, `cam_roll` 2.0°, `time_scale` 0.64, `gripper_cmd` 0.71; blend off, homing off |
 | 0 | same, action dims only (`--act`) | — | — | — | PENDING | PENDING | PENDING |
 | 0 | `11_15_100_0_0` (moved) | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
 | 1 | `0_0_100_4_6` | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |

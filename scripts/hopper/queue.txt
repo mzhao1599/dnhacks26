@@ -50,3 +50,7 @@ cam-probe-cpu | cpu | export FM_LLM=mock; python scripts/exp/camera_probe.py 0 1
 # re-tickets (the first a80 ticket for t2 exited LOCKED behind the cpu job before takeover existed)
 cam-t2-tilt-a80b | a80 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --task 2 --view 0_0_100_6_6 --bm0 --reps 5
 cam-t1-tilt-a80b | a80 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --task 1 --view 0_0_100_4_6 --bm0 --reps 5
+# --- task-0 tilt: second sleep cycle from v2 (mastery curve on the camera family) + fresh noise draws; same-seed demo clips ---
+cam-t0-tilt-cycle2-a80 | a80 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --view 0_0_100_2_354 --reps 5 --rep-offset 5
+cam-t0-tilt-cycle2-a100 | a100 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --view 0_0_100_2_354 --reps 5 --rep-offset 5
+cam-demo-t0-tilt-cpu | cpu c=16 | export FM_LLM=mock; python scripts/exp/record_camera_demo.py --task 0 --view 0_0_100_2_354 --seed 5047
