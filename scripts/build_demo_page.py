@@ -167,15 +167,24 @@ def collect_camera():
 def camera_clips_html(inline):
     """Same-seed clips from scripts/exp/record_camera_demo.py (logs/hopper/videos/cam_<arm>_<ok|fail>.mp4), if rendered."""
     beats = [("BM-0", "Stock camera, frozen VLA"), ("BM-1", "Camera tilted 6°, frozen VLA"), ("BM-3", "Tilted + the consolidated file")]
+    # one complete same-seed set (cam_<arm>_s<seed>_<ok|fail>.mp4); prefer the set whose BM-3 succeeded and BM-1 failed
+    import re
+    sets = {}
+    for pth in glob.glob(os.path.join(VID, "cam_BM-*_s*_*.mp4")):
+        m = re.match(r"cam_(BM-\d)_s(\d+)_(ok|fail)\.mp4$", os.path.basename(pth))
+        if m:
+            sets.setdefault(m.group(2), {})[m.group(1)] = pth
+    full = {sd: v for sd, v in sets.items() if all(a in v for a, _ in beats)}
+    if not full:
+        return ""
+    score = lambda v: (v["BM-3"].endswith("_ok.mp4"), v["BM-1"].endswith("_fail.mp4"), v["BM-0"].endswith("_ok.mp4"))
+    seed, vids = max(full.items(), key=lambda kv: score(kv[1]))
     cells = []
     for arm, title in beats:
-        hits = sorted(glob.glob(os.path.join(VID, f"cam_{arm}_*.mp4")))
-        if not hits:
-            continue
-        vid = hits[-1]
+        vid = vids[arm]
         chip = '<span class="chip ok">this seed: success</span>' if vid.endswith("_ok.mp4") else '<span class="chip fail">this seed: fail</span>'
         cells.append(f'<div class="card"><h3>{html.escape(title)}</h3>{video_tag(vid, inline)}<p class="note">{chip}</p></div>')
-    return f'<div class="cards">{"".join(cells)}</div><p class="sub">Same seed (evaluation layout 47) across the three arms; only the parameter file differs.</p>' if cells else ""
+    return f'<div class="cards">{"".join(cells)}</div><p class="sub">Same seed ({seed}) across the three arms; only the parameter file differs. Rendered on a CPU node (its numerics differ slightly from the A100 runs above).</p>'
 
 
 def camera_html(inline=False):
