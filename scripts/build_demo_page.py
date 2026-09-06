@@ -56,13 +56,14 @@ def collect():
     pooled = latest(bench, type="benchmark_result", aggregated=True) or latest(bench, type="benchmark_result")
     power = read_jsonl(os.path.join(LOGS, "benchmark", "power.jsonl"))
     power = latest(power, type="benchmark_power")
+    reps = latest(read_jsonl(os.path.join(LOGS, "benchmark", "reps.jsonl")), type="benchmark_reps")
     videos = {}
     for p in sorted(glob.glob(os.path.join(VID, "*.mp4"))):
         stem = os.path.basename(p)
         for prefix, *_ in BEATS:
             if stem.startswith(prefix + "_"):
                 videos[prefix] = p
-    return pooled, power, videos
+    return pooled, power, videos, reps
 
 
 def video_tag(path, inline):
@@ -87,7 +88,7 @@ def bars_svg(results):
         yy = H - pad - (H - 2 * pad) * y / 100
         parts.append(f'<line x1="{pad}" x2="{W - pad}" y1="{yy:.1f}" y2="{yy:.1f}" class="grid"/>'
                      f'<text x="{pad - 6}" y="{yy + 4:.1f}" class="tick" text-anchor="end">{y}%</text>')
-    colors = {"BM-0": "var(--muted)", "BM-1": "var(--bad)", "BM-2": "var(--warn)", "BM-3": "var(--accent)", "BM-4": "var(--good)"}
+    colors = {"BM-0": "var(--muted)", "BM-1": "var(--bad)", "BM-2": "var(--warn)", "BM-3": "var(--accent)", "BM-4": "var(--good)", "BM-3w": "var(--accent)"}
     for i, r in enumerate(results):
         x = pad + i * bw + bw * 0.2
         rate = 100 * r["rate"]
@@ -104,13 +105,20 @@ def bars_svg(results):
 
 
 ARM_NAMES = {"BM-0": "standard start", "BM-1": "perturbed start", "BM-2": "perturbed + untrained layer",
-             "BM-3": "perturbed + one sleep cycle", "BM-4": "perturbed + hand-set homing"}
+             "BM-3": "perturbed + one sleep cycle", "BM-4": "perturbed + hand-set homing", "BM-3w": "perturbed + wide-search sleep"}
 
 
 def build(inline: bool) -> str:
-    pooled, power, videos = collect()
+    pooled, power, videos, reps = collect()
     res = (pooled or {}).get("results", [])
     by = {r["arm"]: r for r in res}
+    # headline = the properly powered task-0 result (10 held-out layouts x 5 policy-noise draws, n=50/arm)
+    reps_rows = []
+    if reps:
+        for arm in ("BM-1", "BM-2", "BM-4", "BM-3", "BM-3w"):
+            r = reps["results"].get(arm)
+            if r: reps_rows.append({"arm": arm, **r})
+        by = {**by, **{r["arm"]: r for r in reps_rows if r["arm"] in ("BM-1", "BM-2", "BM-3", "BM-4")}}
     ratio = (pooled or {}).get("ratio")
     tasks = ", ".join(str(t) for t in (pooled or {}).get("tasks", []))
     beats_html = []
@@ -149,6 +157,17 @@ def build(inline: bool) -> str:
         verdict = (f'<p class="verdict">One sleep cycle vs the collapse: <b>{ratio["BM-3/BM-1"]:.2f}×</b> '
                    f'[{ratio["ci"][0]:.2f}, {ratio["ci"][1]:.2f}] — <span class="chip {ratio["verdict"]}">{ratio["verdict"]}</span> by the pre-registered rule.</p>')
     legend = " · ".join(f"<b>{a}</b> {ARM_NAMES[a]}" for a in ARM_NAMES if a in by)
+    headline_html = ""
+    if reps_rows:
+        r1 = next(r for r in reps_rows if r["arm"] == "BM-1"); r3 = next((r for r in reps_rows if r["arm"] == "BM-3"), None)
+        line = ""
+        if r3:
+            line = (f'<p class="verdict">Perturbed <b>{100 * r1["rate"]:.0f}%</b> → after one unattended sleep <b>{100 * r3["rate"]:.0f}%</b> '
+                    f'(n={r1["n"]} each, intervals {"do not overlap" if r3["ci"][0] > r1["ci"][1] else "overlap"}) — '
+                    f'<span class="chip {"pass" if r3["ci"][0] > r1["ci"][1] else "partial"}">{"pass" if r3["ci"][0] > r1["ci"][1] else "partial"}</span> by the pre-registered rule.</p>')
+        headline_html = (f'<section class="chart"><h2>Headline: LIBERO-Spatial task {reps["task"]}, held-out layouts × {reps["reps"]} policy-noise draws</h2>'
+                         f'<p class="sub">n={r1["n"]} per arm · the 10 evaluation layouts were never seen by the optimizer or the gate · 95% Wilson intervals</p>'
+                         f'{bars_svg(reps_rows)}<p class="legend">{" · ".join(f"<b>{r["arm"]}</b> {ARM_NAMES[r["arm"]]}" for r in reps_rows)}</p>{line}</section>')
     return f'''<title>Fleet Memory Demo</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
@@ -192,8 +211,9 @@ a{{color:var(--accent)}}
   that changes is the file.</p>
 </header>
 {"".join(beats_html)}
+{headline_html}
 <section class="chart">
-  <h2>Pooled result on LIBERO-Spatial tasks {tasks or "—"}</h2>
+  <h2>All five tasks, 10 layouts each</h2>
   <p class="sub">10 evaluation layouts per task, never seen by the optimizer or the gate · 95% Wilson intervals · SmolVLA, our own base numbers</p>
   {bars_svg(res)}
   <p class="legend">{legend}</p>
