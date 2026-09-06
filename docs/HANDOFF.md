@@ -93,9 +93,10 @@ All measured numbers, with n and intervals, are in `docs/RESULTS.md` (single sou
 **2026-09-06 second family (RESULTS §8):** LIBERO-Plus camera viewpoint, task 0, camera tilted 6° (view `0_0_100_2_354`),
 10 held-out layouts × 5 draws: BM-0 stock 88% → BM-1 tilted 14% → BM-2 identity shim 6% → **BM-3 one unattended sleep 58%**
 [44, 71] (gate 12.5% → 66.7% on 24 layouts). Action-dims-only attribution: 16% held-out. The promoted file's four camera-calibration
-dims (v3.2, `execution/calib.py`) moved the frame up/left by ~17%. Tasks 1–4, the moved view (`11_15_100_0_0`), a second cycle,
-protocol P with `--perturb-env` camera, and same-seed clips were queued/running at hand-off (see `scripts/hopper/queue.txt`
-and `logs/bench_camera/`); harvest with `scripts/pull_logs.sh` + `scripts/exp/camera_table.py`.
+dims (v3.2, `execution/calib.py`) moved the frame up/left by ~17%. Task 1 tilt: 6% → 8% (no recovery); task 3: 8% → 18% (partial). Protocol P with `--perturb-env` camera: baseline 10/15 →
+tilted 2/10 → drift → auto-sleep (568 rollouts, gate 19% → 75%) → recovery 11/15 (`logs/protocol_cam/`). Second cycle on task 0
+(half budget): validation kept v2. Tasks 2/4 and the moved view were cancelled unfinished (CPU copies too slow, A100 tickets never
+started). Proof package: `docs/proof/camera_family/` + `scripts/verify_camera.py`. Harvest: `scripts/pull_logs.sh` + `scripts/exp/camera_table.py`.
 Headline as of 2026-09-05 23:10: LIBERO-Spatial task 0 under LIBERO-Plus robot-init perturbation, 10 held-out layouts
 × fresh noise draws: BM-1 22% (n=150) → BM-4 hand-set homing 37% (n=150) → **BM-3 one unattended sleep 54% (n=100)
 → second cycle through the 24-seed gate 70% (n=50)**; CIs disjoint at every step. Task 3: pooled n=150 BM-3 = BM-1 = 27%
