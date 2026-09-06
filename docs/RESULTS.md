@@ -191,7 +191,13 @@ Second probe on the CPU tier (own numerics, same 10 layouts): stock 8/10 · tilt
 | 3 | `0_0_100_8_6` | 33/50 = **66%** [52, 78], 131 steps | 4/50 = **8%** [3, 19], 209 steps | 4/50 = 8% [3, 19], 209 steps | **9/50 = 18%** [10, 31], 200 steps — partial (2.3×, intervals overlap) | passed: 4.12 → 3.75, success 12.5% → 20.8% (+8.3 pp) on 24 gate layouts (504 rollouts, 35 min) | v2: `cam_roll` −10.1° (the view turns the axis 8° about z), `cam_shift_xy` = (+0.22, +0.14), `cam_zoom` 0.98, `time_scale` 0.82, `gripper_cmd` 0.82 |
 | 4 | `0_0_100_10_6` | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
 
-Protocol P with a camera bump (baseline → camera tilted → drift → auto-sleep → recovery, unattended): PENDING.
+**Protocol P with a camera bump — unattended recovery achieved** (task 0, arm B, `--perturb-env` view `0_0_100_2_354`, n=15/stage,
+`medium` auto-sleep, 16-seed gate, one A100): baseline (stock camera) **10/15 = 67%** (cost 2.43–2.86) → camera tilted **2/10 = 20%**
+(cost 4.59) → `drift_trigger` fired (EWMA 4.70 vs baseline 2.43, ratio 1.94) → auto-sleep: 568 rollouts, 32 min, gate **passed**
+2.18 vs 4.67, success 18.8% → 75.0% (+56 pp), promoted v2 (`cam_shift_xy` = (−0.07, −0.18), `cam_zoom` 1.02, `cam_roll` 1.6°,
+`time_scale` 0.74 — the same vertical un-shift the benchmark cycle found, discovered independently) → remaining perturbed batch
+3/5 → recovery stage **11/15 = 73%** (cost 1.90–2.34), i.e. back to (slightly above) the pre-perturbation baseline. This is the
+recovery objective that the 6 cm and 2.5 cm object shifts (§6) could not deliver: detect, sleep, promote, recover — no human.
 
 ## Honesty lines
 - Base numbers are ours (SmolVLA), on LIBERO-Plus's exact robot-init perturbation; the CVPR table is π₀/OpenVLA.

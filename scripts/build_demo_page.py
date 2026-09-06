@@ -187,6 +187,34 @@ def camera_clips_html(inline):
     return f'<div class="cards">{"".join(cells)}</div><p class="sub">Same seed ({seed}) across the three arms; only the parameter file differs. Rendered on a CPU node (its numerics differ slightly from the A100 runs above).</p>'
 
 
+def protocol_cam_html():
+    """Protocol P with a camera bump (logs/hopper/protocol_cam): baseline -> tilted -> drift -> auto-sleep -> recovery."""
+    recs = read_jsonl(os.path.join(LOGS, "protocol_cam", "events.jsonl"))
+    if not recs:
+        return ""
+    by_id = {r["episode_id"]: r for r in recs if r.get("type") == "episode"}
+    st = {}
+    for r in recs:
+        if r.get("type") == "protocol_stage":
+            st.setdefault(r["stage"], []).extend(r.get("episode_ids") or [])
+    def rate(stage):
+        eps = [by_id[i] for i in st.get(stage, []) if i in by_id]
+        return (sum(int(e["outcome"]["env_success"]) for e in eps), len(eps))
+    drift = [r for r in recs if r.get("type") == "drift_trigger"]
+    cons = [r for r in recs if r.get("type") == "consolidation" and r.get("phase") == "end"]
+    if not st:
+        return ""
+    b, pz, rc = rate("baseline"), rate("perturbed"), rate("recovery")
+    g = (cons[-1].get("gate") or {}) if cons else {}
+    gtxt = (f'sleep: {cons[-1].get("rollouts")} rollouts, {cons[-1].get("wallclock_s", 0) / 60:.0f} min, gate '
+            f'{100 * g.get("incumbent_success", 0):.0f}% → {100 * g.get("candidate_success", 0):.0f}% on {g.get("n_seeds")} layouts, '
+            f'{"promoted" if cons[-1].get("promoted_version") else "refused"}') if cons else "no sleep ran"
+    return (f'<h3>Unattended recovery after a camera bump (protocol P)</h3>'
+            f'<p class="verdict">stock camera <b>{b[0]}/{b[1]}</b> → camera tilted <b>{pz[0]}/{pz[1]}</b> → '
+            f'{"drift fired → " if drift else ""}{gtxt} → recovery <b>{rc[0]}/{rc[1]}</b></p>'
+            f'<p class="sub">Same task, arm B, n=15 per stage; the drift detector, the sleep and the gate ran with no human in the loop.</p>')
+
+
 def camera_html(inline=False):
     probe, cards = collect_camera()
     if not probe and not cards:
@@ -218,6 +246,7 @@ def camera_html(inline=False):
                       f'{" · vector v" + str(c["version"]) if c.get("version") else ""}</h3>{bars_svg(rows)}{tag}</div>')
         parts.append(f'<div class="cards">{"".join(cc)}</div>')
     parts.append(camera_clips_html(inline))
+    parts.append(protocol_cam_html())
     parts.append('<p class="note">Views written <code>h_v_scale_rot_vert</code>: <code>0_0_100_2_354</code> keeps the camera in place and turns its optical axis '
                  '2° sideways and 6° down; <code>11_15_100_0_0</code> moves it 11° around the table and 15° up (~30 cm away).</p></section>')
     return "".join(parts)
