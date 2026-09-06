@@ -74,6 +74,16 @@ the S1 planner neither helps nor hurts this single-skill task once it stops trun
 ## 6. Protocol P (LIBERO-Spatial task 0): baseline 8/15 (cost 3.00, 144 steps) → bowl shifted 6 cm → 1/5 →
 **drift_trigger fired unattended** (EWMA cost 4.43 vs baseline 2.37) → auto-sleep (small) running; recovery stage PENDING.
 
+## 7. Demo assets
+- Clips (same seed across arms, `scripts/exp/record_demo.py`, `logs/hopper/videos/`): seed 5047 on LIBERO-Spatial task 0 —
+  BM-0 standard **success 69 steps**, BM-1 perturbed **fail**, BM-4 hand-set homing **fail on this seed**, BM-3 consolidated
+  vector **success 99 steps**; LIBERO-10 task 3 seed 0 — raw **fail at horizon**, v2 **success 379 steps**.
+- Storyboard with embedded clips: https://claude.ai/code/artifact/622fb72e-c0aa-4a88-a23f-5ab8ea2b7957 ·
+  analyst dashboard: https://claude.ai/code/artifact/5f1ec73c-fd21-4b6b-845b-a4b1f8432c2e · rebuild: `scripts/pull_logs.sh`,
+  `scripts/build_demo_page.py`, then publish `dashboard/demo_artifact.html` / `dashboard/artifact.html`.
+- Held-out mastery (LIBERO-10 task 3, layouts 20–39, n=40/arm): A 78% [62, 88] / 302 steps / cost 2.03 → **v2 80% [65, 90] /
+  278 steps / cost 1.95**; v3 PENDING. Homing alone at n=50 (task 0, all layouts): BM-1 26% [16, 40] → BM-4 34% [22, 48]; task 3 PENDING.
+
 ## Honesty lines
 - Base numbers are ours (SmolVLA), on LIBERO-Plus's exact robot-init perturbation; the CVPR table is π₀/OpenVLA.
 - The shim reads object pose from simulator state as a stand-in for a detector.

@@ -42,62 +42,62 @@ a{color:var(--accent)}
 </header>
 
 <section class="beat">
-  <div class="media"><div class="novideo">clip not rendered yet</div></div>
+  <div class="media"><video controls muted playsinline preload="metadata" src="../logs/hopper/videos/BM-0_ok.mp4"></video></div>
   <div class="text">
     <p class="eyebrow">Beat 1 · the baseline</p>
     <h2>Same scene, standard start</h2>
     <p class="claim">Frozen SmolVLA, untouched. It knows this task.</p>
-    
+    <span class="chip ok">this seed: success</span>
     <div class="stats"><div class="stat"><span class="num">100%</span><span class="unit">success · 10/10 · CI [72, 100]</span></div><div class="stat"><span class="num">96</span><span class="unit">mean steps</span></div></div>
   </div>
 </section>
 <section class="beat">
-  <div class="media"><div class="novideo">clip not rendered yet</div></div>
+  <div class="media"><video controls muted playsinline preload="metadata" src="../logs/hopper/videos/BM-1_fail.mp4"></video></div>
   <div class="text">
     <p class="eyebrow">Beat 2 · the collapse</p>
     <h2>Shift the arm&#x27;s starting joints by 0.1 rad</h2>
     <p class="claim">LIBERO-Plus&#x27;s robot-initial-state perturbation. Nothing else changes and the policy falls apart.</p>
-    
+    <span class="chip fail">this seed: fail</span>
     <div class="stats"><div class="stat"><span class="num">0%</span><span class="unit">success · 0/10 · CI [0, 28]</span></div><div class="stat"><span class="num">220</span><span class="unit">mean steps</span></div></div>
   </div>
 </section>
 <section class="beat">
-  <div class="media"><div class="novideo">clip not rendered yet</div></div>
+  <div class="media"><video controls muted playsinline preload="metadata" src="../logs/hopper/videos/BM-4_fail.mp4"></video></div>
   <div class="text">
     <p class="eyebrow">Beat 3 · the mechanism</p>
     <h2>Home the arm before the policy acts</h2>
     <p class="claim">One S3 parameter: a scripted controller returns the end-effector to the start pose it was trained from.</p>
-    
+    <span class="chip fail">this seed: fail</span>
     <div class="stats"><div class="stat"><span class="num">0%</span><span class="unit">success · 0/10 · CI [0, 28]</span></div><div class="stat"><span class="num">220</span><span class="unit">mean steps</span></div></div>
   </div>
 </section>
 <section class="beat">
-  <div class="media"><div class="novideo">clip not rendered yet</div></div>
+  <div class="media"><video controls muted playsinline preload="metadata" src="../logs/hopper/videos/BM-3_ok.mp4"></video></div>
   <div class="text">
     <p class="eyebrow">Beat 4 · found by sleeping</p>
     <h2>The optimizer picked homing on its own</h2>
     <p class="claim">One unattended CEM cycle on layouts the evaluation never sees; promoted through the gate; nobody typed a number.</p>
-    
+    <span class="chip ok">this seed: success</span>
     <div class="stats"><div class="stat"><span class="num">0%</span><span class="unit">success · 0/10 · CI [0, 28]</span></div><div class="stat"><span class="num">220</span><span class="unit">mean steps</span></div></div>
   </div>
 </section>
 <section class="beat">
-  <div class="media"><div class="novideo">clip not rendered yet</div></div>
+  <div class="media"><video controls muted playsinline preload="metadata" src="../logs/hopper/videos/MASTERY-A_fail.mp4"></video></div>
   <div class="text">
     <p class="eyebrow">Beat 5 · mastery, before</p>
     <h2>LIBERO-10: bowl into the drawer, close it</h2>
     <p class="claim">Raw policy on the harder long-horizon task.</p>
-    
+    <span class="chip fail">this seed: fail</span>
     <div class="stats"></div>
   </div>
 </section>
 <section class="beat">
-  <div class="media"><div class="novideo">clip not rendered yet</div></div>
+  <div class="media"><video controls muted playsinline preload="metadata" src="../logs/hopper/videos/MASTERY-B_ok.mp4"></video></div>
   <div class="text">
     <p class="eyebrow">Beat 5 · mastery, after</p>
     <h2>Same seed, promoted vector v2</h2>
     <p class="claim">Slower chunks, capped velocity: fewer steps at the same success, on held-out layouts.</p>
-    
+    <span class="chip ok">this seed: success</span>
     <div class="stats"></div>
   </div>
 </section>
