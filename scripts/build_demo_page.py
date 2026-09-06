@@ -164,7 +164,21 @@ def collect_camera():
     return probe, cards
 
 
-def camera_html():
+def camera_clips_html(inline):
+    """Same-seed clips from scripts/exp/record_camera_demo.py (logs/hopper/videos/cam_<arm>_<ok|fail>.mp4), if rendered."""
+    beats = [("BM-0", "Stock camera, frozen VLA"), ("BM-1", "Camera tilted 6°, frozen VLA"), ("BM-3", "Tilted + the consolidated file")]
+    cells = []
+    for arm, title in beats:
+        hits = sorted(glob.glob(os.path.join(VID, f"cam_{arm}_*.mp4")))
+        if not hits:
+            continue
+        vid = hits[-1]
+        chip = '<span class="chip ok">this seed: success</span>' if vid.endswith("_ok.mp4") else '<span class="chip fail">this seed: fail</span>'
+        cells.append(f'<div class="card"><h3>{html.escape(title)}</h3>{video_tag(vid, inline)}<p class="note">{chip}</p></div>')
+    return f'<div class="cards">{"".join(cells)}</div><p class="sub">Same seed (evaluation layout 47) across the three arms; only the parameter file differs.</p>' if cells else ""
+
+
+def camera_html(inline=False):
     probe, cards = collect_camera()
     if not probe and not cards:
         return ""
@@ -194,6 +208,7 @@ def camera_html():
             cc.append(f'<div class="card"><h3>Task {c["task"]} · view {html.escape(str(c["view"]))}'
                       f'{" · vector v" + str(c["version"]) if c.get("version") else ""}</h3>{bars_svg(rows)}{tag}</div>')
         parts.append(f'<div class="cards">{"".join(cc)}</div>')
+    parts.append(camera_clips_html(inline))
     parts.append('<p class="note">Views written <code>h_v_scale_rot_vert</code>: <code>0_0_100_2_354</code> keeps the camera in place and turns its optical axis '
                  '2° sideways and 6° down; <code>11_15_100_0_0</code> moves it 11° around the table and 15° up (~30 cm away).</p></section>')
     return "".join(parts)
@@ -408,7 +423,7 @@ a{{color:var(--accent)}}
 {"".join(beats_html)}
 {headline_html}
 {other_html}
-{camera_html()}
+{camera_html(inline)}
 <section class="chart">
   <h2>Mastery on a fixed task: LIBERO-10 "bowl into the bottom drawer, close it"</h2>
   <p class="sub">Held-out layouts 20–39 × 2 policy-noise draws, n=40 per arm, seeds never used by the optimizer or the gate</p>
