@@ -187,8 +187,9 @@ a{{color:var(--accent)}}
   <p class="eyebrow">Fleet Memory · frozen VLA · LIBERO-Plus robot-initial-state · 2026-09-05</p>
   <h1>It sleeps, and it gets its start back.</h1>
   <p>A frozen SmolVLA policy, an execution shim with a 17-number parameter file, and an offline optimizer that
-  rewrites that file only when a held-out gate says it is better. Every clip below is the same seed across arms:
-  the only thing that changes is the file.</p>
+  rewrites that file only when a held-out gate says it is better. Every clip below is the same seed across arms
+  (benchmark beats: LIBERO-Spatial task 0, evaluation layout 48; mastery beats: LIBERO-10 task 3, seed 2): the only thing
+  that changes is the file.</p>
 </header>
 {"".join(beats_html)}
 <section class="chart">

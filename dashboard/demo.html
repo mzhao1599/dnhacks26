@@ -37,8 +37,9 @@ a{color:var(--accent)}
   <p class="eyebrow">Fleet Memory · frozen VLA · LIBERO-Plus robot-initial-state · 2026-09-05</p>
   <h1>It sleeps, and it gets its start back.</h1>
   <p>A frozen SmolVLA policy, an execution shim with a 17-number parameter file, and an offline optimizer that
-  rewrites that file only when a held-out gate says it is better. Every clip below is the same seed across arms:
-  the only thing that changes is the file.</p>
+  rewrites that file only when a held-out gate says it is better. Every clip below is the same seed across arms
+  (benchmark beats: LIBERO-Spatial task 0, evaluation layout 48; mastery beats: LIBERO-10 task 3, seed 2): the only thing
+  that changes is the file.</p>
 </header>
 
 <section class="beat">
@@ -62,12 +63,12 @@ a{color:var(--accent)}
   </div>
 </section>
 <section class="beat">
-  <div class="media"><video controls muted playsinline preload="metadata" src="../logs/hopper/videos/BM-4_fail.mp4"></video></div>
+  <div class="media"><video controls muted playsinline preload="metadata" src="../logs/hopper/videos/BM-4_ok.mp4"></video></div>
   <div class="text">
     <p class="eyebrow">Beat 3 · the mechanism</p>
     <h2>Home the arm before the policy acts</h2>
     <p class="claim">One S3 parameter: a scripted controller returns the end-effector to the start pose it was trained from.</p>
-    <span class="chip fail">this seed: fail</span>
+    <span class="chip ok">this seed: success</span>
     <div class="stats"><div class="stat"><span class="num">0%</span><span class="unit">success · 0/10 · CI [0, 28]</span></div><div class="stat"><span class="num">220</span><span class="unit">mean steps</span></div></div>
   </div>
 </section>
