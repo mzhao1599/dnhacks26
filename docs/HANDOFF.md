@@ -82,10 +82,10 @@ Numbers here are copied from `docs/RESULTS.md`; **PENDING means not yet measured
 ## 5. Results
 
 All measured numbers, with n and intervals, are in `docs/RESULTS.md` (single source; do not copy tables here).
-Headline as of 2026-09-05 22:30: LIBERO-Spatial task 0 under LIBERO-Plus robot-init perturbation, 10 held-out layouts
-× 10 noise draws (n=100/arm): BM-1 22% → BM-4 hand-set homing 34% → **BM-3 one unattended sleep 54%** (2.45×, CIs
-disjoint; replicated across two independent 50-episode runs). Task 3: the n=12 gate produced a false positive
-(BM-3 18% vs BM-1 32%); strong-gate re-run queued (`cycle2-task3`). Mastery (LIBERO-10 task 3, held-out n=40): A 78%
+Headline as of 2026-09-05 23:10: LIBERO-Spatial task 0 under LIBERO-Plus robot-init perturbation, 10 held-out layouts
+× fresh noise draws: BM-1 22% (n=150) → BM-4 hand-set homing 37% (n=150) → **BM-3 one unattended sleep 54% (n=100)
+→ second cycle through the 24-seed gate 70% (n=50)**; CIs disjoint at every step. Task 3: pooled n=150 BM-3 = BM-1 = 27%
+(the n=12-gate promotion was neither gain nor harm); the strong gate refused a second cycle. Mastery (LIBERO-10 task 3, held-out n=40): A 78%
 → v2 80% (70–80% over three measurements) → v3 58–68% (false positive; strong gate from v2 kept the incumbent).
 
 ## 6. Known issues / open work
