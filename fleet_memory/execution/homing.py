@@ -89,7 +89,7 @@ class Homing:
         a, _ = self.envelope.clamp(a, obs.ee_pos)
         return a, float(np.linalg.norm(pos_err)), float(np.linalg.norm(rot_err))
 
-    def run(self, env: Env, obs: Obs) -> tuple[Obs, HomingResult, bool]:
+    def run(self, env: Env, obs: Obs, on_step=None) -> tuple[Obs, HomingResult, bool]:
         """Step the env until within tolerance or max_steps. Returns (obs, result, done)."""
         res = HomingResult(steps=0, reached=False, final_pos_err_m=0.0, final_rot_err_rad=0.0)
         done = False
@@ -103,6 +103,8 @@ class Homing:
             res.actions.append(a.copy())
             obs, done, _ = env.step(a)
             res.steps += 1
+            if on_step is not None:
+                on_step(obs, res.steps, "homing")
             if done:
                 break
         return obs, res, done

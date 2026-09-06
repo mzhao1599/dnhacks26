@@ -91,7 +91,7 @@ def _apply_intervention(iv: Intervention, plan: Plan, st: Subtask, shim, task: T
 
 
 def run_subtasks(env, obs: Obs, plan: Plan, shim, tracker: Tracker, task: TaskInfo, *, episode_id: str,
-                 surfaces: list[str], coach=None, max_steps: int | None = None, keyframe_every: int = 25,
+                 surfaces: list[str], coach=None, max_steps: int | None = None, keyframe_every: int = 25, on_step=None,
                  envelope=None, base_constraints: ConstraintSet | None = None) -> LoopResult:
     """`envelope` is only used when the shim has no apply_envelope (older shim): clamped here instead."""
     res = LoopResult()
@@ -123,6 +123,8 @@ def run_subtasks(env, obs: Obs, plan: Plan, shim, tracker: Tracker, task: TaskIn
                 res.actions.append(np.asarray(row, np.float32).copy())
                 t += 1
                 st_steps += 1
+                if on_step is not None:
+                    on_step(obs, t, f"{st.skill} {st.target_object}"[:40])
                 if keyframe_every and t % keyframe_every == 0:
                     img = (obs.images or {}).get("agentview")
                     if img is not None:
@@ -164,6 +166,8 @@ def run_subtasks(env, obs: Obs, plan: Plan, shim, tracker: Tracker, task: TaskIn
                 res.ee_positions.append(np.asarray(obs.ee_pos, np.float64).copy())
                 res.actions.append(np.asarray(row, np.float32).copy())
                 t += 1
+                if on_step is not None:
+                    on_step(obs, t, "policy")
                 if done or t >= budget:
                     break
     res.steps = t
