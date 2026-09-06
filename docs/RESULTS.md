@@ -56,7 +56,20 @@ init states 40–49 per task, never seen by the optimizer (0–29) or the gate (
 Wide-search variant (task 0, σ₀=0.5, separate skill instance, MIG/OSMesa renderer): BM-1 3/10 → BM-4 5/10 →
 **BM-3 7/10** (gate passed 2.94 → 2.72). Same 10 eval layouts; renderer differs from the A100 run, so BM-1 differs too.
 
-Verdict by the spec's own rule (§13.5): **collapse reproduced (80% → 14%)**; the untrained shim adds nothing
+**Headline with real n (task 0, the 10 held-out layouts × 5 policy-noise draws, n=50 per arm, all on layouts the optimizer
+and gate never saw):**
+| arm | success | 95% CI | steps |
+|---|---|---|---|
+| BM-1 perturbed | 10/50 = **20%** | [11, 33] | 196 |
+| BM-2 perturbed + untrained shim | 14/50 = 28% | [17, 42] | 185 |
+| BM-4 perturbed + hand-set homing | 17/50 = 34% | [22, 48] | 173 |
+| **BM-3 perturbed + ONE unattended sleep** | **25/50 = 50%** | **[37, 63]** | 162 |
+| BM-3w perturbed + wide-search sleep (separate instance) | 21/50 = 42% | [29, 56] | 179 |
+
+BM-3 vs BM-1: 2.5×, intervals disjoint → **pass** by §13.5 on task 0. The optimizer's vector (homing + time_scale 0.85 +
+grasp offset −1.8 cm + cone 34°) beats hand-set homing alone (50% vs 34%): it found more than the switch.
+
+Verdict by the spec's own rule (§13.5), all five tasks at n=10: **collapse reproduced (80% → 14%)**; the untrained shim adds nothing
 (BM-2 ≈ BM-1); hand-set homing recovers 6 points pooled (**partial**, CIs overlap); one unattended sleep found homing
 on task 0 (gate +50 pp) but the eval layouts did not confirm it (**fail on the main run, partial on the wide run**).
 Per-seed view: on task 0 BM-1 succeeds on layouts 40–44 and fails 45–49; homing flips that (fails 40–42, rescues
