@@ -72,13 +72,25 @@ BM-3 vs BM-1: 2.5×, intervals disjoint → **pass** by §13.5 on task 0.
 BM-2 13/50 = 26% · BM-4 17/50 = 34% · **BM-3 29/50 = 58% [44, 71]** · BM-3w 21/50 = 42%. **Pooled n=100 per arm:**
 BM-1 **22%** [15, 31] → BM-4 34% [25, 44] → **BM-3 54% [44, 64]**, ratio **2.45×**, intervals disjoint. The headline replicates.
 
+**Second unattended sleep cycle (strong gate: 24 gate seeds × 4 draws), from v2:** CEM candidate passed the gate,
+cost 1.946 → 1.626, success 70.8% → 79.2% on the gate layouts (+8.3 pp), promoted as **v3**. Held-out re-eval on a
+third independent set of 5 noise draws (n=50): BM-1 11/50 = 22% · BM-2 13/50 = 26% · BM-4 21/50 = 42% ·
+**BM-3 (v3) 35/50 = 70% [56, 81], 141 steps.** The perturbed-environment mastery curve is therefore
+**v1 22% → v2 54% → v3 70%** (identity → one cycle → two cycles), each step through a gate on layouts the
+optimizer never saw, evaluated on layouts neither saw. v3 = homing on, time_scale 0.755, velocity_cap 0.94,
+gripper_cmd 0.91, grasp offset −1.3 cm, cone 40°: the second cycle mostly slowed the chunks further.
+BM-1 over all three runs: 33/150 = 22%; BM-4 hand-set homing: 55/150 = 37%.
+
 **Same protocol on task 3** (r=0.2 perturbation; its BM-3 came from a cycle-2 promotion gated at n=12):
 BM-1 16/50 = 32% [21, 46] · BM-2 17/50 = 34% · BM-4 hand-set homing 10/50 = **20%** (homing *hurts* here) ·
 BM-3 9/50 = **18%** [10, 31] — a **false-positive promotion**: the n=12 gate accepted a vector that is worse held-out.
 Replication with 5 new noise draws: BM-0 30/50 = 60% · BM-1 14/50 = 28% · BM-2 17/50 = 34% · BM-4 14/50 = 28% · BM-3 17/50 = 34%.
-**Pooled task 3, n=100:** BM-1 30% [22, 40] · BM-2 34% · BM-4 24% [17, 33] · BM-3 26% [18, 35] — the n=12-gate vector is
-≈ BM-1 (no gain, and the first run's "harm" was mostly noise); hand-set homing is the one arm that is worse. Task 3's
-perturbation is r=0.2 rad (twice task 0's) and even the standard arm is at 60%: harder scene, weaker policy.
+Strong-gate cycle 2 on task 3 (24 gate seeds × 4 draws, from the n=12-gate incumbent): fresh-seed validation **kept the
+incumbent** — nothing promoted. Third independent run (n=50): BM-1 11/50 = 22% · BM-2 12/50 = 24% · BM-4 12/50 = 24% ·
+BM-3 15/50 = 30%. **Pooled task 3, n=150:** BM-1 41/150 = **27%** [21, 35] · BM-2 41/150 = 27% · BM-4 36/150 = 24% ·
+BM-3 41/150 = **27%** [21, 35] — the n=12-gate vector is exactly baseline (no gain, no harm; the first run's "harm" was
+noise), and the strong gate was right to refuse another. Task 3's perturbation is r=0.2 rad (twice task 0's) and even
+the standard arm is at 60%: harder scene, weaker policy, and nothing in this 17-dim file fixes it.
 With mastery v3 that is two harmful promotions from the 12-seed gate; the strong gate (24 seeds, K=4) has so far
 promoted nothing false (mastery cycle from v2: validation kept the incumbent). The strong-gate re-run on task 3 is queued. The optimizer's vector (homing + time_scale 0.85 +
 grasp offset −1.8 cm + cone 34°) beats hand-set homing alone (50% vs 34%): it found more than the switch.
@@ -92,7 +104,7 @@ BM-1 vs BM-4 on all 50 init states of tasks 0 and 3 (n=100/arm; hand-set → no 
 Tasks 1–2 are hard even with EE-space homing: the joint configuration still differs (wrist-camera view), a limit
 joint-space homing on a real controller would not have.
 
-Gate tally, all real-env sleep cycles tonight: 11 attempted → 4 promoted (task 0, task 2 cost-only, task 3 cycle 2, mastery v2/v3 = 5 incl. mastery), 7 refused or validation-kept-incumbent. Every refusal held up on later held-out evidence; one promotion (mastery v3) did not.
+Gate tally, all real-env sleep cycles tonight: 13 attempted → 6 promoted (task 0 cycles 1 and 2, task 2 cost-only, task 3 cycle 2 [12-seed gate], mastery v2, mastery v3 [12-seed gate]), 7 refused or validation-kept-incumbent (incl. the strong-gate re-runs on task 3 and mastery, which both kept the incumbent). Every refusal held up on later held-out evidence; the two 12-seed-gate promotions did not (≈ baseline at n=100); every 24-seed-gate decision did.
 
 ## 5. Arm C (Gemini planner `gemini-3.7-flash` + inner coach `gemini-3.1-pro-preview`), LIBERO-10 task 3
 First run (12 seeds): 17%, 173 mean steps — plans sensible (reach/grasp/lift/place/close, canonical instruction,
