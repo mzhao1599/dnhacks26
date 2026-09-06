@@ -8,7 +8,8 @@ Prints CYCLE / REPS lines; events go to $FM_LOGS/bench_camera/events.jsonl (per-
     python scripts/exp/camera_cycle.py <config_index|-1 --view V> [--act] [--bm0] [--reps R] [--task 0] [--workers 4] [--cycles 1]
 
 The same experiment may be queued on several cluster tiers: the first job to start claims
-$FM_LOGS/bench_camera/locks/<tag>.lock and later duplicates exit immediately.
+$FM_LOGS/bench_camera/locks/<tag>.lock and later duplicates exit immediately — unless the newcomer runs on a faster
+tier (a100/a80 > mig > cpu, from the SLURM job name prefix q-<tier>-), in which case it cancels the holder and takes over.
 """
 import argparse, dataclasses, json, os
 import numpy as np
@@ -21,6 +22,34 @@ from fleet_memory.runner.consolidate import ConsolidationConfig, consolidate
 from fleet_memory.runner.pool import run_many, close_pool
 from fleet_memory.runner.worker import RunConfig
 from fleet_memory.analysis.metrics import wilson_ci
+
+
+RANK = {"cpu": 0, "mig": 1, "a100": 2, "a80": 2}
+
+
+def my_tier() -> str:
+    name = os.environ.get("SLURM_JOB_NAME", "")
+    return name.split("-")[1] if name.startswith("q-") and name.count("-") >= 2 else "local"
+
+
+def claim(lock: str) -> bool:
+    """Take the lock; if a slower tier holds it, cancel that job and take over; if an equal/faster tier holds it, exit."""
+    me = f"{os.environ.get('SLURM_JOB_ID', '?')} {my_tier()}"
+    try:
+        fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, (me + "\n").encode()); os.close(fd)
+        return True
+    except FileExistsError:
+        pass
+    holder = open(lock).read().split()
+    hjob, htier = (holder + ["?", "?"])[:2]
+    if RANK.get(my_tier(), -1) > RANK.get(htier, 99):
+        print(f"TAKEOVER {lock}: {my_tier()} job {me.split()[0]} replaces {htier} job {hjob}", flush=True)
+        import subprocess
+        subprocess.run(["scancel", hjob], check=False)
+        open(lock, "w").write(me + "\n")
+        return True
+    print(f"LOCKED {lock} held by job {hjob} ({htier}) -> this duplicate exits", flush=True)
+    return False
 
 
 def main():
@@ -48,10 +77,7 @@ def main():
     tag = f"plus_camera_{cfg['view']}" + ("_act" if a.act else "")
     lock_dir = L + "/locks"; os.makedirs(lock_dir, exist_ok=True)
     lock = f"{lock_dir}/t{a.task}_{tag}_c{a.cycles}_r{a.rep_offset}.lock"
-    try:
-        fd = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY); os.write(fd, f"{os.environ.get('SLURM_JOB_ID', '?')}\n".encode()); os.close(fd)
-    except FileExistsError:
-        print(f"LOCKED {lock} held by job {open(lock).read().strip()} -> this duplicate exits", flush=True)
+    if not claim(lock):
         return
     tmpl = RunConfig(suite="libero_spatial", task_id=a.task, seed=0, arm="B", env_kind="libero_plus", policy_kind="smolvla",
                      log_path=L + "/events.jsonl", env_kwargs={"config": cfg}, environment_tag=tag)
