@@ -19,3 +19,25 @@ armD-task0-coachfix | a100 | unset FM_LLM; python scripts/exp/arm_d.py 0 B,C,D
 # with the full 21-dim vector and, for attribution, with the calibration dims frozen (action-only 17 dims).
 cam-probe | mig1 | export FM_LLM=mock; python scripts/exp/camera_probe.py 0 1 4
 cam-cycle-cfg2 | a100 | export FM_LLM=mock; python scripts/exp/camera_cycle.py 2 --reps 5
+# cam-probe OOMed on 1g.10gb (4 workers x ~2.4 GB > 9.5 GB); 2g.20gb slice on gpu021
+cam-probe2 | mig2 | export FM_LLM=mock; python scripts/exp/camera_probe.py 0 1 4
+# --- 2026-09-06 10:00 fan-out: tilt-only camera views (optical axis 6 deg down, camera in place) on all 5 tasks; each experiment is
+# ticketed on several tiers, camera_cycle.py's lock file lets the first job that starts claim it and the duplicates exit.
+cam-t0-tilt-a80 | a80 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --view 0_0_100_2_354 --bm0 --reps 5
+cam-t0-tilt-a100 | a100 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --view 0_0_100_2_354 --bm0 --reps 5
+cam-t0-tilt-mig | mig2 after=cam-probe2 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --view 0_0_100_2_354 --bm0 --reps 5
+cam-t0-tilt-act-a80 | a80 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --view 0_0_100_2_354 --act --reps 5
+cam-t0-tilt-act-a100 | a100 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --view 0_0_100_2_354 --act --reps 5
+cam-t1-tilt-a80 | a80 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --task 1 --view 0_0_100_4_6 --bm0 --reps 5
+cam-t1-tilt-a100 | a100 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --task 1 --view 0_0_100_4_6 --bm0 --reps 5
+cam-t1-tilt-mig | mig c=4 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --task 1 --view 0_0_100_4_6 --bm0 --reps 5
+cam-t2-tilt-a80 | a80 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --task 2 --view 0_0_100_6_6 --bm0 --reps 5
+cam-t2-tilt-a100 | a100 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --task 2 --view 0_0_100_6_6 --bm0 --reps 5
+cam-t3-tilt-a80 | a80 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --task 3 --view 0_0_100_8_6 --bm0 --reps 5
+cam-t3-tilt-a100 | a100 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --task 3 --view 0_0_100_8_6 --bm0 --reps 5
+cam-t4-tilt-a80 | a80 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --task 4 --view 0_0_100_10_6 --bm0 --reps 5
+cam-t4-tilt-a100 | a100 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --task 4 --view 0_0_100_10_6 --bm0 --reps 5
+cam-t0-moved-a80 | a80 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --view 11_15_100_0_0 --bm0 --reps 5
+# --- unattended recovery after a camera bump (protocol P: baseline stock camera -> tilted -6 deg -> drift -> auto-sleep -> recovery) ---
+protocolP-camera-t0-a80 | a80 | export FM_LLM=mock FM_AUTO_SLEEP=medium; python -m fleet_memory.runner.pool --env libero --policy smolvla --suite libero_spatial --task 0 --arm B --protocol P --n-stage 15 --perturb-env '{"dimension":"camera","view":"0_0_100_2_354"}' --workers 4 --log $FM_LOGS/protocol_cam/events.jsonl
+protocolP-camera-t0-a100 | a100 | export FM_LLM=mock FM_AUTO_SLEEP=medium; python -m fleet_memory.runner.pool --env libero --policy smolvla --suite libero_spatial --task 0 --arm B --protocol P --n-stage 15 --perturb-env '{"dimension":"camera","view":"0_0_100_2_354"}' --workers 4 --log $FM_LOGS/protocol_cam/events.jsonl

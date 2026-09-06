@@ -144,6 +144,33 @@ recovered.)
   Strong-gate cycle from v2 (24 gate seeds, K=4 reps): fresh-seed validation **kept the incumbent**; its held-out re-eval
   70% [55, 82] / 312 steps / cost 2.33 (n=40) is the same v2 vector measured a third time — i.e. v2 lands 70–80% held-out. Homing alone, all 50 layouts of tasks 0+3 (n=100/arm, no optimizer): **BM-1 27% [19, 36] → BM-4 33% [25, 43]** — +6 pp, CIs overlap: real but small.
 
+## 8. Second perturbation family — LIBERO-Plus **Camera Viewpoints** (2026-09-06, v3.2)
+Native port of LIBERO-Plus's camera perturbation (`envs/libero_plus.py: camera_pose_for_view`, verified against their own
+helper functions to 1e-4 in `tests/test_camera.py`). Two kinds of view on libero_spatial task 0: **tilt-only**
+(`0_0_100_2_352|354`: camera stays put, optical axis turns 2° about z and 8°/6° down — the scene shifts up by ~0.13-0.18 of
+the frame) and **moved** (`11..15_15_100_0_0`: camera position rotated 11-15° about z and 15° up, ~30 cm away; a new
+perspective). Frames: `logs/hopper/bench_camera/frames/`.
+
+What changed in the layer for this family: the S3 vector gained four **camera-calibration dims** (`cam_roll_deg`,
+`cam_zoom`, `cam_shift_xy` — a similarity warp of the agentview frame, applied by the shim to the policy's copy of the
+observation only; identity by default, so every robot-init incumbent loads unchanged). The optimizer sees only cost; it is
+never told what the perturbation was. `--act` runs freeze those four dims (17 action dims only) for attribution.
+
+**Probe (10 held-out layouts, 1 noise draw each, MIG/OSMesa):** BM-0 stock camera 9/10. Per view BM-1: PENDING.
+
+**Sleep cycle + held-out reps (10 eval layouts × 5 noise draws, n=50/arm), strong gate (24 gate layouts × 4 draws):**
+| task | view | BM-0 stock | BM-1 camera moved | BM-2 identity shim | BM-3 after one sleep | gate | promoted vector |
+|---|---|---|---|---|---|---|---|
+| 0 | `0_0_100_2_354` (tilt −6°) | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
+| 0 | same, action dims only (`--act`) | — | — | — | PENDING | PENDING | PENDING |
+| 0 | `11_15_100_0_0` (moved) | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
+| 1 | `0_0_100_4_6` | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
+| 2 | `0_0_100_6_6` | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
+| 3 | `0_0_100_8_6` | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
+| 4 | `0_0_100_10_6` | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
+
+Protocol P with a camera bump (baseline → camera tilted → drift → auto-sleep → recovery, unattended): PENDING.
+
 ## Honesty lines
 - Base numbers are ours (SmolVLA), on LIBERO-Plus's exact robot-init perturbation; the CVPR table is π₀/OpenVLA.
 - The shim reads object pose from simulator state as a stand-in for a detector.
