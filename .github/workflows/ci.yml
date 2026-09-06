@@ -7,12 +7,12 @@ jobs:
   mock:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-      - run: pip install -e ".[dev]"
-      - run: FM_LLM=mock pytest -q
+      - run: pip install -e ".[dev]" pytest-github-actions-annotate-failures
+      - run: FM_LLM=mock pytest -q -rf -p pytest_github_actions_annotate_failures
       - name: end-to-end on the mock env (arm A -> one sleep cycle -> metrics)
         run: |
           FM_LLM=mock python -m fleet_memory.runner.pool --env mock --policy mock --suite mock --task pick_bowl_to_plate \
