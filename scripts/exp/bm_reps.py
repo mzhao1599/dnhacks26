@@ -19,22 +19,25 @@ def incumbent(log, si_id):
     return best["params"] if best else None
 
 
-def main(task="0", reps=5, workers=4):
+def main(task="0", reps=5, workers=4, rep_offset=0, with_bm0=False):
     L = os.environ["FM_LOGS"] + "/benchmark"
     store = EventStore(L + "/reps.jsonl")
     cfg = [c for c in list_configs("robot_init", "libero_spatial") if str(c.get("base_task_idx")) == task][0]
     base = RunConfig(suite="libero_spatial", task_id=task, seed=0, arm="A", env_kind="libero_plus", policy_kind="smolvla",
                      log_path=L + "/reps.jsonl", env_kwargs={"config": cfg}, environment_tag="plus_robot_init_0_reps")
     hom = S3Params.identity(); hom.homing_enable = 1.0
-    arms = {"BM-1": dataclasses.replace(base, arm="A"),
+    arms = {}
+    if with_bm0:
+        arms["BM-0"] = dataclasses.replace(base, arm="A", env_kind="libero", env_kwargs={}, environment_tag="")
+    arms.update({"BM-1": dataclasses.replace(base, arm="A"),
             "BM-2": dataclasses.replace(base, arm="B", s3_params=S3Params.identity().to_dict()),
-            "BM-4": dataclasses.replace(base, arm="B", s3_params=hom.to_dict())}
+            "BM-4": dataclasses.replace(base, arm="B", s3_params=hom.to_dict())})
     v2 = incumbent(L + "/events.jsonl", f"si_{task}__libero_spatial_{task}_plus_robot_init_0")
     if v2: arms["BM-3"] = dataclasses.replace(base, arm="B", s3_params=v2)
     if os.path.exists(L + "/events_wide.jsonl"):
         w = incumbent(L + "/events_wide.jsonl", f"si_{task}__libero_spatial_{task}_plus_robot_init_0_wide")
         if w: arms["BM-3w"] = dataclasses.replace(base, arm="B", s3_params=w)
-    seeds = [5040 + i + 50 * r for r in range(reps) for i in range(10)]     # init states 40-49, reps vary the RNG seed
+    seeds = [5040 + i + 50 * (r + rep_offset) for r in range(reps) for i in range(10)]   # init states 40-49; reps vary the RNG seed
     res = {}
     for name, c in arms.items():
         eps = run_many([dataclasses.replace(c, seed=s) for s in seeds], workers)
@@ -42,9 +45,10 @@ def main(task="0", reps=5, workers=4):
         res[name] = {"k": k, "n": len(eps), "rate": k / len(eps), "ci": [lo, hi],
                      "mean_steps": sum(e.outcome.steps for e in eps) / len(eps), "s3_params": c.s3_params}
         print(f"REPS {name}: {k}/{len(eps)} = {100 * k / len(eps):.0f}% [{100 * lo:.0f},{100 * hi:.0f}] steps {res[name]['mean_steps']:.0f}", flush=True)
-    store.append({"type": "benchmark_reps", "task": task, "reps": reps, "results": res})
+    store.append({"type": "benchmark_reps", "task": task, "reps": reps, "rep_offset": rep_offset, "results": res})
     close_pool()
 
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else "0", int(sys.argv[2]) if len(sys.argv) > 2 else 5)
+    main(sys.argv[1] if len(sys.argv) > 1 else "0", int(sys.argv[2]) if len(sys.argv) > 2 else 5,
+         rep_offset=int(sys.argv[3]) if len(sys.argv) > 3 else 0, with_bm0="--bm0" in sys.argv)
