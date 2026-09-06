@@ -46,6 +46,7 @@ class ConsolidationConfig:
     sigma_decay: float = 0.8
     max_wallclock_s: float = 1500.0
     workers: int = 4
+    frozen_dims: list[str] = field(default_factory=list)   # PARAM_SPEC names held at the incumbent's value (never sampled)
     select: str = "mean"                # "mean": final elite mean (noise-robust) | "best": best-ever sample
                                         # (best-ever compares costs across iterations that used different seed
                                         # pairs, so it picks the luckiest draw: on the mock it gated at 1.50-2.61
@@ -70,7 +71,7 @@ class ConsolidationConfig:
                 "iterations": self.iterations, "seeds_per_candidate": self.seeds_per_candidate,
                 "pose_jitter_m": self.pose_jitter_m, "sigma_init_frac": self.sigma_init_frac,
                 "sigma_decay": self.sigma_decay, "gate_seeds": self.gate_seeds, "select": self.select,
-                "validation_seeds": self.validation_seeds}
+                "validation_seeds": self.validation_seeds, "frozen_dims": list(self.frozen_dims)}
 
 
 @dataclass
@@ -115,6 +116,7 @@ def cem_search(evaluate: Evaluate, theta0: np.ndarray, cfg: ConsolidationConfig,
     t0 = time.time()
     u0 = P.normalize(np.asarray(theta0, np.float64).reshape(P.DIM))
     mean = u0.copy()
+    frozen = np.array(P.dim_indices(cfg.frozen_dims), dtype=int) if cfg.frozen_dims else np.zeros(0, dtype=int)
     n_el = max(1, min(cfg.elites, cfg.population))
     best_u, best_cost = mean.copy(), float("inf")
     res = SearchResult(theta_star=P.denormalize(mean), best_cost=best_cost)
@@ -129,6 +131,8 @@ def cem_search(evaluate: Evaluate, theta0: np.ndarray, cfg: ConsolidationConfig,
         else:
             U = np.clip(mean + sigma * rng.standard_normal((cfg.population, P.DIM)), 0.0, 1.0)
             U[0] = u0                                       # elitism
+        if frozen.size:
+            U[:, frozen] = u0[frozen]                       # frozen dims: every candidate keeps the incumbent's value
         X = np.stack([P.denormalize(u) for u in U])
         costs = sanitize_costs(evaluate(X), cfg.population)
         res.evaluations += cfg.population
@@ -340,6 +344,7 @@ def _build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--pose-jitter-m", type=float, default=None)
     ap.add_argument("--max-wallclock-s", type=float, default=None)
     ap.add_argument("--method", choices=["cem", "random"], default=None)
+    ap.add_argument("--frozen-dims", default=None, help="comma-separated PARAM_SPEC names never sampled (e.g. cam_roll_deg,cam_zoom,cam_shift_xy)")
     ap.add_argument("--trigger", choices=["manual", "scheduled", "drift"], default="manual")
     ap.add_argument("--rng-seed", type=int, default=None)
     return ap
@@ -352,6 +357,8 @@ def config_from_args(a: argparse.Namespace) -> ConsolidationConfig:
         v = getattr(a, k, None)
         if v is not None:
             setattr(cfg, k, v)
+    if getattr(a, "frozen_dims", None):
+        cfg.frozen_dims = [x.strip() for x in a.frozen_dims.split(",") if x.strip()]
     return cfg
 
 

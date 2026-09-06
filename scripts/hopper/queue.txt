@@ -14,3 +14,8 @@ reps-task4 | mig | export FM_LLM=mock; python scripts/exp/bm_reps.py 4 3
 protocolP-25mm | a100 | export FM_LLM=mock FM_AUTO_SLEEP=small; python -m fleet_memory.runner.pool --env libero --policy smolvla --suite libero_spatial --task 0 --arm B --protocol P --n-stage 15 --perturb '{"shift_xy":[0.025,0.0]}' --workers 4 --log $FM_LOGS/protocol25/events.jsonl
 # --- in-plan: arm D (the system) on perturbed task 0 with the coach JSON-truncation fix (agents/llm.py) ---
 armD-task0-coachfix | a100 | unset FM_LLM; python scripts/exp/arm_d.py 0 B,C,D
+# --- 2026-09-06: second perturbation family = LIBERO-Plus Camera Viewpoints on task 0 (native port, v3.2 camera-calibration dims) ---
+# probe first (BM-0 + BM-1 on all 6 camera variants, n=10, frames dumped); the cycles run the loop on the 11/15-degree view (cfg 2)
+# with the full 21-dim vector and, for attribution, with the calibration dims frozen (action-only 17 dims).
+cam-probe | mig1 | export FM_LLM=mock; python scripts/exp/camera_probe.py 0 1 4
+cam-cycle-cfg2 | a100 | export FM_LLM=mock; python scripts/exp/camera_cycle.py 2 --reps 5

@@ -13,6 +13,14 @@ Mechanism of the "Robot Initial States" dimension (read from github.com/sylvestf
   target keeps the perturbed qpos.  ``apply_robot_init_state`` therefore writes the perturbed joint
   qpos *after* ``set_init_state`` (then re-settles), which is the perturbation the paper describes.
 
+"Camera Viewpoints" dimension (``camera_pose_for_view``, an exact port of LIBERO-Plus's
+``Libero_Tabletop_Manipulation._setup_camera`` incl. its 4-decimal rounding): the task name's
+``view_<h>_<v>_<scale%>_<end_rot>_<end_vert>`` rotates the agentview camera *position+orientation* about z by
+``h`` deg and about a y-parallel axis through (0, 0, 0.8) by ``v`` deg, scales its distance from that pivot,
+then turns the optical axis by ``end_rot`` (z) / ``end_vert`` (y). ``0_0_100_0_0`` = the stock camera.
+``apply_camera_view`` writes the pose into the compiled model's ``cam_pos/cam_quat`` after every reset
+(hard resets rebuild the model) and re-renders the observation.
+
 Two backends, picked automatically from the imported ``libero`` package:
 * native  (shared venv, hf-libero): plain LiberoEnv + joint-qpos rewrite; needs only the LIBERO-Plus
   repo checkout (``FM_LIBERO_PLUS``) for the qpos table / task_classification.json (or regenerates
@@ -43,6 +51,11 @@ DIMENSIONS = {"robot_init": "Robot Initial States", "layout": "Objects Layout", 
               "language": "Language Instructions", "light": "Light Conditions",
               "background": "Background Textures", "noise": "Sensor Noise"}
 _SUFFIX = re.compile(r"_(view_.*|add_\d+|table_\d+|tb_\d+|language_.*|light_.*|level.*|noise_.*)$")
+# stock agentview camera of every LIBERO tabletop scene (hf-libero == LIBERO-Plus ``pos_av`` / ``quat_av``, wxyz)
+CAM_POS_AV = [0.6586131746834771, 0.0, 1.6103500240372423]
+CAM_QUAT_AV = [0.6380177736282349, 0.3048497438430786, 0.30484986305236816, 0.6380177736282349]
+CAM_PIVOT = np.array([0.0, 0.0, 0.8])
+IDENTITY_VIEW = "0_0_100_0_0"
 
 
 # --------------------------------------------------------------------------- #
@@ -159,8 +172,100 @@ def list_configs(dimension: str, suite: str) -> list[dict]:
                        init_qpos=table[n].tolist())
         elif key == "layout":
             cfg.update(bddl=f"{suite}/{it['name']}.bddl", init_states_file=f"libero_newobj/{suite}/{it['name']}.pruned_init")
+        elif key == "camera":
+            view, n = variant.split("_initstate_")
+            cfg.update(view=view[len("view_"):], init_state=int(n.split("_noise_")[0]), **parse_view(view[len("view_"):]))
         out.append(cfg)
     return out
+
+
+# --------------------------------------------------------------------------- #
+# Camera viewpoints (port of LIBERO-Plus libero_tabletop_manipulation.py: rotate_around_y/z, scale_distance_from_pivot)
+# --------------------------------------------------------------------------- #
+def parse_view(view: str) -> dict[str, float]:
+    """'11_15_100_0_0' -> {h_deg, v_deg, scale, end_rot_deg, end_vert_deg} (their ints; scale = percent / 100)."""
+    h, v, sc, er, ev = view.split("_")
+    return {"h_deg": int(h), "v_deg": int(v), "scale": int(sc) / 100.0, "end_rot_deg": int(er), "end_vert_deg": int(ev)}
+
+
+def _rot_of(q_wxyz):
+    from scipy.spatial.transform import Rotation
+    return Rotation.from_quat([q_wxyz[1], q_wxyz[2], q_wxyz[3], q_wxyz[0]])
+
+
+def _wxyz(rot) -> list[float]:
+    x, y, z, w = rot.as_quat()
+    return [float(w), float(x), float(y), float(z)]
+
+
+def _rotate_around_y(quat=None, pos=None, degrees=0):
+    """LIBERO-Plus rotate_around_y: about the y-parallel axis through (0, 0, 0.8); positive turns x toward z."""
+    from scipy.spatial.transform import Rotation
+    rot = Rotation.from_rotvec(np.radians(-degrees) * np.array([0.0, 1.0, 0.0]))
+    out = {}
+    if quat is not None:
+        out["quat"] = _wxyz(rot * _rot_of(quat))
+    if pos is not None:
+        out["pos"] = (rot.apply(np.asarray(pos, np.float64) - CAM_PIVOT) + CAM_PIVOT).tolist()
+    return out
+
+
+def _rotate_around_z(quat=None, pos=None, degrees=0):
+    """LIBERO-Plus rotate_around_z: about the world z axis (positive = counter-clockwise from above)."""
+    from scipy.spatial.transform import Rotation
+    rot = Rotation.from_euler("z", degrees, degrees=True)
+    out = {}
+    if quat is not None:
+        out["quat"] = _wxyz(rot * _rot_of(quat))
+    if pos is not None:
+        out["pos"] = rot.apply(np.asarray(pos, np.float64)).tolist()
+    return out
+
+
+def _r4(x) -> list[float]:
+    return [round(float(v), 4) for v in x]
+
+
+def camera_pose_for_view(view: str) -> tuple[list[float], list[float]]:
+    """(pos, quat_wxyz) of the agentview camera for a LIBERO-Plus view string, bit-for-bit their _setup_camera
+    (same operation order and the same round(x, 4) after every step)."""
+    p = parse_view(view)
+    pos, quat = list(CAM_POS_AV), list(CAM_QUAT_AV)
+    if p["v_deg"] != 0:
+        r = _rotate_around_y(quat, pos, p["v_deg"]);       pos, quat = _r4(r["pos"]), _r4(r["quat"])
+        r = _rotate_around_z(quat, pos, p["h_deg"]);       pos, quat = _r4(r["pos"]), _r4(r["quat"])
+    else:
+        r = _rotate_around_z(quat, pos, p["h_deg"]);       pos, quat = _r4(r["pos"]), _r4(r["quat"])
+    if p["scale"] != 1.0:
+        pos = _r4(CAM_PIVOT + (np.asarray(pos) - CAM_PIVOT) * p["scale"]);  quat = _r4(quat)
+    if p["end_rot_deg"] != 0:
+        quat = _r4(_rotate_around_z(quat, degrees=p["end_rot_deg"])["quat"])
+    if p["end_vert_deg"] != 0:
+        quat = _r4(_rotate_around_y(quat, degrees=p["end_vert_deg"])["quat"])
+    return pos, quat
+
+
+def apply_camera_view(env: LiberoEnv, config: dict) -> Obs:
+    """Move the compiled model's agentview camera to the config's view (``config["view"]``, e.g. '11_15_100_0_0')
+    and re-render the observation. Must run after every reset (hard_reset rebuilds the model). Records
+    before/after in ``env.last_perturbation['camera']``."""
+    import mujoco
+    view = str(config.get("view") or IDENTITY_VIEW)
+    pos, quat = camera_pose_for_view(view)
+    sim = env.raw_env.env.sim
+    model = getattr(sim.model, "_model", sim.model)
+    cid = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_CAMERA, "agentview")
+    if cid < 0:
+        raise RuntimeError("no 'agentview' camera in the model")
+    before_pos, before_quat = model.cam_pos[cid].copy(), model.cam_quat[cid].copy()
+    model.cam_pos[cid] = np.asarray(pos, np.float64)
+    model.cam_quat[cid] = np.asarray(quat, np.float64)
+    sim.forward()
+    obs = env.current_obs()
+    env.last_perturbation["camera"] = {"view": view, **parse_view(view), "cam_pos_before": _r(before_pos),
+                                       "cam_quat_before": _r(before_quat), "cam_pos": _r(pos), "cam_quat": _r(quat),
+                                       "cam_shift_m": round(float(np.linalg.norm(np.asarray(pos) - before_pos)), 4)}
+    return obs
 
 
 # --------------------------------------------------------------------------- #
@@ -260,9 +365,12 @@ class LiberoPlusEnv(LiberoEnv):
 
     def reset(self, seed: int, perturbation: dict[str, Any] | None = None) -> Obs:
         obs = super().reset(seed, perturbation)
-        if self.config.get("dimension") == "robot_init" and self.config.get("reapply_qpos", True):
+        dim = self.config.get("dimension")
+        if dim == "robot_init" and self.config.get("reapply_qpos", True):
             obs = apply_robot_init_state(self, self.config, seed)
-        self.last_perturbation["plus"] = {k: self.config.get(k) for k in ("dimension", "name", "init_state", "radius")}
+        elif dim == "camera":
+            obs = apply_camera_view(self, self.config)
+        self.last_perturbation["plus"] = {k: self.config.get(k) for k in ("dimension", "name", "init_state", "radius", "view")}
         return obs
 
     def canonical_ee_pose(self) -> tuple[np.ndarray, np.ndarray]:
@@ -291,4 +399,5 @@ def make_perturbed_env(suite: str, task_id: str | int, config: dict | str | None
 
 
 __all__ = ["list_configs", "make_perturbed_env", "apply_robot_init_state", "robot_init_qpos", "LiberoPlusEnv",
-           "robot_init_qpos_table", "base_task_names", "is_plus_backend", "DIMENSIONS", "BASE_QPOS"]
+           "robot_init_qpos_table", "base_task_names", "is_plus_backend", "DIMENSIONS", "BASE_QPOS",
+           "camera_pose_for_view", "apply_camera_view", "parse_view", "IDENTITY_VIEW"]

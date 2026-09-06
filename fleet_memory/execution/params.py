@@ -1,6 +1,11 @@
-"""v3 S3 control surface as ONE bounded continuous vector (9 dims). All optimisation happens over
+"""v3 S3 control surface as ONE bounded continuous vector (21 dims). All optimisation happens over
 this and nothing else. Bounds are hard; the shim clips. The optimizer writes these; the coach may
 only propose them as candidates that go through the same perturbation gate.
+
+v3.2 adds four *observation-side* dims (camera calibration): a similarity warp (roll / zoom / shift) of the
+external camera frame applied before the frozen policy sees it (execution/calib.py). Identity = no warp, so
+every earlier 17-dim vector loads unchanged. A bumped camera is the classic fleet perturbation; these dims let
+the sleep loop learn a per-site re-calibration without touching weights — gated like every other dim.
 """
 from __future__ import annotations
 
@@ -23,14 +28,18 @@ PARAM_SPEC: list[tuple[str, int, float, float]] = [
     ("homing_enable",       1,  0.0, 1.0),     # optimised as continuous, thresholded at 0.5: home the arm before the VLA acts
     ("homing_pos_delta",    3, -0.05, 0.05),   # m, offset from the canonical LIBERO start EE position (homing target)
     ("homing_rot_delta",    3, -0.15, 0.15),   # rad axis-angle offset from the canonical start orientation
+    ("cam_roll_deg",        1, -20.0, 20.0),   # v3.2 camera calibration: rotate the agentview frame (deg, ccw)
+    ("cam_zoom",            1,  0.80, 1.25),   # scale about the frame centre (>1 magnifies)
+    ("cam_shift_xy",        2, -0.15, 0.15),   # translate the frame by this fraction of width / height
 ]
-DIM = sum(d for _, d, _, _ in PARAM_SPEC)  # 17
+DIM = sum(d for _, d, _, _ in PARAM_SPEC)  # 21
+CALIB_NAMES = ("cam_roll_deg", "cam_zoom", "cam_shift_xy")
 NAMES: list[str] = [n for n, _, _, _ in PARAM_SPEC]
 LOW = np.concatenate([np.full(d, lo, np.float64) for _, d, lo, _ in PARAM_SPEC])
 HIGH = np.concatenate([np.full(d, hi, np.float64) for _, d, _, hi in PARAM_SPEC])
 RANGE = HIGH - LOW
 
-VEC_FIELDS = ("approach_offset_xyz", "homing_pos_delta", "homing_rot_delta")
+VEC_FIELDS = ("approach_offset_xyz", "homing_pos_delta", "homing_rot_delta", "cam_shift_xy")
 APPROACH_RADIUS_M = 0.12   # phase detector: approach = gripper open AND ||ee - target|| < this
 BLEND_ALPHA = 0.5          # a = (1-α)·a_vla + α·a_toward_waypoint during approach only
 
@@ -48,6 +57,9 @@ class S3Params:
     homing_enable: float = 0.0
     homing_pos_delta: np.ndarray = field(default_factory=lambda: np.zeros(3))
     homing_rot_delta: np.ndarray = field(default_factory=lambda: np.zeros(3))
+    cam_roll_deg: float = 0.0                # v3.2 camera calibration (identity: 0 / 1 / 0,0)
+    cam_zoom: float = 1.0
+    cam_shift_xy: np.ndarray = field(default_factory=lambda: np.zeros(2))
 
     # --- vector view ---------------------------------------------------------
     def to_array(self) -> np.ndarray:
@@ -56,18 +68,32 @@ class S3Params:
                                 self.velocity_cap, self.gripper_cmd, self.approach_cone_deg, self.blend_alpha,
                                 self.homing_enable],
                                np.asarray(self.homing_pos_delta, np.float64).reshape(3),
-                               np.asarray(self.homing_rot_delta, np.float64).reshape(3)])
+                               np.asarray(self.homing_rot_delta, np.float64).reshape(3),
+                               [self.cam_roll_deg, self.cam_zoom],
+                               np.asarray(self.cam_shift_xy, np.float64).reshape(2)])
 
     @classmethod
     def from_array(cls, x: np.ndarray) -> "S3Params":
         x = np.asarray(x, np.float64).reshape(-1)
         if x.shape[0] in (9, 16):                # v3.0 (9) / v3.1-pre-blend (16) vectors stay loadable
-            x = np.concatenate([x[:9], [0.0], x[9:], np.zeros(DIM - 1 - x.shape[0])])
+            x = np.concatenate([x[:9], [0.0], x[9:]])
+        if x.shape[0] < DIM:                     # shorter (older) vectors: missing dims are identity (17 -> 21)
+            x = np.concatenate([x, cls().to_array()[x.shape[0]:]])
         x = clip(x.reshape(DIM))
         return cls(approach_offset_xyz=x[0:3].copy(), pregrasp_height=float(x[3]), grasp_offset_z=float(x[4]),
                    time_scale=float(x[5]), velocity_cap=float(x[6]), gripper_cmd=float(x[7]),
                    approach_cone_deg=float(x[8]), blend_alpha=float(x[9]), homing_enable=float(x[10]),
-                   homing_pos_delta=x[11:14].copy(), homing_rot_delta=x[14:17].copy())
+                   homing_pos_delta=x[11:14].copy(), homing_rot_delta=x[14:17].copy(),
+                   cam_roll_deg=float(x[17]), cam_zoom=float(x[18]), cam_shift_xy=x[19:21].copy())
+
+    # --- camera calibration (applied by the shim to the external camera frame before the policy) ----
+    def calib_dict(self) -> dict[str, float | list[float]] | None:
+        """{roll_deg, zoom, shift_xy} or None when the calibration is the identity (no warp)."""
+        d = {"roll_deg": float(self.cam_roll_deg), "zoom": float(self.cam_zoom),
+             "shift_xy": [float(v) for v in np.asarray(self.cam_shift_xy, np.float64).reshape(2)]}
+        if abs(d["roll_deg"]) < 1e-9 and abs(d["zoom"] - 1.0) < 1e-9 and all(abs(v) < 1e-9 for v in d["shift_xy"]):
+            return None
+        return d
 
     # --- homing (executed by the runner before the policy loop, not by the shim) -----------------
     @property
@@ -83,7 +109,7 @@ class S3Params:
     def to_dict(self) -> dict[str, float | list[float]]:
         d = {f.name: getattr(self, f.name) for f in fields(self)}
         for k in VEC_FIELDS:
-            d[k] = [float(v) for v in np.asarray(d[k]).reshape(3)]
+            d[k] = [float(v) for v in np.asarray(d[k]).reshape(-1)]
         return {k: (v if isinstance(v, list) else float(v)) for k, v in d.items()}
 
     @classmethod
@@ -114,6 +140,7 @@ class S3Params:
         c.approach_half_angle_deg = float(self.approach_cone_deg)
         c.time_scale = float(self.time_scale)
         c.blend_alpha = float(self.blend_alpha)
+        c.image_calib = self.calib_dict()
         if self.blend_alpha < 0.05:              # approach shaping off: waypoint / cone / grasp offset are inert
             c.pre_grasp_waypoint, c.approach_vector = None, None
             c.grasp_offset = np.zeros(3, np.float32)
@@ -123,6 +150,19 @@ class S3Params:
 
 def clip(x: np.ndarray) -> np.ndarray:
     return np.minimum(np.maximum(np.asarray(x, np.float64), LOW), HIGH)
+
+
+def dim_indices(names) -> list[int]:
+    """Vector indices covered by the named PARAM_SPEC entries (e.g. CALIB_NAMES -> [17, 18, 19, 20])."""
+    want, out, i = set(names), [], 0
+    for n, d, _, _ in PARAM_SPEC:
+        if n in want:
+            out.extend(range(i, i + d))
+        i += d
+    unknown = want - {n for n, _, _, _ in PARAM_SPEC}
+    if unknown:
+        raise KeyError(f"unknown S3 dims {sorted(unknown)}")
+    return out
 
 
 def normalize(x: np.ndarray) -> np.ndarray:
