@@ -172,7 +172,11 @@ What changed in the layer for this family: the S3 vector gained four **camera-ca
 observation only; identity by default, so every robot-init incumbent loads unchanged). The optimizer sees only cost; it is
 never told what the perturbation was. `--act` runs freeze those four dims (17 action dims only) for attribution.
 
-**Probe (10 held-out layouts, 1 noise draw each, MIG/OSMesa):** BM-0 stock camera 9/10. Per view BM-1: PENDING.
+**Probe (10 held-out layouts, 1 noise draw each, MIG 2g.20gb / OSMesa, raw policy):** BM-0 stock camera **9/10** (89 steps) ·
+BM-1 `0_0_100_2_352` (tilt −8°) **3/10** [11, 60], 203 steps · BM-1 `0_0_100_2_354` (tilt −6°) **2/10** [6, 51], 203 steps.
+A 6–8° pointing change of a fixed camera collapses the policy as hard as the robot-init perturbation did (90% → 20–30%).
+The four moved-camera views (11–15°) are PENDING (the first probe OOMed at the third view: a per-env policy copy in the worker
+cache, fixed in `runner/pool.py`).
 
 **Sleep cycle + held-out reps (10 eval layouts × 5 noise draws, n=50/arm), strong gate (24 gate layouts × 4 draws):**
 | task | view | BM-0 stock | BM-1 camera moved | BM-2 identity shim | BM-3 after one sleep | gate | promoted vector |

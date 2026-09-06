@@ -20,7 +20,8 @@ POLL=${POLL:-60}
 mkdir -p $ROOT/logs/slurm; touch "$DONE"
 PREFIX_A100='source scripts/hopper/env.sh; export FM_POLICY_KWARGS="{\"n_action_steps\":10}" FM_LIBERO_PLUS=/scratch/ezhao2/fleet-memory/LIBERO-plus PYTHONPATH=$FM_REPO; cd $FM_REPO;'
 PREFIX_MIG='export MUJOCO_GL=osmesa PYOPENGL_PLATFORM=osmesa; '"$PREFIX_A100"' export MUJOCO_GL=osmesa PYOPENGL_PLATFORM=osmesa;'
-PREFIX_CPU='export MUJOCO_GL=osmesa PYOPENGL_PLATFORM=osmesa CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=4 MKL_NUM_THREADS=4; '"$PREFIX_A100"' export MUJOCO_GL=osmesa PYOPENGL_PLATFORM=osmesa CUDA_VISIBLE_DEVICES=;'
+# cpu tier (measured 2026-09-06): 16 workers x OMP 2 on 32 cores = ~11.6 env steps/s per node (~1/3 of a MIG slice), ~4.2 GB RSS per worker
+PREFIX_CPU='export MUJOCO_GL=osmesa PYOPENGL_PLATFORM=osmesa CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=2 MKL_NUM_THREADS=2; '"$PREFIX_A100"' export MUJOCO_GL=osmesa PYOPENGL_PLATFORM=osmesa CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=2 MKL_NUM_THREADS=2; unset MUJOCO_EGL_DEVICE_ID;'
 
 count() {  # our running+pending jobs on a tier, by job-name prefix q-a100- / q-mig-
   squeue -u ezhao2 -h -o "%j" | grep -c "^q-$1-"
@@ -45,7 +46,7 @@ while true; do
       jid=$(sbatch --parsable $dep -p gpuq -q gpu --gres=gpu:A100.80gb:1 -c $cpus --mem=48G -t 04:00:00 -J "q-a80-$name" -o "$ROOT/logs/slurm/q_${name}_%j.out" --wrap "$PREFIX_A100 $cmd; echo QTASK_DONE $name") && { echo "$name" >> "$DONE"; echo "$(date +%H:%M) submitted $name ($jid) on a80 ${dep}"; n8=$((n8+1)); }
     elif [ "$tier" = "cpu" ] && [ "$nc" -lt "$MAX_CPU" ]; then
       [ "$cpus" -gt 8 ] || cpus=32
-      jid=$(sbatch --parsable $dep -p normal -q normal -c $cpus --mem=96G -t 04:00:00 -J "q-cpu-$name" -o "$ROOT/logs/slurm/q_${name}_%j.out" --wrap "$PREFIX_CPU $cmd; echo QTASK_DONE $name") && { echo "$name" >> "$DONE"; echo "$(date +%H:%M) submitted $name ($jid) on cpu (c=$cpus) ${dep}"; nc=$((nc+1)); }
+      jid=$(sbatch --parsable $dep -p normal -q normal -c $cpus --mem=$((cpus * 4))G -t 04:00:00 -J "q-cpu-$name" -o "$ROOT/logs/slurm/q_${name}_%j.out" --wrap "$PREFIX_CPU $cmd; echo QTASK_DONE $name") && { echo "$name" >> "$DONE"; echo "$(date +%H:%M) submitted $name ($jid) on cpu (c=$cpus) ${dep}"; nc=$((nc+1)); }
     elif [ "$tier" = "a100" ] && [ "$na" -lt "$MAX_A100" ]; then
       jid=$(sbatch --parsable $dep -p gpuq -q gpu --gres=gpu:A100.40gb:1 -c $cpus --mem=48G -t 04:00:00 -J "q-a100-$name" -o "$ROOT/logs/slurm/q_${name}_%j.out" --wrap "$PREFIX_A100 $cmd; echo QTASK_DONE $name") && { echo "$name" >> "$DONE"; echo "$(date +%H:%M) submitted $name ($jid) on a100 ${dep}"; na=$((na+1)); }
     elif { [ "$tier" = "mig" ] || [ "$tier" = "mig1" ] || [ "$tier" = "mig2" ]; } && [ "$nm" -lt "$MAX_MIG" ]; then
