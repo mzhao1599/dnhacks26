@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fleet Memory Demo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{color-scheme:light dark;--paper:#f3f4f6;--card:#ffffff;--ink:#141a22;--ink2:#465060;--muted:#7d8794;--line:#d9dde3;
+  --accent:#3b5bdb;--good:#1f8a4c;--bad:#c73e3e;--warn:#c98a12;--chip-ok:#e3f4ea;--chip-fail:#fbe6e6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#0f1216;--card:#171b21;--ink:#eef1f4;--ink2:#b8c0ca;--muted:#7f8994;--line:#2a3039;
+  --accent:#7c93f0;--good:#4cc27a;--bad:#ef6b6b;--warn:#e0a83a;--chip-ok:#173324;--chip-fail:#3a1d1d}}
+:root[data-theme="dark"]{--paper:#0f1216;--card:#171b21;--ink:#eef1f4;--ink2:#b8c0ca;--muted:#7f8994;--line:#2a3039;
+  --accent:#7c93f0;--good:#4cc27a;--bad:#ef6b6b;--warn:#e0a83a;--chip-ok:#173324;--chip-fail:#3a1d1d}
+body{background:var(--paper);color:var(--ink);font:16px/1.5 "IBM Plex Sans",system-ui,sans-serif;margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding:40px 24px 64px;display:grid;gap:40px}
+header h1{font-size:34px;line-height:1.15;margin:0 0 10px;font-weight:600;letter-spacing:-.01em;text-wrap:balance}
+header p{max-width:64ch;color:var(--ink2);margin:0}
+.eyebrow{font:500 12px/1 "IBM Plex Mono",ui-monospace,monospace;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+.beat{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:24px;align-items:start;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+@media (max-width:760px){.beat{grid-template-columns:1fr}}
+.media video{width:100%;aspect-ratio:2/1;background:#000;border-radius:6px;display:block}
+.novideo{aspect-ratio:2/1;display:grid;place-items:center;border:1px dashed var(--line);border-radius:6px;color:var(--muted);font-size:14px}
+.beat h2{font-size:22px;margin:0 0 8px;font-weight:600;text-wrap:balance}
+.claim{color:var(--ink2);margin:0 0 12px;max-width:44ch}
+.stats{display:flex;gap:28px;flex-wrap:wrap;margin-top:12px}
+.stat{display:grid}.num{font:500 30px/1.1 "IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}.unit{font-size:12px;color:var(--muted)}
+.chip{display:inline-block;font:500 12px/1 "IBM Plex Mono",monospace;padding:5px 9px;border-radius:999px;border:1px solid var(--line)}
+.chip.ok,.chip.pass{background:var(--chip-ok);color:var(--good);border-color:transparent}.chip.fail{background:var(--chip-fail);color:var(--bad);border-color:transparent}
+.chip.partial{color:var(--warn)}
+.chart{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+.chart h2{font-size:20px;margin:0 0 4px}.chart .sub{color:var(--muted);font-size:13px;margin:0 0 12px}
+svg{width:100%;height:auto;max-width:720px;display:block}.grid{stroke:var(--line);stroke-width:1}.ci{stroke:var(--ink);stroke-width:1.5}
+.tick{fill:var(--muted);font:11px "IBM Plex Mono",monospace}.lab{fill:var(--ink);font:500 12px "IBM Plex Mono",monospace}
+.legend{font-size:13px;color:var(--ink2);margin:10px 0 0}.note{margin:12px 0 0;color:var(--ink2)}.verdict{margin:12px 0 0;font-size:17px}
+.honest{border-top:1px solid var(--line);padding-top:16px;color:var(--muted);font-size:13px;display:grid;gap:4px;max-width:80ch}
+a{color:var(--accent)}
+</style>
+</head><body><div class="wrap">
+<header>
+  <p class="eyebrow">Fleet Memory · frozen VLA · LIBERO-Plus robot-initial-state · 2026-09-05</p>
+  <h1>It sleeps, and it gets its start back.</h1>
+  <p>A frozen SmolVLA policy, an execution shim with a 17-number parameter file, and an offline optimizer that
+  rewrites that file only when a held-out gate says it is better. Every clip below is the same seed across arms:
+  the only thing that changes is the file.</p>
+</header>
+
+<section class="beat">
+  <div class="media"><div class="novideo">clip not rendered yet</div></div>
+  <div class="text">
+    <p class="eyebrow">Beat 1 · the baseline</p>
+    <h2>Same scene, standard start</h2>
+    <p class="claim">Frozen SmolVLA, untouched. It knows this task.</p>
+    
+    <div class="stats"><div class="stat"><span class="num">100%</span><span class="unit">success · 10/10 · CI [72, 100]</span></div><div class="stat"><span class="num">96</span><span class="unit">mean steps</span></div></div>
+  </div>
+</section>
+<section class="beat">
+  <div class="media"><div class="novideo">clip not rendered yet</div></div>
+  <div class="text">
+    <p class="eyebrow">Beat 2 · the collapse</p>
+    <h2>Shift the arm&#x27;s starting joints by 0.1 rad</h2>
+    <p class="claim">LIBERO-Plus&#x27;s robot-initial-state perturbation. Nothing else changes and the policy falls apart.</p>
+    
+    <div class="stats"><div class="stat"><span class="num">0%</span><span class="unit">success · 0/10 · CI [0, 28]</span></div><div class="stat"><span class="num">220</span><span class="unit">mean steps</span></div></div>
+  </div>
+</section>
+<section class="beat">
+  <div class="media"><div class="novideo">clip not rendered yet</div></div>
+  <div class="text">
+    <p class="eyebrow">Beat 3 · the mechanism</p>
+    <h2>Home the arm before the policy acts</h2>
+    <p class="claim">One S3 parameter: a scripted controller returns the end-effector to the start pose it was trained from.</p>
+    
+    <div class="stats"><div class="stat"><span class="num">0%</span><span class="unit">success · 0/10 · CI [0, 28]</span></div><div class="stat"><span class="num">220</span><span class="unit">mean steps</span></div></div>
+  </div>
+</section>
+<section class="beat">
+  <div class="media"><div class="novideo">clip not rendered yet</div></div>
+  <div class="text">
+    <p class="eyebrow">Beat 4 · found by sleeping</p>
+    <h2>The optimizer picked homing on its own</h2>
+    <p class="claim">One unattended CEM cycle on layouts the evaluation never sees; promoted through the gate; nobody typed a number.</p>
+    
+    <div class="stats"><div class="stat"><span class="num">0%</span><span class="unit">success · 0/10 · CI [0, 28]</span></div><div class="stat"><span class="num">220</span><span class="unit">mean steps</span></div></div>
+  </div>
+</section>
+<section class="beat">
+  <div class="media"><div class="novideo">clip not rendered yet</div></div>
+  <div class="text">
+    <p class="eyebrow">Beat 5 · mastery, before</p>
+    <h2>LIBERO-10: bowl into the drawer, close it</h2>
+    <p class="claim">Raw policy on the harder long-horizon task.</p>
+    
+    <div class="stats"></div>
+  </div>
+</section>
+<section class="beat">
+  <div class="media"><div class="novideo">clip not rendered yet</div></div>
+  <div class="text">
+    <p class="eyebrow">Beat 5 · mastery, after</p>
+    <h2>Same seed, promoted vector v2</h2>
+    <p class="claim">Slower chunks, capped velocity: fewer steps at the same success, on held-out layouts.</p>
+    
+    <div class="stats"></div>
+  </div>
+</section>
+<section class="chart">
+  <h2>Pooled result on LIBERO-Spatial tasks 2</h2>
+  <p class="sub">10 evaluation layouts per task, never seen by the optimizer or the gate · 95% Wilson intervals · SmolVLA, our own base numbers</p>
+  <svg viewBox="0 0 640 220" role="img" aria-label="success rate per arm with 95% confidence intervals"><line x1="36" x2="604" y1="184.0" y2="184.0" class="grid"/><text x="30" y="188.0" class="tick" text-anchor="end">0%</text><line x1="36" x2="604" y1="147.0" y2="147.0" class="grid"/><text x="30" y="151.0" class="tick" text-anchor="end">25%</text><line x1="36" x2="604" y1="110.0" y2="110.0" class="grid"/><text x="30" y="114.0" class="tick" text-anchor="end">50%</text><line x1="36" x2="604" y1="73.0" y2="73.0" class="grid"/><text x="30" y="77.0" class="tick" text-anchor="end">75%</text><line x1="36" x2="604" y1="36.0" y2="36.0" class="grid"/><text x="30" y="40.0" class="tick" text-anchor="end">100%</text><rect x="58.7" y="36.0" width="68.2" height="148.0" fill="var(--muted)" rx="2"/><line x1="92.8" x2="92.8" y1="77.1" y2="36.0" class="ci"/><text x="92.8" y="30.0" class="lab" text-anchor="middle">10/10</text><text x="92.8" y="200" class="tick" text-anchor="middle">BM-0</text><rect x="172.3" y="184.0" width="68.2" height="0.0" fill="var(--bad)" rx="2"/><line x1="206.4" x2="206.4" y1="184.0" y2="142.9" class="ci"/><text x="206.4" y="136.9" class="lab" text-anchor="middle">0/10</text><text x="206.4" y="200" class="tick" text-anchor="middle">BM-1</text><rect x="285.9" y="184.0" width="68.2" height="0.0" fill="var(--warn)" rx="2"/><line x1="320.0" x2="320.0" y1="184.0" y2="142.9" class="ci"/><text x="320.0" y="136.9" class="lab" text-anchor="middle">0/10</text><text x="320.0" y="200" class="tick" text-anchor="middle">BM-2</text><rect x="399.5" y="184.0" width="68.2" height="0.0" fill="var(--good)" rx="2"/><line x1="433.6" x2="433.6" y1="184.0" y2="142.9" class="ci"/><text x="433.6" y="136.9" class="lab" text-anchor="middle">0/10</text><text x="433.6" y="200" class="tick" text-anchor="middle">BM-4</text><rect x="513.1" y="184.0" width="68.2" height="0.0" fill="var(--accent)" rx="2"/><line x1="547.2" x2="547.2" y1="184.0" y2="142.9" class="ci"/><text x="547.2" y="136.9" class="lab" text-anchor="middle">0/10</text><text x="547.2" y="200" class="tick" text-anchor="middle">BM-3</text></svg>
+  <p class="legend"><b>BM-0</b> standard start · <b>BM-1</b> perturbed start · <b>BM-2</b> perturbed + untrained layer · <b>BM-3</b> perturbed + one sleep cycle · <b>BM-4</b> perturbed + hand-set homing</p>
+  <p class="verdict">One sleep cycle vs the collapse: <b>1.00×</b> [0.02, 45.64] — <span class="chip fail">fail</span> by the pre-registered rule.</p>
+  
+</section>
+<div class="honest">
+  <span>Base numbers are ours (SmolVLA) on LIBERO-Plus's exact robot-init perturbation; the CVPR table is π₀/OpenVLA.</span>
+  <span>The shim reads object pose from simulator state as a stand-in for a detector. Homing runs in end-effector space.</span>
+  <span>Frozen VLA in every arm, zero demonstrations. The only thing that changed between the collapse and the recovery is one versioned, gated parameter file.</span>
+</div>
+</div>
+</body></html>
