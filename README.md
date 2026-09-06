@@ -1,4 +1,4 @@
-# Fleet Memory
+# somnio robotics
 
 **A frozen robot policy that gets better at its own environment while it sleeps.**
 
@@ -6,7 +6,7 @@
 ![python](https://img.shields.io/badge/python-3.12-blue)
 ![license](https://img.shields.io/badge/license-MIT-green)
 
-Vision-language-action models (here: [SmolVLA](https://huggingface.co/lerobot/smolvla_libero) on [LIBERO](https://github.com/Lifelong-Robot-Learning/LIBERO)) are brittle: shift the arm's starting joints by 0.1 rad — [LIBERO-Plus](https://github.com/sylvestf/LIBERO-plus)'s *robot-initial-state* perturbation — and success drops from **80% to 22%**. Fine-tuning is the usual answer. Fleet Memory instead leaves the weights alone and wraps the policy in an execution shim driven by a **17-number parameter file** (approach shaping, time scale, velocity cap, gripper command, a homing move). An offline "sleep loop" searches that file with CEM on layouts it is allowed to see, and a gate on layouts it never sees decides whether the new version replaces the old one. No demonstrations, no gradients, no human in the loop.
+Vision-language-action models (here: [SmolVLA](https://huggingface.co/lerobot/smolvla_libero) on [LIBERO](https://github.com/Lifelong-Robot-Learning/LIBERO)) are brittle: shift the arm's starting joints by 0.1 rad — [LIBERO-Plus](https://github.com/sylvestf/LIBERO-plus)'s *robot-initial-state* perturbation — and success drops from **80% to 22%**. Fine-tuning is the usual answer. Our approach instead leaves the weights alone and wraps the policy in an execution shim driven by a **17-number parameter file** (approach shaping, time scale, velocity cap, gripper command, a homing move). An offline "sleep loop" searches that file with CEM on layouts it is allowed to see, and a gate on layouts it never sees decides whether the new version replaces the old one. No demonstrations, no gradients, no human in the loop.
 
 <p align="center">
   <img src="docs/media/collapse_vs_sleep.gif" width="384" alt="Top: perturbed start, raw policy fails. Bottom: same seed, after one unattended sleep cycle, success."><br>
