@@ -113,6 +113,71 @@ def pooled_reps(recs):
     return out
 
 
+def collect_camera():
+    """Second family (v3.2): LIBERO-Plus camera viewpoints. Probe (BM-0 + BM-1 per view, n=10) from
+    bench_camera/probe.jsonl; sleep-cycle reps (BM-0/1/2/3, n=50) from bench_camera/events.jsonl, keyed by (task, view),
+    pooled over replication runs; the action-only (`--act`) variant is kept as its own row."""
+    from collections import defaultdict
+    probe = latest(read_jsonl(os.path.join(LOGS, "bench_camera", "probe.jsonl")), type="camera_probe")
+    recs = [r for r in read_jsonl(os.path.join(LOGS, "bench_camera", "events.jsonl")) if r.get("type") == "benchmark_reps"]
+    acc = defaultdict(lambda: defaultdict(lambda: {"k": 0, "n": 0, "steps": 0.0}))
+    meta = {}
+    for r in recs:
+        key = (str(r.get("task")), r.get("view"))
+        meta.setdefault(key, {"task": str(r.get("task")), "view": r.get("view"), "n_runs": 0, "version": None})["n_runs"] += 1
+        for arm, v in (r.get("results") or {}).items():
+            label = arm + (" (action dims only)" if r.get("act_only") and arm == "BM-3" else "")
+            if r.get("act_only") and arm != "BM-3":
+                continue                                     # BM-1/BM-2 of the act run duplicate the full run's arms
+            a = acc[key][label]; a["k"] += int(v["k"]); a["n"] += int(v["n"]); a["steps"] += float(v.get("mean_steps", 0)) * int(v["n"])
+            if arm == "BM-3" and not r.get("act_only") and v.get("version"):
+                meta[key]["version"] = v["version"]
+    cards = []
+    for key in sorted(acc, key=lambda k: (int(k[0]), k[1] or "")):
+        rows = {}
+        for arm, a in acc[key].items():
+            if a["n"]:
+                lo, hi = wilson(a["k"], a["n"])
+                rows[arm] = {"k": a["k"], "n": a["n"], "rate": a["k"] / a["n"], "ci": [lo, hi], "mean_steps": a["steps"] / a["n"]}
+        cards.append({**meta[key], "results": rows})
+    return probe, cards
+
+
+def camera_html():
+    probe, cards = collect_camera()
+    if not probe and not cards:
+        return ""
+    parts = ['<section class="chart"><h2>Second perturbation family: the camera moves</h2>',
+             '<p class="sub">LIBERO-Plus camera viewpoints, native port · the parameter file gained four camera-calibration numbers '
+             '(roll / zoom / shift of the external camera frame before the frozen policy sees it) · identity by default · '
+             'the optimizer only ever sees cost</p>']
+    if probe:
+        res = probe.get("results") or {}
+        rows = "".join(f'<tr><td>{html.escape(k)}</td><td>{v["k"]}/{v["n"]} = {100 * v["rate"]:.0f}%</td>'
+                       f'<td>[{100 * v["ci"][0]:.0f}, {100 * v["ci"][1]:.0f}]</td><td>{v["mean_steps"]:.0f}</td></tr>' for k, v in res.items())
+        parts.append(f'<h3>Probe: every camera view of task {probe.get("task")}, raw policy, 10 held-out layouts</h3>'
+                     f'<table class="tbl"><tr><th>arm · view</th><th>success</th><th>95% CI</th><th>steps</th></tr>{rows}</table>')
+    if cards:
+        cc = []
+        for c in cards:
+            order = ["BM-0", "BM-1", "BM-2", "BM-3", "BM-3 (action dims only)"]
+            rows = [{"arm": a, **c["results"][a]} for a in order if a in c["results"]]
+            r1, r3 = c["results"].get("BM-1"), c["results"].get("BM-3")
+            tag = ""
+            if r1 and r3:
+                v = "pass" if r3["ci"][0] > r1["ci"][1] else ("partial" if r3["rate"] > r1["rate"] else "fail")
+                tag = (f'<p class="verdict">camera moved <b>{100 * r1["rate"]:.0f}%</b> → one sleep <b>{100 * r3["rate"]:.0f}%</b> '
+                       f'(n={r1["n"]}) — <span class="chip {v}">{v}</span></p>')
+            elif r1:
+                tag = f'<p class="verdict">camera moved <b>{100 * r1["rate"]:.0f}%</b> (n={r1["n"]}) — sleep cycle pending</p>'
+            cc.append(f'<div class="card"><h3>Task {c["task"]} · view {html.escape(str(c["view"]))}'
+                      f'{" · vector v" + str(c["version"]) if c.get("version") else ""}</h3>{bars_svg(rows)}{tag}</div>')
+        parts.append(f'<div class="cards">{"".join(cc)}</div>')
+    parts.append('<p class="note">Views written <code>h_v_scale_rot_vert</code>: <code>0_0_100_2_354</code> keeps the camera in place and turns its optical axis '
+                 '2° sideways and 6° down; <code>11_15_100_0_0</code> moves it 11° around the table and 15° up (~30 cm away).</p></section>')
+    return "".join(parts)
+
+
 def wilson(k, n, z=1.96):
     if n == 0:
         return (0.0, 0.0)
@@ -322,6 +387,7 @@ a{{color:var(--accent)}}
 {"".join(beats_html)}
 {headline_html}
 {other_html}
+{camera_html()}
 <section class="chart">
   <h2>Mastery on a fixed task: LIBERO-10 "bowl into the bottom drawer, close it"</h2>
   <p class="sub">Held-out layouts 20–39 × 2 policy-noise draws, n=40 per arm, seeds never used by the optimizer or the gate</p>

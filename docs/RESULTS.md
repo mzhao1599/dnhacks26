@@ -130,6 +130,22 @@ what this S3 vector can express (approach offsets are bounded ±3 cm; the VLA ne
 nothing legitimate to promote. Re-adaptation: not achieved; reported as such. (On the mock env the same protocol
 recovered.)
 
+**Overnight follow-ups (queue of 2026-09-05 late, read 2026-09-06 morning) — all honest negatives:**
+- Protocol P with a **2.5 cm** bowl shift (inside the ±3 cm approach-offset bound; `small` auto-sleep, 8-seed gate; arm B, n=15/stage):
+  baseline 10/15 = 67% (cost 2.46–2.88) → a *false* drift alarm already in the baseline stage (arm B ran below the arm-A reference)
+  → sleep #1 refused (cand 4.38 vs 3.87) → perturbed 6/15 = 40% (cost 4.17) → drift → sleep #2 **passed** the 8-seed gate
+  (3.86 → 3.42, 37.5% → 50%, promoted v2) → recovery **4/15 = 27%** (cost 4.20–4.64). Detection and refusal worked; the
+  8-seed promotion did not hold up on the recovery episodes (another weak-gate false positive, consistent with §4).
+- Second mastery task (LIBERO-10 task 0, "put both the alphabet soup and the cream cheese box in the basket", 20 train seeds):
+  arm A **30%** [15, 52], 455 steps; one `small` sleep: validation picked the incumbent's neighbourhood, gate refused
+  (cand 3.80 vs 3.38, 37.5% → 25%); arm B on the same seeds 30% / 455 / cost 3.60. No change, nothing promoted.
+- Arm D with the coach JSON fix, perturbed task 0, n=20 (10 layouts × 2 draws): B vector-only 15/20 = **75%** [53, 89] /
+  135 steps · C planner + coach, no vector 7/20 = **35%** / 172 · D vector + planner + coach 13/20 = 65% [43, 82] / 146 ·
+  **0 interventions in every arm** (the stall detector never fires in 150-step episodes). The S1/coach layer remains inert on
+  this task; the vector carries the recovery. Arm C's 35% vs 50% in the earlier run is n=20 noise.
+- Tasks 2 and 4 at n=30 (10 layouts × 3 draws, MIG renderer): task 2 **0/30 in every arm** (BM-1/2/3/4); task 4 BM-1 1/30,
+  BM-2/3/4 2/30. Robot-init at r=0.1 on those scenes is below what any execution-side file can fix.
+
 ## 7. Demo assets
 - Clips (same seed across arms, `scripts/exp/record_demo.py`, `logs/hopper/videos/`): seed 5047 on LIBERO-Spatial task 0 —
   BM-0 standard **success 69 steps**, BM-1 perturbed **fail**, BM-4 hand-set homing **fail on this seed**, BM-3 consolidated
