@@ -4,14 +4,17 @@ import json, os, sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 src = open(os.path.join(ROOT, "dashboard", "index.html")).read()
 log_path = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "logs", "demo.jsonl")
-SKIP = {"snapshot"}                      # per-episode coach snapshots: 75% of the bytes, unused by the dashboard
+SKIP = {"snapshot", "scorecard"}         # per-episode coach snapshots: 75% of the bytes, unused by the dashboard
 lines = []
 for l in open(log_path):
     if not l.strip():
         continue
     try:
-        if json.loads(l).get("type") in SKIP:
+        d = json.loads(l)
+        if d.get("type") in SKIP:
             continue
+        if d.get("type") == "episode" and (d.get("perturbation") or {}).get("consolidation_id"):
+            continue                     # CEM rollouts (the bulk of the episodes): the dashboard only counts them
     except Exception:
         continue                         # torn NFS line
     lines.append(l)
@@ -21,7 +24,7 @@ for l in lines:
         n_ep += json.loads(l).get("type") == "episode"
     except Exception:
         pass
-label = f"Hopper run 2026-09-05 (all arms, {n_ep:,} episodes)"
+label = f"Hopper runs 2026-09-05/06 (all arms, {n_ep:,} evaluation episodes; CEM rollouts omitted)"
 head, sep, tail = src.partition('fetch("../logs/events.jsonl")')
 assert sep, "index.html fetch line not found"
 tail = tail.split("\n", 1)[1]                                  # drop the rest of the fetch line

@@ -151,7 +151,7 @@ recovered.)
   BM-0 standard **success 69 steps**, BM-1 perturbed **fail**, BM-4 hand-set homing **fail on this seed**, BM-3 consolidated
   vector **success 99 steps**; LIBERO-10 task 3 seed 0 — raw **fail at horizon**, v2 **success 379 steps**.
 - Storyboard with embedded clips: https://claude.ai/code/artifact/622fb72e-c0aa-4a88-a23f-5ab8ea2b7957 ·
-  analyst dashboard: https://claude.ai/code/artifact/5f1ec73c-fd21-4b6b-845b-a4b1f8432c2e · rebuild: `scripts/pull_logs.sh`,
+  analyst dashboard (2026-09-06, camera family included, CEM rollouts omitted to fit): https://claude.ai/code/artifact/b66d579e-ba99-4a79-bd59-442a67486239 (the 2026-09-05 version stays at https://claude.ai/code/artifact/5f1ec73c-fd21-4b6b-845b-a4b1f8432c2e) · rebuild: `scripts/pull_logs.sh`,
   `scripts/build_demo_page.py`, then publish `dashboard/demo_artifact.html` / `dashboard/artifact.html`.
 - Held-out mastery (LIBERO-10 task 3, layouts 20–39, n=40/arm): A 78% [62, 88] / 302 steps / cost 2.03 → **v2 80% [65, 90] /
   278 steps / cost 1.95** → v3 68% [52, 80] / 335 steps / cost 2.31 (a gate false-positive at n=12; regressed).
@@ -182,9 +182,9 @@ cache, fixed in `runner/pool.py`).
 | task | view | BM-0 stock | BM-1 camera moved | BM-2 identity shim | BM-3 after one sleep | gate | promoted vector |
 |---|---|---|---|---|---|---|---|
 | 0 | `0_0_100_2_354` (tilt −6°) | 44/50 = **88%** [76, 94], 91 steps | 7/50 = **14%** [7, 26], 208 steps | 3/50 = 6% [2, 16], 214 steps | **29/50 = 58%** [44, 71], 156 steps — **pass** (4.1×, intervals disjoint) | **passed**: cost 4.04 → 1.89, success 12.5% → 66.7% (+54 pp) on 24 gate layouts; 504 rollouts, 31 min on an A100 | v2: `cam_shift_xy` = (−0.17, −0.18) (frame moved up/left by ~17% — the direction that undoes the tilt), `cam_zoom` 1.09, `cam_roll` 2.0°, `time_scale` 0.64, `gripper_cmd` 0.71; blend off, homing off |
-| 0 | same, action dims only (`--act`, calibration frozen at identity) | — | — | — | PENDING | passed: cost 3.77 → 3.15, success 20.8% → 33.3% (+12.5 pp) on the same 24 gate layouts; 504 rollouts, 31 min | v2: `time_scale` 0.60, `velocity_cap` 0.71, `gripper_cmd` 0.74, `blend_alpha` 0.14 (cone 30°), homing on (δ ≤ 2 cm) — the robot-init recipe, worth a quarter of the calibration's gain here |
+| 0 | same, action dims only (`--act`, calibration frozen at identity) | — | 4/50 = 8% [3, 19] (its own BM-1) | 6/50 = 12% [6, 24] | **8/50 = 16%** [8, 29], 213 steps — no recovery | passed: cost 3.77 → 3.15, success 20.8% → 33.3% (+12.5 pp) on the same 24 gate layouts; 504 rollouts, 31 min | v2: `time_scale` 0.60, `velocity_cap` 0.71, `gripper_cmd` 0.74, `blend_alpha` 0.14 (cone 30°), homing on (δ ≤ 2 cm) — the robot-init recipe, which does not fix a moved camera |
 | 0 | `11_15_100_0_0` (moved) | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
-| 1 | `0_0_100_4_6` | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
+| 1 | `0_0_100_4_6` | PENDING | PENDING | PENDING | PENDING | passed on cost only: 4.46 → 4.35, success 0% → 4.2% on 24 gate layouts (480 rollouts, 35 min) | v2: `cam_shift_xy` = (+0.25, −0.02), `cam_roll` 3.7°, `time_scale` 1.14, `velocity_cap` 0.73 — a scene the policy barely solves even stock (60% robot-init BM-0) |
 | 2 | `0_0_100_6_6` | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
 | 3 | `0_0_100_8_6` | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
 | 4 | `0_0_100_10_6` | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |

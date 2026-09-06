@@ -1,4 +1,4 @@
-# Fleet Memory v3.1 — Handoff (operational state as of 2026-09-05 ~21:30 EDT)
+# Fleet Memory v3.2 — Handoff (operational state as of 2026-09-06 ~10:45 EDT)
 
 Read `AGENTS.md` first (what the project is, invariants, conventions). This file is the *state of the world*:
 where things run, where the numbers live, what is pending, and how to pick the work back up cold.
@@ -90,6 +90,12 @@ Numbers here are copied from `docs/RESULTS.md`; **PENDING means not yet measured
 ## 5. Results
 
 All measured numbers, with n and intervals, are in `docs/RESULTS.md` (single source; do not copy tables here).
+**2026-09-06 second family (RESULTS §8):** LIBERO-Plus camera viewpoint, task 0, camera tilted 6° (view `0_0_100_2_354`),
+10 held-out layouts × 5 draws: BM-0 stock 88% → BM-1 tilted 14% → BM-2 identity shim 6% → **BM-3 one unattended sleep 58%**
+[44, 71] (gate 12.5% → 66.7% on 24 layouts). Action-dims-only attribution: 16% held-out. The promoted file's four camera-calibration
+dims (v3.2, `execution/calib.py`) moved the frame up/left by ~17%. Tasks 1–4, the moved view (`11_15_100_0_0`), a second cycle,
+protocol P with `--perturb-env` camera, and same-seed clips were queued/running at hand-off (see `scripts/hopper/queue.txt`
+and `logs/bench_camera/`); harvest with `scripts/pull_logs.sh` + `scripts/exp/camera_table.py`.
 Headline as of 2026-09-05 23:10: LIBERO-Spatial task 0 under LIBERO-Plus robot-init perturbation, 10 held-out layouts
 × fresh noise draws: BM-1 22% (n=150) → BM-4 hand-set homing 37% (n=150) → **BM-3 one unattended sleep 54% (n=100)
 → second cycle through the 24-seed gate 70% (n=50)**; CIs disjoint at every step. Task 3: pooled n=150 BM-3 = BM-1 = 27%
@@ -108,8 +114,11 @@ Headline as of 2026-09-05 23:10: LIBERO-Spatial task 0 under LIBERO-Plus robot-i
 - EE-space homing cannot restore the joint configuration (wrist-camera view differs); LIBERO-Spatial tasks 1–2 stay
   ≤6% under robot-init perturbation. Homing hurts on task 3 (r=0.2).
 - Protocol P on the real env: drift detection and refusal worked; recovery 0/15 (6 cm object shift is outside S3's ±3 cm).
-- The benchmark is the robot-init family only (spec §13, `seeds.json`). Other LIBERO-Plus families are wired
-  (`--dimension camera|light|background|layout`, LIBERO-plus package backend `venv_plus`) but out of plan and unmeasured.
+- Families measured: robot-init (spec §13) and, since 2026-09-06, camera viewpoints (native port; `--dimension camera`). Light /
+  background / layout are wired for the LIBERO-plus package backend (`venv_plus`) but unmeasured. The first camera probe OOMed
+  because the worker cache duplicated the policy per env config (fixed in `runner/pool.py`); MIG 1g slices fit 3 workers, not 4.
+- Artifacts: storyboard https://claude.ai/code/artifact/622fb72e-c0aa-4a88-a23f-5ab8ea2b7957 (republished 2026-09-06 with the
+  camera panel), dashboard https://claude.ai/code/artifact/b66d579e-ba99-4a79-bd59-442a67486239 (new URL; CEM rollouts omitted).
 - Arm E/F, S2 probe, cross-suite transfer: deferred.
 
 ## 7. Resume checklist
