@@ -71,8 +71,15 @@ no prose leaks, 0 interventions) but per-subtask step budgets (~460 total) trunc
 no longer ends the episode). Rerun, 20 seeds: **75% [53, 89], 295 steps** — i.e. ≈ the identity-shim arm (80%/294):
 the S1 planner neither helps nor hurts this single-skill task once it stops truncating.
 
-## 6. Protocol P (LIBERO-Spatial task 0): baseline 8/15 (cost 3.00, 144 steps) → bowl shifted 6 cm → 1/5 →
-**drift_trigger fired unattended** (EWMA cost 4.43 vs baseline 2.37) → auto-sleep (small) running; recovery stage PENDING.
+## 6. Protocol P (LIBERO-Spatial task 0, real env, unattended): an honest negative
+baseline 8/15 (cost 3.00, 144 steps) → bowl shifted 6 cm → perturbed **1/15** (cost 4.87) → **drift_trigger fired**
+(EWMA 4.43 vs baseline 2.37) → auto-sleep #1 (176 rollouts, 44 min on a MIG slice): CEM ran 4 iterations, the
+fresh-seed validation chose the **incumbent** (4.74) over every candidate (4.88–5.05) → nothing to gate, no promotion →
+drift fired again (5.18) → auto-sleep #2: same outcome → recovery stage **0/15** (cost 5.19).
+Reading: the loop did everything it should without a human — detect, sleep, refuse. But a 6 cm object shift is outside
+what this S3 vector can express (approach offsets are bounded ±3 cm; the VLA never finds the moved bowl), so there was
+nothing legitimate to promote. Re-adaptation: not achieved; reported as such. (On the mock env the same protocol
+recovered.)
 
 ## 7. Demo assets
 - Clips (same seed across arms, `scripts/exp/record_demo.py`, `logs/hopper/videos/`): seed 5047 on LIBERO-Spatial task 0 —
