@@ -64,6 +64,7 @@ def main():
     ap.add_argument("--cycles", type=int, default=1)
     ap.add_argument("--rep-offset", type=int, default=0)
     ap.add_argument("--skip-eval", action="store_true")
+    ap.add_argument("--fast", action="store_true", help="half budget: CEM pop 16 x 3 iters (K=4), same 24-layout gate, 20 min cap")
     a = ap.parse_args()
     L = os.environ["FM_LOGS"] + "/bench_camera"
     os.makedirs(L, exist_ok=True)
@@ -82,8 +83,9 @@ def main():
     tmpl = RunConfig(suite="libero_spatial", task_id=a.task, seed=0, arm="B", env_kind="libero_plus", policy_kind="smolvla",
                      log_path=L + "/events.jsonl", env_kwargs={"config": cfg}, environment_tag=tag)
     print(f"skill instance {tmpl.skill_instance_id} view={cfg['view']} act_only={a.act}", flush=True)
-    ccfg = ConsolidationConfig(population=24, elites=6, iterations=4, seeds_per_candidate=4, gate_seeds=24,
-                               workers=a.workers, max_wallclock_s=7200.0,
+    ccfg = ConsolidationConfig(population=16 if a.fast else 24, elites=4 if a.fast else 6, iterations=3 if a.fast else 4,
+                               seeds_per_candidate=4, gate_seeds=24, workers=a.workers,
+                               max_wallclock_s=1200.0 if a.fast else 7200.0,
                                frozen_dims=list(P.CALIB_NAMES) if a.act else [])
     for _ in range(a.cycles):
         c = consolidate(store, tmpl.skill_instance_id, template=tmpl, cfg=ccfg, trigger="manual")
