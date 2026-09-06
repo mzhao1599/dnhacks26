@@ -4,7 +4,8 @@ Weight-frozen improvement of a VLA (SmolVLA-LIBERO / π₀.₅) on LIBERO, keyed
 Two writers: an LLM coach for discrete knowledge (S1 plans, lessons; Gemini or Claude) and a sleep-loop CEM
 optimizer for a 17-dim continuous S3 vector (approach shaping, time scale, velocity cap, gripper, homing),
 promoted only through a perturbation gate on seeds the optimizer never saw. Everything is an append-only
-event log; the env success predicate is the only source of truth. See `CLAUDE.md` for the invariants.
+event log; the env success predicate is the only source of truth. See `AGENTS.md`/`CLAUDE.md` for the invariants,
+`docs/RESULTS.md` for measured results, `docs/HANDOFF.md` to resume the Hopper runs, `docs/DECISIONS.md` for why.
 
 ## Commands (laptop, no GPU — mock env/policy, offline LLM)
 ```
