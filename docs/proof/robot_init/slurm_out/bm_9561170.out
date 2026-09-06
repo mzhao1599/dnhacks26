@@ -1,0 +1,95 @@
+=== BM task 2: consolidate (CEM pop24 x K2 x 4 iters, gate 12) then arms BM-0..4 x 10 eval seeds
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   1%|          | 3/489 [00:00<00:18, 26.85it/s]Loading weights:   2%|▏         | 11/489 [00:00<00:04, 100.26it/s]Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading weights:  15%|█▍        | 73/489 [00:00<00:01, 393.95it/s]`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:  15%|█▌        | 74/489 [00:00<00:01, 390.82it/s]Loading weights:  23%|██▎       | 114/489 [00:00<00:00, 384.37it/s]Loading weights:  23%|██▎       | 114/489 [00:00<00:01, 346.99it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:  31%|███▏      | 153/489 [00:00<00:01, 310.19it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   6%|▌         | 29/489 [00:00<00:01, 249.07it/s]Loading weights:  41%|████      | 199/489 [00:00<00:00, 349.74it/s]Loading weights:  31%|███       | 150/489 [00:00<00:01, 202.99it/s]Loading weights:   0%|          | 1/489 [00:00<01:00,  8.05it/s]Loading weights:  18%|█▊        | 89/489 [00:00<00:00, 429.19it/s]Loading weights:  48%|████▊     | 236/489 [00:00<00:00, 316.15it/s]Loading weights:  37%|███▋      | 181/489 [00:00<00:01, 223.65it/s]Loading weights:   4%|▍         | 19/489 [00:00<00:04, 98.59it/s]Loading weights:  30%|██▉       | 145/489 [00:00<00:00, 458.04it/s]Loading weights:   6%|▌         | 30/489 [00:00<00:04, 102.15it/s]Loading weights:  55%|█████▌    | 270/489 [00:00<00:00, 285.14it/s]Loading weights:  39%|███▉      | 192/489 [00:00<00:00, 346.35it/s]Loading weights:  43%|████▎     | 209/489 [00:00<00:01, 181.94it/s]Loading weights:   8%|▊         | 41/489 [00:00<00:04, 100.63it/s]Loading weights:  68%|██████▊   | 333/489 [00:01<00:00, 355.77it/s]Loading weights:  49%|████▉     | 240/489 [00:01<00:01, 205.07it/s]Loading weights:  11%|█         | 52/489 [00:00<00:04, 97.91it/s] Loading weights:  47%|████▋     | 230/489 [00:00<00:00, 321.76it/s]Loading weights:  80%|████████  | 392/489 [00:01<00:00, 414.26it/s]Loading weights:  13%|█▎        | 62/489 [00:00<00:04, 97.53it/s]Loading weights:  54%|█████▍    | 265/489 [00:01<00:01, 208.13it/s]Loading weights:  54%|█████▍    | 265/489 [00:00<00:00, 314.03it/s]Loading weights:  92%|█████████▏| 451/489 [00:01<00:00, 449.51it/s]Loading weights: 100%|██████████| 489/489 [00:01<00:00, 389.89it/s]
+Loading weights:  15%|█▍        | 72/489 [00:00<00:04, 96.66it/s]Loading weights:  59%|█████▉    | 289/489 [00:01<00:00, 212.51it/s]Loading weights:  62%|██████▏   | 303/489 [00:00<00:00, 331.64it/s]Loading weights:  17%|█▋        | 82/489 [00:00<00:04, 94.07it/s]Loading weights:  72%|███████▏  | 351/489 [00:01<00:00, 303.41it/s]Loading weights:  82%|████████▏ | 399/489 [00:00<00:00, 488.89it/s]Loading weights: 100%|██████████| 489/489 [00:01<00:00, 452.27it/s]
+Loading weights:  21%|██        | 101/489 [00:00<00:03, 118.20it/s]Loading weights:  95%|█████████▍| 463/489 [00:01<00:00, 501.77it/s]Loading weights: 100%|██████████| 489/489 [00:01<00:00, 309.07it/s]
+Loading weights:  30%|██▉       | 145/489 [00:01<00:01, 210.28it/s]Loading weights:  40%|████      | 198/489 [00:01<00:00, 299.92it/s]Loading weights:  54%|█████▎    | 262/489 [00:01<00:00, 396.11it/s]Loading weights:  78%|███████▊  | 381/489 [00:01<00:00, 628.10it/s]Loading weights: 100%|█████████▉| 487/489 [00:01<00:00, 745.93it/s]Loading weights: 100%|██████████| 489/489 [00:01<00:00, 324.94it/s]
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 15821.19it/s]
+Loading weights: 100%|██████████| 103/103 [00:00<00:00, 12161.85it/s]
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
+/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 10594.27it/s]
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 10266.72it/s]
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
+consolidation cons_05b61945 task=2 gate={'passed': True, 'incumbent_cost': 4.502693843951666, 'candidate_cost': 4.222829824591389, 'n_seeds': 12, 'incumbent_success': 0.0, 'candidate_success': 0.0, 'success_delta_pp': 0.0} promoted=2
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 1/489 [00:00<00:59,  8.16it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:  10%|█         | 50/489 [00:00<00:00, 471.93it/s]Loading weights:  10%|█         | 50/489 [00:00<00:01, 232.76it/s]Loading weights:  13%|█▎        | 62/489 [00:00<00:00, 540.73it/s]Loading weights:   5%|▌         | 25/489 [00:00<00:02, 209.39it/s]Loading weights:  16%|█▌        | 78/489 [00:00<00:01, 237.97it/s]Loading weights:   9%|▉         | 46/489 [00:00<00:02, 195.16it/s]Loading weights:  20%|██        | 98/489 [00:00<00:01, 337.80it/s]Loading weights:  21%|██▏       | 105/489 [00:00<00:01, 237.43it/s]Loading weights:  24%|██▍       | 117/489 [00:00<00:01, 305.67it/s]Loading weights:  27%|██▋       | 134/489 [00:00<00:01, 316.23it/s]Loading weights:  13%|█▎        | 66/489 [00:00<00:02, 159.36it/s]Loading weights:  26%|██▋       | 129/489 [00:00<00:01, 228.84it/s]Loading weights:  18%|█▊        | 88/489 [00:00<00:02, 167.02it/s]Loading weights:  31%|███▏      | 153/489 [00:00<00:01, 264.46it/s]Loading weights:  34%|███▍      | 167/489 [00:00<00:01, 267.20it/s]Loading weights:  31%|███       | 152/489 [00:00<00:01, 202.81it/s]Loading weights:  25%|██▌       | 124/489 [00:00<00:01, 224.85it/s]Loading weights:  40%|███▉      | 195/489 [00:00<00:01, 267.88it/s]Loading weights:  37%|███▋      | 182/489 [00:00<00:01, 239.74it/s]Loading weights:  37%|███▋      | 181/489 [00:00<00:01, 217.55it/s]Loading weights:  31%|███       | 151/489 [00:00<00:01, 234.42it/s]Loading weights:  46%|████▌     | 226/489 [00:00<00:00, 278.34it/s]Loading weights:  44%|████▍     | 214/489 [00:00<00:01, 252.73it/s]Loading weights:  51%|█████     | 248/489 [00:00<00:00, 332.41it/s]Loading weights:  53%|█████▎    | 257/489 [00:00<00:00, 270.57it/s]Loading weights:  36%|███▌      | 176/489 [00:00<00:01, 202.32it/s]Loading weights:  50%|█████     | 246/489 [00:00<00:00, 260.98it/s]Loading weights:  72%|███████▏  | 351/489 [00:01<00:00, 507.35it/s]Loading weights:  41%|████      | 201/489 [00:00<00:01, 208.47it/s]Loading weights:  58%|█████▊    | 285/489 [00:01<00:00, 241.76it/s]Loading weights:  95%|█████████▌| 465/489 [00:01<00:00, 662.45it/s]Loading weights: 100%|██████████| 489/489 [00:01<00:00, 407.98it/s]
+Loading weights:  56%|█████▌    | 274/489 [00:01<00:00, 234.57it/s]Loading weights:  46%|████▋     | 227/489 [00:01<00:01, 212.18it/s]Loading weights:  65%|██████▍   | 317/489 [00:01<00:00, 258.35it/s]Loading weights:  65%|██████▍   | 317/489 [00:01<00:00, 278.98it/s]Loading weights:  77%|███████▋  | 375/489 [00:01<00:00, 324.81it/s]Loading weights: 100%|██████████| 489/489 [00:01<00:00, 391.98it/s]
+Loading weights:  53%|█████▎    | 257/489 [00:01<00:01, 210.17it/s]Loading weights: 100%|██████████| 489/489 [00:01<00:00, 362.55it/s]
+Loading weights:  62%|██████▏   | 301/489 [00:01<00:00, 268.61it/s]Loading weights: 100%|██████████| 489/489 [00:01<00:00, 336.59it/s]
+[BM-0] arm=A n=10 success=1.00 ci=[0.72,1.00] mean_steps=96.4 mean_cost=-
+[BM-1] arm=A n=10 success=0.00 ci=[0.00,0.28] mean_steps=220.0 mean_cost=4.511
+[BM-2] arm=B n=10 success=0.00 ci=[0.00,0.28] mean_steps=220.0 mean_cost=4.513
+[BM-4] arm=B n=10 success=0.00 ci=[0.00,0.28] mean_steps=220.0 mean_cost=4.523
+[BM-3] arm=B n=10 success=0.00 ci=[0.00,0.28] mean_steps=220.0 mean_cost=4.241
+
+| arm | n | success | 95% CI | mean steps |
+|---|---|---|---|---|
+| BM-0 | 10 | 100.0% (10) | [72.2, 100.0] | 96 |
+| BM-1 | 10 | 0.0% (0) | [0.0, 27.8] | 220 |
+| BM-2 | 10 | 0.0% (0) | [0.0, 27.8] | 220 |
+| BM-4 | 10 | 0.0% (0) | [0.0, 27.8] | 220 |
+| BM-3 | 10 | 0.0% (0) | [0.0, 27.8] | 220 |
+
+BM-3 / BM-1 = 1.00 [0.02, 45.64] -> fail
+chart: /scratch/ezhao2/fleet-memory/logs/benchmark/bm_task2.png
+BM_TASK_DONE 2

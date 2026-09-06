@@ -1,0 +1,108 @@
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+multiprocessing.pool.RemoteTraceback: 
+"""
+Traceback (most recent call last):
+  File "/scratch/ezhao2/.uv_python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/multiprocessing/pool.py", line 125, in worker
+    result = (True, func(*args, **kwds))
+                    ^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/.uv_python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/multiprocessing/pool.py", line 48, in mapstar
+    return list(map(*args))
+           ^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/pool.py", line 40, in _run_one
+    env, pol = _cached(cfg)
+               ^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/pool.py", line 34, in _cached
+    _CACHE[key] = (make_env(cfg), make_policy(cfg))
+                   ^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/worker.py", line 80, in make_env
+    return make_perturbed_env(cfg.suite, cfg.task_id, kw.pop("config"), **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/envs/libero_plus.py", line 289, in make_perturbed_env
+    return LiberoPlusEnv(suite, task_id, cfg, image_size=image_size, **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/envs/libero_plus.py", line 228, in __init__
+    import libero.libero.envs.bddl_utils as BDDLUtils
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/libero/libero/envs/__init__.py", line 1, in <module>
+    from .bddl_base_domain import TASK_MAPPING
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/libero/libero/envs/bddl_base_domain.py", line 3, in <module>
+    import robosuite.utils.transform_utils as T
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/__init__.py", line 11, in <module>
+    from robosuite.environments.base import make
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/environments/__init__.py", line 1, in <module>
+    from .base import REGISTERED_ENVS, MujocoEnv
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/environments/base.py", line 12, in <module>
+    from robosuite.utils.binding_utils import MjRenderContextOffscreen, MjSim
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/utils/binding_utils.py", line 58, in <module>
+    from robosuite.renderers.context.egl_context import EGLGLContext as GLContext
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/renderers/context/egl_context.py", line 26, in <module>
+    raise ImportError(
+ImportError: Cannot use EGL rendering platform. The PYOPENGL_PLATFORM environment variable is set to {!r} (should be either unset or 'egl').
+"""
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/benchmark.py", line 235, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/benchmark.py", line 205, in main
+    c = consolidate(store, tmpl.skill_instance_id, template=tmpl, cfg=ccfg, trigger="manual")
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/consolidate.py", line 294, in consolidate
+    _ensure_reference(store, hm, si_id, env_id, template, rollouts, cfg, pert)
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/consolidate.py", line 265, in _ensure_reference
+    eps = rollouts(rollout_cfgs(template, "A", None, seed_set("opt", max(4, cfg.gate_seeds)), perturbation))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/consolidate.py", line 230, in __call__
+    eps = list(self.run_many(cfgs, self.workers) or [])
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/consolidate.py", line 217, in _default_run_many
+    return run_many(cfgs, workers)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/pool.py", line 82, in run_many
+    out = _pool(int(workers)).map(_run_one, dicts, chunksize=1)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/.uv_python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/multiprocessing/pool.py", line 367, in map
+    return self._map_async(func, iterable, mapstar, chunksize).get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/.uv_python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/multiprocessing/pool.py", line 774, in get
+    raise self._value
+ImportError: Cannot use EGL rendering platform. The PYOPENGL_PLATFORM environment variable is set to {!r} (should be either unset or 'egl').
+BM_TASK_DONE 3

@@ -45,6 +45,23 @@ Same task, same frozen policy, and instead of the robot's start the **camera** i
 
 BM-3 vs BM-1: **4.1×**, intervals disjoint. The promoted file moved the frame up and left by ~17% of its size with a 9% zoom and 2° roll — the direction that undoes the tilt — and also slowed the chunks (time scale 0.64). The gate saw 12.5% → 66.7% on its 24 layouts (cost 4.04 → 1.89). An attribution run with the four camera numbers frozen (17 action dims only) also passed its gate (20.8% → 33.3%) but did not hold up held-out: **16%** (8/50) against its own raw 8% — the recovery is the calibration's. As with the robot-start family, it does not rescue scenes the frozen policy can barely do: task 1 under its tilt is 6% raw → 8% after a sleep (n=50, the gate had passed on cost alone). **And the unattended loop closes end to end on this family:** with the camera tilted mid-run, the drift detector fired, the sleep ran on its own (568 rollouts, 32 min), the gate promoted a file that shifts the frame the same way, and the recovery stage came back to 73% from 20% — the pre-perturbation baseline was 67% (protocol P, n=15 per stage; details in RESULTS §8). A second sleep cycle on task 0 (half budget) found nothing better than v2 on fresh validation seeds and promoted nothing, which is the gate doing its job. Task 3 under its view moved 8% → 18% (n=50, intervals overlap: partial). Tasks 2/4 were still running at submission time; every row in [`docs/RESULTS.md` §8](docs/RESULTS.md) holds only measured numbers. **Proof:** [`docs/proof/camera_family/`](docs/proof/camera_family/) has the Slurm accounting, the raw job outputs, the evaluation event log, the same-seed videos, and `scripts/verify_camera.py`, which recounts every number from the raw episode records. A curiosity from the probe: physically *moving* the camera (11° around, 15° up, 30 cm) barely hurts this policy (6/10 vs 8/10 stock), while a 6° pointing tilt collapses it — the scene shifting in the frame is what breaks it, and that is what the shift dims undo.
 
+## Proof the numbers are real
+
+Every number above is recomputed from raw per-episode records written by the cluster jobs, and the records ship with the repo:
+
+| | robot-start family | camera family |
+|---|---|---|
+| Slurm accounting (job ids, nodes, GPUs, times) | [`docs/proof/robot_init/sacct_2026-09-05.txt`](docs/proof/robot_init/sacct_2026-09-05.txt) | [`docs/proof/camera_family/sacct_2026-09-06.txt`](docs/proof/camera_family/sacct_2026-09-06.txt) |
+| raw job stdout (the `REPS`/`CYCLE` lines) | [`docs/proof/robot_init/slurm_out/`](docs/proof/robot_init/slurm_out/) | [`docs/proof/camera_family/slurm_out/`](docs/proof/camera_family/slurm_out/) |
+| per-episode event log (seed, arm, parameter file, simulator success flag) | [`events_evaluation.jsonl`](docs/proof/robot_init/events_evaluation.jsonl) | [`events_evaluation.jsonl`](docs/proof/camera_family/events_evaluation.jsonl) |
+| recount from the raw records | `python scripts/verify_robot_init.py` → [output](docs/proof/robot_init/verify_output.txt) | `python scripts/verify_camera.py` → [output](docs/proof/camera_family/verify_output.txt) |
+| same-seed videos | `logs/hopper/videos/` (storyboard) | [`cam_BM-1_s5047_fail.mp4`](docs/proof/camera_family/cam_BM-1_s5047_fail.mp4), [`cam_BM-3_s5047_ok.mp4`](docs/proof/camera_family/cam_BM-3_s5047_ok.mp4) |
+
+The optimizer only ever runs on init states 0–29 and the gate on 30–39 (`fleet_memory/runner/seeds.json`); every evaluation episode
+is on init states 40–49, which the verify scripts enforce by seed. Success is the simulator's predicate. The only field that differs
+between the collapse arm and the recovered arm in those records is `s3_params`. Full logs (with every CEM rollout) are on the cluster:
+`/scratch/ezhao2/fleet-memory/logs/`.
+
 ## How it works
 
 ```mermaid
