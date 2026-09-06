@@ -77,7 +77,15 @@ Numbers here are copied from `docs/RESULTS.md`; **PENDING means not yet measured
   that job is still queued/running. A name is submitted once (`$FM_ROOT/logs/queue.done`; delete the line to resubmit).
   Job names `q-a100-<name>` / `q-mig-<name>`, stdout `logs/slurm/q_<name>_<jid>.out`, ends with `QTASK_DONE <name>`.
 - Experiment drivers in `scripts/exp/`: `bm_reps.py <task> <reps> [rep_offset] [--bm0]` (held-out layouts × noise
-  reps, prints `REPS <arm>: k/n`), `mastery_heldout.py`, `arm_d.py <task> [B,C,D]`, `bm_power.py`, `record_demo.py`.
+  reps, prints `REPS <arm>: k/n`), `mastery_heldout.py`, `arm_d.py <task> [B,C,D]`, `bm_power.py`, `record_demo.py`;
+  **camera family (v3.2, 2026-09-06):** `camera_probe.py <task> [reps] [workers]` (BM-0 + BM-1 on every camera view of the
+  task, frames to `logs/bench_camera/frames/`), `camera_cycle.py <idx|-1 --view V> [--task t] [--act] [--bm0] [--reps R]`
+  (strong-gate sleep then BM-1/2/3 reps; a lock file in `logs/bench_camera/locks/` lets the same experiment be ticketed on
+  several tiers — the first job to start claims it, duplicates exit with `LOCKED`).
+- Queue-runner tiers (2026-09-06): `a100` (A100.40gb), `a80` (A100.80gb, QOS cap 12/user), `mig` (3g.40gb), `mig2`
+  (2g.20gb), `mig1` (1g.10gb — **3 workers max, 4 OOM**), `cpu` (`-p normal`, no GPU, SmolVLA on CPU + OSMesa; c=32 default).
+  Tier field options: `after=<task>` (afterany dependency), `c=<n>` (CPUs). Caps via `MAX_A100/MAX_A80/MAX_MIG/MAX_CPU` env
+  when starting the runner. On 2026-09-06 morning every gpuq GPU was allocated; MIG nodes were CPU-bound (gpu021: 8 free CPUs).
 
 ## 5. Results
 
