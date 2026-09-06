@@ -62,3 +62,6 @@ cam-t4-tilt-fast-a100 | a100 | export FM_LLM=mock; python scripts/exp/camera_cyc
 cam-t0-moved-fast-a80 | a80 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --view 11_15_100_0_0 --bm0 --reps 3 --fast
 cam-t0-moved-fast-a100 | a100 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --view 11_15_100_0_0 --bm0 --reps 3 --fast
 cam-demo-t0-tilt-cpu2 | cpu c=16 | export FM_LLM=mock; python scripts/exp/record_camera_demo.py --task 0 --view 0_0_100_2_354 --seed 5048
+# --- 10:40: only cycle 2 on task-0 tilt is still worth a GPU before the deadline (half budget, 3 fresh draws) ---
+cam-t0-tilt-cycle2-fast-a80 | a80 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --view 0_0_100_2_354 --reps 3 --rep-offset 5 --fast
+cam-t0-tilt-cycle2-fast-a100 | a100 | export FM_LLM=mock; python scripts/exp/camera_cycle.py -1 --view 0_0_100_2_354 --reps 3 --rep-offset 5 --fast
