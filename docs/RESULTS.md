@@ -175,8 +175,10 @@ never told what the perturbation was. `--act` runs freeze those four dims (17 ac
 **Probe (10 held-out layouts, 1 noise draw each, MIG 2g.20gb / OSMesa, raw policy):** BM-0 stock camera **9/10** (89 steps) ·
 BM-1 `0_0_100_2_352` (tilt −8°) **3/10** [11, 60], 203 steps · BM-1 `0_0_100_2_354` (tilt −6°) **2/10** [6, 51], 203 steps.
 A 6–8° pointing change of a fixed camera collapses the policy as hard as the robot-init perturbation did (90% → 20–30%).
-The four moved-camera views (11–15°) are PENDING (the first probe OOMed at the third view: a per-env policy copy in the worker
-cache, fixed in `runner/pool.py`).
+Second probe on the CPU tier (own numerics, same 10 layouts): stock 8/10 · tilt −8° 1/10 · tilt −6° 1/10 · **moved camera
+`11_15_100_0_0` (11° around, 15° up, 30 cm away) 6/10** — the policy tolerates a *moved* viewpoint far better than a small
+*pointing* change: what collapses it is the scene shifting in the frame, which is exactly what the shift dims can undo. Views
+`13..15_15` PENDING. (The first GPU probe OOMed at the third view: a per-env policy copy in the worker cache, fixed in `runner/pool.py`.)
 
 **Sleep cycle + held-out reps (10 eval layouts × 5 noise draws, n=50/arm), strong gate (24 gate layouts × 4 draws):**
 | task | view | BM-0 stock | BM-1 camera moved | BM-2 identity shim | BM-3 after one sleep | gate | promoted vector |
@@ -186,7 +188,7 @@ cache, fixed in `runner/pool.py`).
 | 0 | `11_15_100_0_0` (moved) | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
 | 1 | `0_0_100_4_6` | 35/50 = **70%** [56, 81], 139 steps | 3/50 = **6%** [2, 16], 213 steps | 2/50 = 4% [1, 13], 215 steps | 4/50 = **8%** [3, 19], 213 steps — **no recovery** | passed on cost only: 4.46 → 4.35, success 0% → 4.2% on 24 gate layouts (480 rollouts, 35 min) | v2: `cam_shift_xy` = (+0.25, −0.02), `cam_roll` 3.7°, `time_scale` 1.14, `velocity_cap` 0.73 — nothing in the file rescues this scene under the tilt |
 | 2 | `0_0_100_6_6` | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
-| 3 | `0_0_100_8_6` | PENDING | PENDING | PENDING | PENDING | passed: 4.12 → 3.75, success 12.5% → 20.8% (+8.3 pp) on 24 gate layouts (504 rollouts, 35 min) | v2: `cam_roll` −10.1° (the view turns the axis 8° about z), `cam_shift_xy` = (+0.22, +0.14), `cam_zoom` 0.98, `time_scale` 0.82, `gripper_cmd` 0.82 |
+| 3 | `0_0_100_8_6` | 33/50 = **66%** [52, 78], 131 steps | 4/50 = **8%** [3, 19], 209 steps | 4/50 = 8% [3, 19], 209 steps | **9/50 = 18%** [10, 31], 200 steps — partial (2.3×, intervals overlap) | passed: 4.12 → 3.75, success 12.5% → 20.8% (+8.3 pp) on 24 gate layouts (504 rollouts, 35 min) | v2: `cam_roll` −10.1° (the view turns the axis 8° about z), `cam_shift_xy` = (+0.22, +0.14), `cam_zoom` 0.98, `time_scale` 0.82, `gripper_cmd` 0.82 |
 | 4 | `0_0_100_10_6` | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
 
 Protocol P with a camera bump (baseline → camera tilted → drift → auto-sleep → recovery, unattended): PENDING.
