@@ -1,11 +1,17 @@
 [project]
 name = "fleet-memory"
-version = "0.2.0"
-description = "Coaching-driven, weight-frozen improvement for a VLA policy (SmolVLA on LIBERO)"
+version = "0.3.1"
+description = "Weight-frozen improvement of a VLA policy: an execution shim whose 17-number parameter file is rewritten by a gated sleep-loop optimizer (SmolVLA on LIBERO / LIBERO-Plus)"
+readme = "README.md"
+license = {text = "MIT"}
 requires-python = ">=3.12"
-dependencies = ["numpy", "anthropic", "scipy"]
+dependencies = ["numpy", "scipy"]
+
+[project.urls]
+Repository = "https://github.com/mzhao1599/dnhacks26"
 
 [project.optional-dependencies]
+llm = ["anthropic", "google-genai"]
 sim = ["lerobot[smolvla,libero]==0.6.1", "sentence-transformers", "pandas", "matplotlib"]
 dev = ["pytest"]
 

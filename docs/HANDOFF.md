@@ -68,7 +68,7 @@ Numbers here are copied from `docs/RESULTS.md`; **PENDING means not yet measured
 
 - `env.sh` (source it; sets venv, HF cache, MUJOCO_GL, LIBERO config, secrets), one sbatch per experiment
   (`phase0_v3`, `probe_p1b`, `sleep_v31`, `bm_task`, `bm_followup`, `bm_power`, `mastery_heldout`, `libero_plus_smoke`,
-  `pi05_smoke`, `unzip_plus_assets`, …), `LIBERO_PLUS.md` (perturbation mechanics + plus backend).
+  `pi05_smoke`, …), `LIBERO_PLUS.md` (perturbation mechanics + plus backend).
 - **Queue runner** (keeps GPUs busy unattended): `queue_runner.sh` polls `queue.txt` every 60 s on the login node
   (`setsid nohup bash scripts/hopper/queue_runner.sh >> $FM_ROOT/logs/queue_runner.log &`; restart with
   `pkill -f "^bash scripts/hopper/queue_runner.sh"` — the anchored pattern matters, a bare `pkill -f queue_runner`

@@ -1,0 +1,22 @@
+name: tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  mock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev]"
+      - run: FM_LLM=mock pytest -q
+      - name: end-to-end on the mock env (arm A -> one sleep cycle -> metrics)
+        run: |
+          FM_LLM=mock python -m fleet_memory.runner.pool --env mock --policy mock --suite mock --task pick_bowl_to_plate \
+            --arm A --n 12 --workers 2 --seed-set train --log logs/ci.jsonl --make-reference
+          FM_LLM=mock python -m fleet_memory.runner.consolidate --env mock --policy mock --suite mock \
+            --task pick_bowl_to_plate --log logs/ci.jsonl --small --workers 2 --trigger manual
+          python -m fleet_memory.analysis.metrics --log logs/ci.jsonl
