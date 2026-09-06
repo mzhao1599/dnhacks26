@@ -34,6 +34,8 @@ It does not always work, and the repo says so: on the harder task 3 (perturbatio
 
 Same task, same frozen policy, and instead of the robot's start the **camera** is perturbed — LIBERO-Plus's *camera-viewpoint* family, ported exactly (`tests/test_camera.py` checks our poses against their code). Tilting the fixed camera's optical axis by 6° collapses SmolVLA as hard as the joint offset did. The action-side knobs cannot fix a moved camera, so the parameter file gained four *observation-side* numbers: roll, zoom and x/y shift of the external camera frame before the policy sees it — identity by default, optimised and gated exactly like the rest. The optimizer is never told the camera moved; it only sees cost.
 
+<p align="center"><img src="docs/media/headline_camera.svg" width="720" alt="Bar chart: stock camera 88%, camera tilted 14%, untrained layer 6%, one sleep cycle 58%, sleep with calibration frozen 16%"></p>
+
 | arm (task 0, view `0_0_100_2_354`, 10 held-out layouts × 5 noise draws) | success (n) | 95% CI |
 |---|---|---|
 | BM-0 stock camera, frozen VLA | **88%** (44/50) | [76, 94] |
