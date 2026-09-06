@@ -118,7 +118,28 @@ def collect_camera():
     bench_camera/probe.jsonl; sleep-cycle reps (BM-0/1/2/3, n=50) from bench_camera/events.jsonl, keyed by (task, view),
     pooled over replication runs; the action-only (`--act`) variant is kept as its own row."""
     from collections import defaultdict
-    probe = latest(read_jsonl(os.path.join(LOGS, "bench_camera", "probe.jsonl")), type="camera_probe")
+    precs = read_jsonl(os.path.join(LOGS, "bench_camera", "probe.jsonl"))
+    probe = latest(precs, type="camera_probe")
+    if not probe:                                        # per-arm events (or, for the first crashed probe, the episodes themselves)
+        arms = {}
+        for r in precs:
+            if r.get("type") == "camera_probe_arm":
+                arms[r["arm"]] = {k: r[k] for k in ("k", "n", "rate", "ci", "mean_steps")}
+        if not arms:
+            views = ["0_0_100_2_352", "0_0_100_2_354", "11_15_100_0_0", "13_15_100_0_0", "14_15_100_0_0", "15_15_100_0_0"]   # task-0 order
+            from collections import defaultdict
+            last = {}                                    # (env, seed) -> latest completed episode: a re-run replaces a crashed run
+            for r in precs:
+                if r.get("type") == "episode" and int(r["outcome"].get("steps") or 0) > 0 and not r["outcome"].get("error"):
+                    last[(r.get("environment_id", ""), r.get("seed"))] = r
+            acc = defaultdict(lambda: [0, 0, 0.0])
+            for (env, _), r in last.items():
+                name = "BM-0 stock" if "plus_camera" not in env else f"BM-1 cfg={env.rsplit('_', 1)[1]} view={views[int(env.rsplit('_', 1)[1])]}"
+                a = acc[name]; a[0] += int(r["outcome"]["env_success"]); a[1] += 1; a[2] += float(r["outcome"]["steps"])
+            for name, (k, n, st) in acc.items():
+                lo, hi = wilson(k, n)
+                arms[name] = {"k": k, "n": n, "rate": k / n, "ci": [lo, hi], "mean_steps": st / n}
+        probe = {"task": "0", "results": arms} if arms else None
     recs = [r for r in read_jsonl(os.path.join(LOGS, "bench_camera", "events.jsonl")) if r.get("type") == "benchmark_reps"]
     acc = defaultdict(lambda: defaultdict(lambda: {"k": 0, "n": 0, "steps": 0.0}))
     meta = {}

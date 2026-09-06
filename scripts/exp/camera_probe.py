@@ -45,18 +45,19 @@ def main(task="0", reps=1, workers=4):
     seeds = [5040 + i + 50 * r for r in range(reps) for i in range(10)]     # eval layouts 40-49, reps vary policy noise
     res = {}
 
-    def run(name, cfg):
+    def run(name, cfg, view="stock"):
         eps = run_many([dataclasses.replace(cfg, seed=s) for s in seeds], workers)
         k, n = sum(e.outcome.env_success for e in eps), len(eps)
         lo, hi = wilson_ci(k, n)
         res[name] = {"k": k, "n": n, "rate": k / n, "ci": [lo, hi], "mean_steps": float(np.mean([e.outcome.steps for e in eps])),
                      "per_seed": {str(e.seed): bool(e.outcome.env_success) for e in eps}}
         print(f"PROBE {name}: {k}/{n} = {100 * k / n:.0f}% [{100 * lo:.0f},{100 * hi:.0f}] steps {res[name]['mean_steps']:.0f}", flush=True)
+        store.append({"type": "camera_probe_arm", "task": task, "reps": reps, "arm": name, "view": view, **res[name]})   # survives a crash later on
 
     run("BM-0 stock", base)
     for i, c in enumerate(cfgs):
         run(f"BM-1 cfg={i} view={c['view']}", dataclasses.replace(base, env_kind="libero_plus", env_kwargs={"config": c},
-                                                                  environment_tag=f"plus_camera_{i}"))
+                                                                  environment_tag=f"plus_camera_{i}"), view=c["view"])
     store.append({"type": "camera_probe", "task": task, "reps": reps, "configs": cfgs, "results": res})
     close_pool()
 
