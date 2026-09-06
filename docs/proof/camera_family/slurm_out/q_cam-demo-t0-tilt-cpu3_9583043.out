@@ -1,0 +1,27 @@
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+WARNING:root:No accelerated backend detected. Using default cpu, this will be slow.
+WARNING:lerobot.configs.policies:Device 'cuda' is not available. Switching to 'cpu'.
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 1/489 [00:00<05:07,  1.59it/s]Loading weights:   7%|▋         | 32/489 [00:00<00:07, 58.22it/s]Loading weights:  10%|█         | 50/489 [00:00<00:06, 71.59it/s]Loading weights:  13%|█▎        | 65/489 [00:01<00:05, 82.52it/s]Loading weights:  16%|█▌        | 79/489 [00:01<00:05, 81.85it/s]Loading weights:  19%|█▉        | 95/489 [00:01<00:04, 96.49it/s]Loading weights:  22%|██▏       | 108/489 [00:01<00:03, 97.91it/s]Loading weights:  25%|██▍       | 122/489 [00:01<00:03, 95.58it/s]Loading weights:  27%|██▋       | 133/489 [00:01<00:03, 95.20it/s]Loading weights:  30%|██▉       | 146/489 [00:01<00:03, 101.08it/s]Loading weights:  32%|███▏      | 158/489 [00:01<00:03, 101.74it/s]Loading weights:  36%|███▌      | 176/489 [00:02<00:02, 115.39it/s]Loading weights:  40%|███▉      | 194/489 [00:02<00:02, 124.92it/s]Loading weights:  43%|████▎     | 209/489 [00:02<00:02, 130.82it/s]Loading weights:  46%|████▌     | 223/489 [00:02<00:02, 119.51it/s]Loading weights:  49%|████▉     | 239/489 [00:02<00:01, 129.58it/s]Loading weights:  53%|█████▎    | 257/489 [00:02<00:01, 133.18it/s]Loading weights:  56%|█████▌    | 272/489 [00:02<00:01, 135.79it/s]Loading weights:  58%|█████▊    | 286/489 [00:02<00:01, 119.39it/s]Loading weights:  65%|██████▍   | 317/489 [00:03<00:01, 164.16it/s]Loading weights:  71%|███████▏  | 349/489 [00:03<00:00, 202.98it/s]Loading weights:  78%|███████▊  | 383/489 [00:03<00:00, 238.89it/s]Loading weights:  84%|████████▍ | 413/489 [00:03<00:00, 253.45it/s]Loading weights:  90%|████████▉ | 440/489 [00:03<00:00, 240.23it/s]Loading weights:  95%|█████████▌| 465/489 [00:03<00:00, 222.09it/s]Loading weights: 100%|██████████| 489/489 [00:03<00:00, 133.63it/s]
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights:  50%|█████     | 52/103 [00:00<00:00, 428.47it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 560.02it/s]
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
+BM-0 stock camera · raw VLA: success=False steps=220 -> /scratch/ezhao2/fleet-memory/logs/videos/cam_BM-0_s5047_fail.mp4
+WARNING:root:No accelerated backend detected. Using default cpu, this will be slow.
+WARNING:lerobot.configs.policies:Device 'cuda' is not available. Switching to 'cpu'.
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:  82%|████████▏ | 400/489 [00:00<00:00, 3998.84it/s]Loading weights: 100%|██████████| 489/489 [00:00<00:00, 4296.68it/s]
+BM-1 camera bumped · raw VLA: success=False steps=220 -> /scratch/ezhao2/fleet-memory/logs/videos/cam_BM-1_s5047_fail.mp4
+BM-3 camera bumped · consolidated v2: success=True steps=117 -> /scratch/ezhao2/fleet-memory/logs/videos/cam_BM-3_s5047_ok.mp4
+QTASK_DONE cam-demo-t0-tilt-cpu3
