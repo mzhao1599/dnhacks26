@@ -86,6 +86,10 @@ no prose leaks, 0 interventions) but per-subtask step budgets (~460 total) trunc
 no longer ends the episode). Rerun, 20 seeds: **75% [53, 89], 295 steps** — i.e. ≈ the identity-shim arm (80%/294):
 the S1 planner neither helps nor hurts this single-skill task once it stops truncating.
 
+Arm D on the perturbed benchmark task 0 (optimized vector + Gemini planner + inner coach), 10 held-out layouts × 2
+noise draws: **B vector-only 10/20 = 50% [30, 70], 162 steps; D 12/20 = 60% [39, 78], 151 steps; 0 coach interventions**
+(episodes are ~160 steps, the stall detector never fires). The S1 layer is inert here; the recovery is the vector's.
+
 ## 6. Protocol P (LIBERO-Spatial task 0, real env, unattended): an honest negative
 baseline 8/15 (cost 3.00, 144 steps) → bowl shifted 6 cm → perturbed **1/15** (cost 4.87) → **drift_trigger fired**
 (EWMA 4.43 vs baseline 2.37) → auto-sleep #1 (176 rollouts, 44 min on a MIG slice): CEM ran 4 iterations, the
