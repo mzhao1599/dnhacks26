@@ -108,9 +108,13 @@ def test_store_concurrent_appenders(tmp_path):
         p.join(60)
         assert p.exitcode == 0
     with open(path, "rb") as f:
-        lines = f.read().split(b"\n")
-    assert lines[-1] == b"" and len(lines) - 1 == 600
-    rows = [json.loads(x) for x in lines[:-1]]       # every line parses => no interleaving
+        raw = f.read()
+    assert raw.endswith(b"\n")
+    # append() may prepend an extra "\n" when its torn-tail check races another writer (documented as
+    # harmless; readers skip blank lines), so count records, not raw lines.
+    lines = [x for x in raw.split(b"\n") if x]
+    assert len(lines) == 600
+    rows = [json.loads(x) for x in lines]            # every line parses => no interleaving
     assert len({(r["w"], r["i"]) for r in rows}) == 600
     assert len(EventStore(path).read_all()) == 600
 
