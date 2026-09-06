@@ -49,9 +49,9 @@ init states 40–49 per task, never seen by the optimizer (0–29) or the gate (
 | 0 | 9/10 | 5/10 | 4/10 | 4/10 | 5/10 (gate: 17%→67% on gate seeds; eval: no change) |
 | 1 | 6/10 | 0/10 | 0/10 | 2/10 | cycle 1 refused; cycle 2 refused (17%→0%) — stays v1 |
 | 2 | 10/10 | 0/10 | 0/10 | 0/10 | 0/10 (gate passed on cost only, 0%→0%) |
-| 3 | 9/10 | 2/10 | 2/10 | 3/10 | cycle 1 refused; cycle 2 (σ₀=0.5) passed 4.11→3.65 → eval PENDING |
-| 4 | 6/10 | 0/10 | 0/10 | 1/10 | gate refused → cycle 2: PENDING |
-| **pooled** | **40/50 = 80%** | **7/50 = 14% [7, 26]** | 6/50 = 12% | **10/50 = 20% [11, 33]** | 5/20 on tasks 0+2 (= BM-1 there) |
+| 3 | 9/10 | 2/10 | 2/10 | 3/10 | cycle 1 refused; cycle 2 (σ₀=0.5) passed 4.11→3.65 → **2/10** (= BM-1) |
+| 4 | 6/10 | 0/10 | 0/10 | 1/10 | cycle 1 refused; cycle 2: validation kept the incumbent — stays v1 |
+| **pooled** | **40/50 = 80%** | **7/50 = 14% [7, 26]** | 6/50 = 12% | **10/50 = 20% [11, 33]** | 7/30 = 23% on tasks 0/2/3 vs BM-1 7/30 there → 1.00× [0.40, 2.50], **fail at n=10** |
 
 Wide-search variant (task 0, σ₀=0.5, separate skill instance, MIG/OSMesa renderer): BM-1 3/10 → BM-4 5/10 →
 **BM-3 7/10** (gate passed 2.94 → 2.72). Same 10 eval layouts; renderer differs from the A100 run, so BM-1 differs too.
@@ -77,6 +77,8 @@ Per-seed view: on task 0 BM-1 succeeds on layouts 40–44 and fails 45–49; hom
 BM-1 vs BM-4 on all 50 init states of tasks 0 and 3 (n=100/arm; hand-set → no held-out concern): PENDING.
 Tasks 1–2 are hard even with EE-space homing: the joint configuration still differs (wrist-camera view), a limit
 joint-space homing on a real controller would not have.
+
+Gate tally, all real-env sleep cycles tonight: 11 attempted → 4 promoted (task 0, task 2 cost-only, task 3 cycle 2, mastery v2/v3 = 5 incl. mastery), 7 refused or validation-kept-incumbent. Every refusal held up on later held-out evidence; one promotion (mastery v3) did not.
 
 ## 5. Arm C (Gemini planner `gemini-3.7-flash` + inner coach `gemini-3.1-pro-preview`), LIBERO-10 task 3
 First run (12 seeds): 17%, 173 mean steps — plans sensible (reach/grasp/lift/place/close, canonical instruction,

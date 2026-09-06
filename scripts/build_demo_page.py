@@ -51,9 +51,65 @@ BEATS = [  # (video stem prefix, eyebrow, title, claim)
 ]
 
 
+def arm_of(e):
+    """BM arm from an eval episode record (robust to torn benchmark_result lines)."""
+    if e.get("perturbation", {}).get("consolidation_id") or not (5040 <= e["seed"] <= 5049):
+        return None
+    pert = "plus_robot_init" in e.get("environment_id", "")
+    if e["condition"] == "A":
+        return "BM-1" if pert else "BM-0"
+    if not pert:
+        return None
+    p = e.get("s3_params", {})
+    homing, ts = p.get("homing_enable", 0) >= 0.5, abs(p.get("time_scale", 1.0) - 1.0) < 0.01
+    if not homing and ts and abs(p.get("velocity_cap", 1.0) - 1.0) < 0.01:
+        return "BM-2"
+    return "BM-4" if (homing and ts) else "BM-3"
+
+
+def pooled_from_episodes(bench):
+    from collections import defaultdict
+    acc = defaultdict(lambda: {"k": 0, "n": 0, "steps": 0.0, "tasks": set()})
+    for e in bench:
+        if e.get("type") != "episode" or "_wide" in e.get("environment_id", "") or "_reps" in e.get("environment_id", ""):
+            continue
+        a = arm_of(e)
+        if a is None:
+            continue
+        acc[a]["n"] += 1; acc[a]["k"] += int(e["outcome"]["env_success"]); acc[a]["steps"] += e["outcome"]["steps"]; acc[a]["tasks"].add(e["task_id"])
+    out = []
+    for a in ("BM-0", "BM-1", "BM-2", "BM-4", "BM-3"):
+        if a in acc and acc[a]["n"]:
+            r = acc[a]; lo, hi = wilson(r["k"], r["n"])
+            out.append({"arm": a, "k": r["k"], "n": r["n"], "rate": r["k"] / r["n"], "ci": [lo, hi], "mean_steps": r["steps"] / r["n"], "tasks": sorted(r["tasks"])})
+    return out
+
+
+def wilson(k, n, z=1.96):
+    if n == 0:
+        return (0.0, 0.0)
+    p = k / n; d = 1 + z * z / n; c = p + z * z / (2 * n); h = z * ((p * (1 - p) + z * z / (4 * n)) / n) ** 0.5
+    return ((c - h) / d, (c + h) / d)
+
+
 def collect():
     bench = read_jsonl(os.path.join(LOGS, "benchmark", "events.jsonl"))
-    pooled = latest(bench, type="benchmark_result", aggregated=True) or latest(bench, type="benchmark_result")
+    pooled = {"results": pooled_from_episodes(bench)}
+    pooled["tasks"] = sorted({t for r in pooled["results"] for t in r["tasks"]}, key=int)
+    by = {r["arm"]: r for r in pooled["results"]}
+    if "BM-3" in by and "BM-1" in by:
+        import math
+        # matched tasks only: BM-1 restricted to the tasks where a sleep cycle produced a BM-3
+        t3 = set(by["BM-3"]["tasks"])
+        m = [e for e in bench if e.get("type") == "episode" and arm_of(e) == "BM-1" and e["task_id"] in t3
+             and "_wide" not in e.get("environment_id", "") and "_reps" not in e.get("environment_id", "")]
+        k1m, n1m = sum(int(e["outcome"]["env_success"]) for e in m), len(m)
+        by["BM-1"] = {**by["BM-1"], "k_matched": k1m, "n_matched": n1m}
+        k3, n3, k1, n1 = by["BM-3"]["k"], by["BM-3"]["n"], k1m, n1m
+        rr = (k3 / n3) / max(k1 / n1, 1e-9); se = math.sqrt(max(1 / max(k3, .5) - 1 / n3, 0) + max(1 / max(k1, .5) - 1 / n1, 0))
+        lo1, hi1 = wilson(k1, n1)
+        pooled["ratio"] = {"BM-3/BM-1": rr, "ci": [rr * math.exp(-1.96 * se), rr * math.exp(1.96 * se)], "matched": f"{k3}/{n3} vs {k1}/{n1} on tasks {sorted(t3)}",
+                           "verdict": "pass" if by["BM-3"]["ci"][0] > hi1 else ("partial" if k3 / n3 > k1 / n1 else "fail")}
     power = read_jsonl(os.path.join(LOGS, "benchmark", "power.jsonl"))
     power = latest(power, type="benchmark_power")
     reps = latest(read_jsonl(os.path.join(LOGS, "benchmark", "reps.jsonl")), type="benchmark_reps")
@@ -154,8 +210,8 @@ def build(inline: bool) -> str:
                           f'homing <b>{100 * r4["k"] / r4["n"]:.0f}%</b>.</p>')
     verdict = ""
     if ratio:
-        verdict = (f'<p class="verdict">One sleep cycle vs the collapse: <b>{ratio["BM-3/BM-1"]:.2f}×</b> '
-                   f'[{ratio["ci"][0]:.2f}, {ratio["ci"][1]:.2f}] — <span class="chip {ratio["verdict"]}">{ratio["verdict"]}</span> by the pre-registered rule.</p>')
+        verdict = (f'<p class="verdict">One sleep cycle vs the collapse on the same tasks ({ratio.get("matched", "")}): <b>{ratio["BM-3/BM-1"]:.2f}×</b> '
+                   f'[{ratio["ci"][0]:.2f}, {ratio["ci"][1]:.2f}] — <span class="chip {ratio["verdict"]}">{ratio["verdict"]}</span> at 10 layouts per task; see the headline above for n=50.</p>')
     legend = " · ".join(f"<b>{a}</b> {ARM_NAMES[a]}" for a in ARM_NAMES if a in by)
     headline_html = ""
     if reps_rows:
@@ -213,8 +269,8 @@ a{{color:var(--accent)}}
 {"".join(beats_html)}
 {headline_html}
 <section class="chart">
-  <h2>All five tasks, 10 layouts each</h2>
-  <p class="sub">10 evaluation layouts per task, never seen by the optimizer or the gate · 95% Wilson intervals · SmolVLA, our own base numbers</p>
+  <h2>All five tasks, 10 held-out layouts each</h2>
+  <p class="sub">Pooled over tasks {tasks} · BM-3 exists only where a sleep cycle passed its gate (tasks 0, 2, 3; tasks 1 and 4 refused every candidate) · 95% Wilson intervals</p>
   {bars_svg(res)}
   <p class="legend">{legend}</p>
   {verdict}
