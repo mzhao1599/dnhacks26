@@ -1,0 +1,31 @@
+3483 episode records, 748 held-out evaluation episodes (init states 40-49, no consolidation_id)
+
+environment                                                arm                                draws          k/n   rate       95% CI  steps seeds
+libero_spatial_0 (stock)                                   BM-0 stock camera                  draws 1-5   44/50     88% [  76,   94]     91 5040-5249
+libero_spatial_0_plus_camera_0_0_100_2_354                 BM-1 camera moved, raw policy      draws 1-5    7/50     14% [   7,   26]    208 5040-5249
+libero_spatial_0_plus_camera_0_0_100_2_354                 BM-2 identity file                 draws 1-5    3/50      6% [   2,   16]    214 5040-5249
+libero_spatial_0_plus_camera_0_0_100_2_354                 BM-3 promoted file                 draws 1-5   29/50     58% [  44,   71]    156 5040-5249
+libero_spatial_0_plus_camera_0_0_100_2_354_act             BM-1 camera moved, raw policy      draws 1-5    4/50      8% [   3,   19]    212 5040-5249
+libero_spatial_0_plus_camera_0_0_100_2_354_act             BM-2 identity file                 draws 1-5    6/50     12% [   6,   24]    207 5040-5249
+libero_spatial_0_plus_camera_0_0_100_2_354_act             BM-3 promoted file                 draws 1-5    7/49     14% [   7,   27]    214 5040-5249
+libero_spatial_1 (stock)                                   BM-0 stock camera                  draws 1-5   35/50     70% [  56,   81]    139 5040-5249
+libero_spatial_1_plus_camera_0_0_100_4_6                   BM-1 camera moved, raw policy      draws 1-5    3/50      6% [   2,   16]    213 5040-5249
+libero_spatial_1_plus_camera_0_0_100_4_6                   BM-2 identity file                 draws 1-5    2/50      4% [   1,   13]    215 5040-5249
+libero_spatial_1_plus_camera_0_0_100_4_6                   BM-3 promoted file                 draws 1-5    4/49      8% [   3,   19]    213 5040-5249
+libero_spatial_3 (stock)                                   BM-0 stock camera                  draws 1-5   33/50     66% [  52,   78]    131 5040-5249
+libero_spatial_3_plus_camera_0_0_100_8_6                   BM-1 camera moved, raw policy      draws 1-5    4/50      8% [   3,   19]    209 5040-5249
+libero_spatial_3_plus_camera_0_0_100_8_6                   BM-2 identity file                 draws 1-5    4/50      8% [   3,   19]    209 5040-5249
+libero_spatial_3_plus_camera_0_0_100_8_6                   BM-3 promoted file                 draws 1-5    9/50     18% [  10,   31]    200 5040-5249
+
+Gates (from consolidation records; gate rollouts are seeds 4030-4069 = init states 30-39, never in the evaluation set):
+  si_0__libero_spatial_0_plus_camera_0_0_100_2_354             PASSED  cost 4.04 -> 1.89, success 12% -> 67% on 24 layouts; 504 rollouts, 31 min; promoted v2
+  si_0__libero_spatial_0_plus_camera_0_0_100_2_354_act         PASSED  cost 3.77 -> 3.15, success 21% -> 33% on 24 layouts; 504 rollouts, 31 min; promoted v2
+  si_1__libero_spatial_1_plus_camera_0_0_100_4_6               PASSED  cost 4.46 -> 4.35, success 0% -> 4% on 24 layouts; 480 rollouts, 35 min; promoted v2
+  si_3__libero_spatial_3_plus_camera_0_0_100_8_6               PASSED  cost 4.12 -> 3.75, success 12% -> 21% on 24 layouts; 504 rollouts, 35 min; promoted v2
+
+Protocol P (camera bump, unattended): per stage from the stage records' episode ids
+  baseline   10/15
+  drift_trigger: ewma 4.70 vs baseline 2.43
+  auto-sleep gate: PASSED 19% -> 75% (568 rollouts) promoted v2
+  perturbed  5/15
+  recovery   11/15

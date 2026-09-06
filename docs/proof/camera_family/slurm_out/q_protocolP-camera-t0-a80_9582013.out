@@ -1,0 +1,148 @@
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9][info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9][info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 1/489 [00:01<08:40,  1.07s/it]Loading weights:   0%|          | 1/489 [00:01<08:40,  1.07s/it]Loading weights:   0%|          | 1/489 [00:01<08:39,  1.07s/it]Loading weights:   0%|          | 1/489 [00:01<08:40,  1.07s/it]Loading weights:   1%|          | 3/489 [00:01<03:37,  2.24it/s]Loading weights:   1%|          | 3/489 [00:01<03:38,  2.22it/s]Loading weights:   1%|          | 3/489 [00:01<03:38,  2.22it/s]Loading weights:   1%|          | 3/489 [00:01<03:38,  2.22it/s]Loading weights:  14%|█▍        | 69/489 [00:01<00:05, 70.49it/s]Loading weights:  14%|█▍        | 69/489 [00:01<00:05, 70.46it/s]Loading weights:  14%|█▍        | 69/489 [00:01<00:06, 69.75it/s]Loading weights:  14%|█▍        | 69/489 [00:01<00:06, 69.60it/s]Loading weights:  19%|█▉        | 93/489 [00:01<00:05, 70.07it/s]Loading weights:  19%|█▉        | 94/489 [00:01<00:05, 71.15it/s]Loading weights:  20%|█▉        | 96/489 [00:01<00:05, 72.92it/s]Loading weights:  20%|█▉        | 97/489 [00:02<00:05, 71.77it/s]Loading weights:  22%|██▏       | 110/489 [00:02<00:05, 74.54it/s]Loading weights:  23%|██▎       | 112/489 [00:02<00:04, 76.51it/s]Loading weights:  24%|██▍       | 117/489 [00:02<00:05, 71.26it/s]Loading weights:  24%|██▎       | 116/489 [00:02<00:05, 69.70it/s]Loading weights:  26%|██▌       | 125/489 [00:02<00:04, 76.41it/s]Loading weights:  26%|██▌       | 127/489 [00:02<00:04, 77.29it/s]Loading weights:  27%|██▋       | 132/489 [00:02<00:04, 74.79it/s]Loading weights:  27%|██▋       | 132/489 [00:02<00:04, 73.37it/s]Loading weights:  28%|██▊       | 138/489 [00:02<00:04, 79.21it/s]Loading weights:  29%|██▊       | 140/489 [00:02<00:04, 73.97it/s]Loading weights:  30%|██▉       | 145/489 [00:02<00:04, 75.14it/s]Loading weights:  30%|██▉       | 145/489 [00:02<00:04, 74.79it/s]Loading weights:  31%|███       | 150/489 [00:02<00:04, 68.36it/s]Loading weights:  32%|███▏      | 157/489 [00:02<00:04, 81.22it/s]Loading weights:  32%|███▏      | 157/489 [00:02<00:04, 80.87it/s]Loading weights:  31%|███       | 151/489 [00:02<00:04, 69.72it/s]Loading weights:  33%|███▎      | 160/489 [00:02<00:04, 70.43it/s]Loading weights:  33%|███▎      | 161/489 [00:02<00:04, 71.61it/s]Loading weights:  35%|███▍      | 169/489 [00:02<00:04, 75.89it/s]Loading weights:  35%|███▍      | 169/489 [00:02<00:04, 75.66it/s]Loading weights:  36%|███▌      | 176/489 [00:03<00:04, 75.85it/s]Loading weights:  36%|███▌      | 176/489 [00:03<00:04, 76.03it/s]Loading weights:  37%|███▋      | 179/489 [00:03<00:04, 73.99it/s]Loading weights:  37%|███▋      | 179/489 [00:03<00:04, 73.83it/s]Loading weights:  38%|███▊      | 186/489 [00:03<00:04, 75.50it/s]Loading weights:  38%|███▊      | 186/489 [00:03<00:04, 74.59it/s]Loading weights:  38%|███▊      | 188/489 [00:03<00:04, 72.39it/s]Loading weights:  38%|███▊      | 188/489 [00:03<00:04, 72.43it/s]Loading weights:  40%|████      | 196/489 [00:03<00:04, 71.72it/s]Loading weights:  40%|████      | 197/489 [00:03<00:04, 72.17it/s]Loading weights:  40%|████      | 196/489 [00:03<00:04, 72.12it/s]Loading weights:  40%|████      | 197/489 [00:03<00:04, 72.16it/s]Loading weights:  42%|████▏     | 205/489 [00:03<00:05, 54.52it/s]Loading weights:  42%|████▏     | 205/489 [00:03<00:05, 54.18it/s]Loading weights:  42%|████▏     | 205/489 [00:03<00:05, 52.08it/s]Loading weights:  42%|████▏     | 205/489 [00:03<00:05, 52.10it/s]Loading weights:  47%|████▋     | 230/489 [00:03<00:03, 80.40it/s]Loading weights:  47%|████▋     | 230/489 [00:03<00:03, 79.83it/s]Loading weights:  47%|████▋     | 230/489 [00:03<00:03, 79.73it/s]Loading weights:  47%|████▋     | 230/489 [00:03<00:03, 79.87it/s]Loading weights:  49%|████▉     | 240/489 [00:03<00:03, 74.53it/s]Loading weights:  49%|████▉     | 240/489 [00:03<00:03, 75.41it/s]Loading weights:  49%|████▉     | 240/489 [00:03<00:03, 74.94it/s]Loading weights:  49%|████▉     | 240/489 [00:03<00:03, 74.34it/s]Loading weights:  51%|█████     | 249/489 [00:04<00:03, 66.56it/s]Loading weights:  51%|█████     | 249/489 [00:04<00:03, 66.73it/s]Loading weights:  51%|█████     | 249/489 [00:04<00:03, 65.97it/s]Loading weights:  51%|█████     | 249/489 [00:04<00:03, 65.99it/s]Loading weights:  53%|█████▎    | 257/489 [00:04<00:03, 63.08it/s]Loading weights:  53%|█████▎    | 257/489 [00:04<00:03, 62.04it/s]Loading weights:  53%|█████▎    | 257/489 [00:04<00:03, 62.00it/s]Loading weights:  53%|█████▎    | 257/489 [00:04<00:03, 62.33it/s]Loading weights:  54%|█████▍    | 264/489 [00:04<00:04, 52.45it/s]Loading weights:  54%|█████▍    | 264/489 [00:04<00:04, 52.11it/s]Loading weights:  54%|█████▍    | 264/489 [00:04<00:04, 51.82it/s]Loading weights:  54%|█████▍    | 264/489 [00:04<00:04, 51.38it/s]Loading weights:  58%|█████▊    | 284/489 [00:04<00:02, 69.37it/s]Loading weights:  58%|█████▊    | 284/489 [00:04<00:02, 69.13it/s]Loading weights:  58%|█████▊    | 284/489 [00:04<00:02, 68.61it/s]Loading weights:  58%|█████▊    | 284/489 [00:04<00:03, 68.29it/s]Loading weights:  62%|██████▏   | 301/489 [00:04<00:02, 78.12it/s]Loading weights:  62%|██████▏   | 301/489 [00:04<00:02, 77.42it/s]Loading weights:  62%|██████▏   | 301/489 [00:04<00:02, 77.31it/s]Loading weights:  62%|██████▏   | 301/489 [00:04<00:02, 77.45it/s]Loading weights:  65%|██████▍   | 317/489 [00:04<00:01, 91.14it/s]Loading weights:  65%|██████▍   | 317/489 [00:04<00:01, 91.36it/s]Loading weights:  65%|██████▍   | 317/489 [00:05<00:01, 90.33it/s]Loading weights:  65%|██████▍   | 317/489 [00:05<00:01, 90.43it/s]Loading weights:  68%|██████▊   | 333/489 [00:05<00:01, 104.19it/s]Loading weights:  68%|██████▊   | 333/489 [00:05<00:01, 104.04it/s]Loading weights:  68%|██████▊   | 333/489 [00:05<00:01, 103.28it/s]Loading weights:  68%|██████▊   | 333/489 [00:05<00:01, 103.54it/s]Loading weights:  75%|███████▍  | 365/489 [00:05<00:00, 132.72it/s]Loading weights:  75%|███████▍  | 365/489 [00:05<00:00, 129.57it/s]Loading weights:  75%|███████▍  | 365/489 [00:05<00:00, 129.13it/s]Loading weights:  75%|███████▍  | 365/489 [00:05<00:00, 126.97it/s]Loading weights:  78%|███████▊  | 383/489 [00:05<00:00, 141.32it/s]Loading weights:  80%|███████▉  | 391/489 [00:05<00:00, 156.57it/s]Loading weights:  80%|███████▉  | 390/489 [00:05<00:00, 152.20it/s]Loading weights:  80%|███████▉  | 389/489 [00:05<00:00, 148.55it/s]Loading weights:  84%|████████▍ | 413/489 [00:05<00:00, 157.03it/s]Loading weights:  84%|████████▍ | 413/489 [00:05<00:00, 157.26it/s]Loading weights:  84%|████████▍ | 413/489 [00:05<00:00, 154.40it/s]Loading weights:  84%|████████▍ | 413/489 [00:05<00:00, 155.01it/s]Loading weights:  88%|████████▊ | 430/489 [00:05<00:00, 155.85it/s]Loading weights:  88%|████████▊ | 431/489 [00:05<00:00, 155.44it/s]Loading weights:  88%|████████▊ | 431/489 [00:05<00:00, 155.34it/s]Loading weights:  88%|████████▊ | 431/489 [00:05<00:00, 154.59it/s]Loading weights:  91%|█████████ | 446/489 [00:05<00:00, 149.80it/s]Loading weights:  91%|█████████▏| 447/489 [00:05<00:00, 152.30it/s]Loading weights:  92%|█████████▏| 448/489 [00:05<00:00, 155.65it/s]Loading weights:  92%|█████████▏| 448/489 [00:05<00:00, 152.69it/s]Loading weights:  98%|█████████▊| 477/489 [00:05<00:00, 162.09it/s]Loading weights:  98%|█████████▊| 477/489 [00:05<00:00, 163.90it/s]Loading weights:  98%|█████████▊| 477/489 [00:05<00:00, 163.95it/s]Loading weights: 100%|██████████| 489/489 [00:05<00:00, 82.48it/s] 
+Loading weights:  98%|█████████▊| 477/489 [00:05<00:00, 163.81it/s]Loading weights: 100%|██████████| 489/489 [00:05<00:00, 82.47it/s] 
+Loading weights: 100%|██████████| 489/489 [00:05<00:00, 82.43it/s] 
+Loading weights: 100%|██████████| 489/489 [00:05<00:00, 82.31it/s] 
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights:  70%|██████▉   | 72/103 [00:00<00:00, 706.32it/s]Loading weights:  71%|███████   | 73/103 [00:00<00:00, 682.99it/s]Loading weights:  71%|███████   | 73/103 [00:00<00:00, 667.25it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 825.34it/s]
+Loading weights: 100%|██████████| 103/103 [00:00<00:00, 820.62it/s]
+Loading weights: 100%|██████████| 103/103 [00:00<00:00, 819.39it/s]
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
+/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
+/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 8780.76it/s]
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
+[reference] arm=A n=15 success=0.73 ci=[0.48,0.89] mean_steps=117.6 mean_cost=-
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:  34%|███▍      | 168/489 [00:00<00:00, 1679.42it/s]Loading weights: 100%|██████████| 489/489 [00:00<00:00, 2657.62it/s]
+[baseline] arm=B n=10 success=0.70 ci=[0.40,0.89] mean_steps=120.1 mean_cost=2.427
+[baseline] arm=B n=5 success=0.60 ci=[0.23,0.88] mean_steps=134.0 mean_cost=2.862
+[perturbed] arm=B n=10 success=0.20 ci=[0.06,0.51] mean_steps=199.1 mean_cost=4.587
+  drift pending for si_0__libero_spatial_0: consolidating (medium)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   1%|          | 3/489 [00:00<00:16, 29.71it/s]Loading weights:   8%|▊         | 39/489 [00:00<00:01, 377.26it/s]Loading weights:   9%|▉         | 46/489 [00:00<00:00, 453.75it/s]Loading weights:   6%|▌         | 28/489 [00:00<00:02, 156.76it/s]Loading weights:  16%|█▌        | 77/489 [00:00<00:01, 361.72it/s]Loading weights:  19%|█▉        | 92/489 [00:00<00:00, 402.97it/s]Loading weights:  11%|█▏        | 56/489 [00:00<00:02, 203.18it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:  25%|██▍       | 121/489 [00:00<00:00, 381.38it/s]Loading weights:  28%|██▊       | 138/489 [00:00<00:00, 416.80it/s]Loading weights:  17%|█▋        | 82/489 [00:00<00:01, 210.81it/s]Loading weights:  12%|█▏        | 57/489 [00:00<00:00, 503.55it/s]Loading weights:  33%|███▎      | 160/489 [00:00<00:00, 360.76it/s]Loading weights:  37%|███▋      | 180/489 [00:00<00:00, 398.72it/s]Loading weights:  25%|██▌       | 124/489 [00:00<00:01, 262.50it/s]Loading weights:  40%|████      | 197/489 [00:00<00:00, 333.84it/s]Loading weights:  22%|██▏       | 108/489 [00:00<00:00, 393.92it/s]Loading weights:  47%|████▋     | 228/489 [00:00<00:00, 380.61it/s]Loading weights:  34%|███▍      | 167/489 [00:00<00:01, 309.60it/s]Loading weights:  47%|████▋     | 231/489 [00:00<00:00, 332.30it/s]Loading weights:  56%|█████▋    | 276/489 [00:00<00:00, 401.49it/s]Loading weights:  30%|███       | 149/489 [00:00<00:00, 341.07it/s]Loading weights:  40%|████      | 198/489 [00:00<00:00, 296.30it/s]Loading weights:  68%|██████▊   | 333/489 [00:00<00:00, 441.48it/s]Loading weights:  54%|█████▍    | 265/489 [00:00<00:00, 279.40it/s]Loading weights:  38%|███▊      | 184/489 [00:00<00:00, 318.30it/s]Loading weights:  47%|████▋     | 228/489 [00:00<00:01, 242.70it/s]Loading weights:  78%|███████▊  | 381/489 [00:00<00:00, 430.00it/s]Loading weights:  66%|██████▋   | 325/489 [00:00<00:00, 357.77it/s]Loading weights:  44%|████▍     | 217/489 [00:00<00:01, 267.22it/s]Loading weights:  81%|████████  | 397/489 [00:01<00:00, 452.86it/s]Loading weights:  54%|█████▍    | 263/489 [00:01<00:00, 247.01it/s]Loading weights:  92%|█████████▏| 451/489 [00:01<00:00, 484.86it/s]Loading weights: 100%|██████████| 489/489 [00:01<00:00, 474.80it/s]
+Loading weights: 100%|██████████| 489/489 [00:01<00:00, 445.50it/s]
+Loading weights:  54%|█████▍    | 265/489 [00:00<00:00, 311.31it/s]Loading weights:  86%|████████▌ | 419/489 [00:01<00:00, 556.96it/s]Loading weights: 100%|██████████| 489/489 [00:01<00:00, 383.77it/s]
+Loading weights:  89%|████████▉ | 435/489 [00:00<00:00, 674.22it/s]Loading weights: 100%|██████████| 489/489 [00:00<00:00, 507.99it/s]
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 12612.05it/s]
+Loading weights: 100%|██████████| 103/103 [00:00<00:00, 12592.20it/s]
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 12329.15it/s]
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
+/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
+/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 12989.37it/s]
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
+[perturbed] arm=B n=5 success=0.60 ci=[0.23,0.88] mean_steps=152.8 mean_cost=2.774
+[recovery] arm=B n=10 success=0.70 ci=[0.40,0.89] mean_steps=138.8 mean_cost=2.338
+[recovery] arm=B n=5 success=0.80 ci=[0.38,0.96] mean_steps=121.2 mean_cost=1.900
+QTASK_DONE protocolP-camera-t0-a80

@@ -1,0 +1,251 @@
+6 camera variants for task 0: ['0_0_100_2_352', '0_0_100_2_354', '11_15_100_0_0', '13_15_100_0_0', '14_15_100_0_0', '15_15_100_0_0']
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+FRAME cfg=0 view=0_0_100_2_352 camera={"view": "0_0_100_2_352", "h_deg": 0, "v_deg": 0, "scale": 1.0, "end_rot_deg": 2, "end_vert_deg": 352, "cam_pos_before": [0.6586, 0.0, 1.6104], "cam_quat_before": [0.638, 0.3048, 0.3048, 0.638], "cam_pos": [0.6586, 0.0, 1.6104], "cam_quat": [-0.6036, -0.3439, -0.3531, -0.6266], "cam_shift_m": 0.0001}
+FRAME cfg=1 view=0_0_100_2_354 camera={"view": "0_0_100_2_354", "h_deg": 0, "v_deg": 0, "scale": 1.0, "end_rot_deg": 2, "end_vert_deg": 354, "cam_pos_before": [0.6586, 0.0, 1.6104], "cam_quat_before": [0.638, 0.3048, 0.3048, 0.638], "cam_pos": [0.6586, 0.0, 1.6104], "cam_quat": [-0.6097, -0.333, -0.3425, -0.6325], "cam_shift_m": 0.0001}
+FRAME cfg=2 view=11_15_100_0_0 camera={"view": "11_15_100_0_0", "h_deg": 11, "v_deg": 15, "scale": 1.0, "end_rot_deg": 0, "end_vert_deg": 0, "cam_pos_before": [0.6586, 0.0, 1.6104], "cam_quat_before": [0.638, 0.3048, 0.3048, 0.638], "cam_pos": [0.4186, 0.0814, 1.7532], "cam_quat": [0.6048, 0.197, 0.239, 0.7337], "cam_shift_m": 0.2909}
+FRAME cfg=3 view=13_15_100_0_0 camera={"view": "13_15_100_0_0", "h_deg": 13, "v_deg": 15, "scale": 1.0, "end_rot_deg": 0, "end_vert_deg": 0, "cam_pos_before": [0.6586, 0.0, 1.6104], "cam_quat_before": [0.638, 0.3048, 0.3048, 0.638], "cam_pos": [0.4155, 0.0959, 1.7532], "cam_quat": [0.5919, 0.1928, 0.2424, 0.7441], "cam_shift_m": 0.2978}
+FRAME cfg=4 view=14_15_100_0_0 camera={"view": "14_15_100_0_0", "h_deg": 14, "v_deg": 15, "scale": 1.0, "end_rot_deg": 0, "end_vert_deg": 0, "cam_pos_before": [0.6586, 0.0, 1.6104], "cam_quat_before": [0.638, 0.3048, 0.3048, 0.638], "cam_pos": [0.4137, 0.1032, 1.7532], "cam_quat": [0.5854, 0.1907, 0.244, 0.7493], "cam_shift_m": 0.3017}
+FRAME cfg=5 view=15_15_100_0_0 camera={"view": "15_15_100_0_0", "h_deg": 15, "v_deg": 15, "scale": 1.0, "end_rot_deg": 0, "end_vert_deg": 0, "cam_pos_before": [0.6586, 0.0, 1.6104], "cam_quat_before": [0.638, 0.3048, 0.3048, 0.638], "cam_pos": [0.4119, 0.1104, 1.7532], "cam_quat": [0.5788, 0.1885, 0.2457, 0.7544], "cam_shift_m": 0.3057}
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 1/489 [00:02<21:20,  2.62s/it]Loading weights:   0%|          | 1/489 [00:02<21:20,  2.62s/it]Loading weights:   0%|          | 1/489 [00:02<21:19,  2.62s/it]Loading weights:   0%|          | 1/489 [00:02<21:08,  2.60s/it]Loading weights:   1%|          | 3/489 [00:02<06:16,  1.29it/s]Loading weights:   1%|          | 3/489 [00:02<06:16,  1.29it/s]Loading weights:   1%|          | 3/489 [00:02<06:13,  1.30it/s]Loading weights:   1%|          | 3/489 [00:02<06:17,  1.29it/s]Loading weights:  12%|█▏        | 59/489 [00:02<00:11, 36.88it/s]Loading weights:  12%|█▏        | 59/489 [00:02<00:11, 37.16it/s]Loading weights:  12%|█▏        | 61/489 [00:03<00:11, 37.63it/s]Loading weights:  12%|█▏        | 61/489 [00:03<00:11, 37.29it/s]Loading weights:  17%|█▋        | 81/489 [00:03<00:10, 39.77it/s]Loading weights:  17%|█▋        | 84/489 [00:03<00:09, 42.00it/s]Loading weights:  17%|█▋        | 85/489 [00:03<00:09, 42.39it/s]Loading weights:  17%|█▋        | 83/489 [00:03<00:09, 40.90it/s]Loading weights:  19%|█▉        | 95/489 [00:03<00:09, 40.60it/s]Loading weights:  20%|██        | 98/489 [00:03<00:09, 41.33it/s]Loading weights:  21%|██        | 103/489 [00:03<00:08, 43.87it/s]Loading weights:  21%|██        | 102/489 [00:03<00:08, 43.57it/s]Loading weights:  22%|██▏       | 106/489 [00:04<00:09, 41.52it/s]Loading weights:  22%|██▏       | 110/489 [00:04<00:08, 43.91it/s]Loading weights:  24%|██▎       | 115/489 [00:04<00:08, 42.56it/s]Loading weights:  24%|██▎       | 115/489 [00:04<00:09, 40.98it/s]Loading weights:  24%|██▎       | 116/489 [00:04<00:09, 40.91it/s]Loading weights:  25%|██▍       | 120/489 [00:04<00:08, 44.59it/s]Loading weights:  25%|██▌       | 123/489 [00:04<00:08, 41.61it/s]Loading weights:  26%|██▌       | 125/489 [00:04<00:09, 40.20it/s]Loading weights:  26%|██▌       | 128/489 [00:04<00:08, 41.15it/s]Loading weights:  26%|██▌       | 126/489 [00:04<00:09, 40.14it/s]Loading weights:  27%|██▋       | 131/489 [00:04<00:08, 40.78it/s]Loading weights:  28%|██▊       | 135/489 [00:04<00:09, 37.64it/s]Loading weights:  28%|██▊       | 137/489 [00:04<00:08, 42.82it/s]Loading weights:  27%|██▋       | 134/489 [00:04<00:09, 38.30it/s]Loading weights:  27%|██▋       | 133/489 [00:04<00:09, 37.96it/s]Loading weights:  29%|██▉       | 141/489 [00:05<00:10, 33.04it/s]Loading weights:  29%|██▉       | 141/489 [00:05<00:09, 35.01it/s]Loading weights:  29%|██▉       | 143/489 [00:05<00:09, 35.43it/s]Loading weights:  29%|██▊       | 140/489 [00:04<00:10, 34.79it/s]Loading weights:  30%|███       | 149/489 [00:05<00:09, 37.45it/s]Loading weights:  30%|███       | 149/489 [00:05<00:09, 34.57it/s]Loading weights:  30%|███       | 149/489 [00:05<00:09, 36.54it/s]Loading weights:  30%|███       | 149/489 [00:05<00:09, 35.15it/s]Loading weights:  32%|███▏      | 158/489 [00:05<00:08, 36.94it/s]Loading weights:  32%|███▏      | 158/489 [00:05<00:08, 38.72it/s]Loading weights:  32%|███▏      | 158/489 [00:05<00:08, 37.14it/s]Loading weights:  32%|███▏      | 158/489 [00:05<00:08, 38.03it/s]Loading weights:  34%|███▎      | 164/489 [00:05<00:08, 40.54it/s]Loading weights:  34%|███▎      | 164/489 [00:05<00:07, 41.65it/s]Loading weights:  34%|███▎      | 164/489 [00:05<00:07, 40.64it/s]Loading weights:  34%|███▎      | 164/489 [00:05<00:07, 41.05it/s]Loading weights:  35%|███▍      | 170/489 [00:05<00:08, 39.39it/s]Loading weights:  35%|███▍      | 169/489 [00:05<00:08, 37.08it/s]Loading weights:  35%|███▍      | 170/489 [00:05<00:08, 39.35it/s]Loading weights:  35%|███▍      | 169/489 [00:05<00:08, 36.89it/s]Loading weights:  36%|███▌      | 176/489 [00:05<00:07, 40.78it/s]Loading weights:  36%|███▌      | 176/489 [00:05<00:07, 40.70it/s]Loading weights:  36%|███▌      | 176/489 [00:05<00:07, 40.88it/s]Loading weights:  36%|███▌      | 176/489 [00:05<00:07, 40.41it/s]Loading weights:  38%|███▊      | 185/489 [00:05<00:06, 43.72it/s]Loading weights:  38%|███▊      | 185/489 [00:06<00:06, 43.74it/s]Loading weights:  38%|███▊      | 185/489 [00:06<00:07, 43.35it/s]Loading weights:  38%|███▊      | 185/489 [00:06<00:06, 43.63it/s]Loading weights:  39%|███▉      | 190/489 [00:06<00:07, 41.40it/s]Loading weights:  39%|███▉      | 190/489 [00:06<00:07, 41.17it/s]Loading weights:  39%|███▉      | 190/489 [00:06<00:07, 41.35it/s]Loading weights:  39%|███▉      | 190/489 [00:06<00:07, 41.22it/s]Loading weights:  40%|███▉      | 195/489 [00:06<00:07, 41.19it/s]Loading weights:  40%|███▉      | 195/489 [00:06<00:07, 41.04it/s]Loading weights:  40%|███▉      | 195/489 [00:06<00:07, 40.43it/s]Loading weights:  40%|███▉      | 195/489 [00:06<00:07, 40.31it/s]Loading weights:  42%|████▏     | 203/489 [00:06<00:07, 40.60it/s]Loading weights:  42%|████▏     | 203/489 [00:06<00:07, 40.39it/s]Loading weights:  42%|████▏     | 203/489 [00:06<00:07, 40.21it/s]Loading weights:  42%|████▏     | 203/489 [00:06<00:07, 40.26it/s]Loading weights:  43%|████▎     | 212/489 [00:06<00:06, 41.93it/s]Loading weights:  43%|████▎     | 212/489 [00:06<00:06, 41.84it/s]Loading weights:  43%|████▎     | 212/489 [00:06<00:06, 41.90it/s]Loading weights:  43%|████▎     | 212/489 [00:06<00:06, 41.81it/s]Loading weights:  45%|████▌     | 221/489 [00:06<00:06, 42.27it/s]Loading weights:  45%|████▌     | 221/489 [00:06<00:06, 42.30it/s]Loading weights:  45%|████▌     | 221/489 [00:06<00:06, 42.18it/s]Loading weights:  45%|████▌     | 221/489 [00:06<00:06, 41.16it/s]Loading weights:  47%|████▋     | 230/489 [00:07<00:05, 43.35it/s]Loading weights:  47%|████▋     | 230/489 [00:07<00:05, 43.37it/s]Loading weights:  47%|████▋     | 230/489 [00:07<00:06, 43.02it/s]Loading weights:  47%|████▋     | 230/489 [00:07<00:05, 43.36it/s]Loading weights:  49%|████▉     | 239/489 [00:07<00:06, 41.22it/s]Loading weights:  49%|████▉     | 239/489 [00:07<00:06, 40.66it/s]Loading weights:  49%|████▉     | 239/489 [00:07<00:06, 39.69it/s]Loading weights:  49%|████▉     | 239/489 [00:07<00:06, 39.72it/s]Loading weights:  51%|█████     | 248/489 [00:07<00:05, 44.95it/s]Loading weights:  51%|█████     | 248/489 [00:07<00:05, 43.99it/s]Loading weights:  51%|█████     | 248/489 [00:07<00:05, 43.95it/s]Loading weights:  51%|█████     | 248/489 [00:07<00:05, 42.09it/s]Loading weights:  52%|█████▏    | 254/489 [00:07<00:04, 47.63it/s]Loading weights:  53%|█████▎    | 257/489 [00:07<00:04, 47.30it/s]Loading weights:  53%|█████▎    | 257/489 [00:07<00:04, 46.98it/s]Loading weights:  53%|█████▎    | 257/489 [00:07<00:04, 47.34it/s]Loading weights:  53%|█████▎    | 260/489 [00:07<00:04, 47.16it/s]Loading weights:  54%|█████▍    | 266/489 [00:07<00:04, 46.76it/s]Loading weights:  54%|█████▍    | 266/489 [00:07<00:04, 45.40it/s]Loading weights:  54%|█████▍    | 266/489 [00:07<00:04, 46.34it/s]Loading weights:  54%|█████▍    | 266/489 [00:07<00:04, 46.03it/s]Loading weights:  56%|█████▌    | 275/489 [00:08<00:04, 47.93it/s]Loading weights:  56%|█████▌    | 275/489 [00:08<00:04, 47.71it/s]Loading weights:  56%|█████▌    | 275/489 [00:08<00:04, 47.94it/s]Loading weights:  56%|█████▌    | 275/489 [00:08<00:04, 47.20it/s]Loading weights:  58%|█████▊    | 284/489 [00:08<00:04, 44.39it/s]Loading weights:  58%|█████▊    | 284/489 [00:08<00:04, 44.39it/s]Loading weights:  58%|█████▊    | 284/489 [00:08<00:04, 43.55it/s]Loading weights:  58%|█████▊    | 284/489 [00:08<00:04, 42.49it/s]Loading weights:  59%|█████▉    | 290/489 [00:08<00:04, 46.98it/s]Loading weights:  59%|█████▉    | 290/489 [00:08<00:04, 46.86it/s]Loading weights:  60%|██████    | 295/489 [00:08<00:03, 54.82it/s]Loading weights:  62%|██████▏   | 301/489 [00:08<00:03, 58.68it/s]Loading weights:  62%|██████▏   | 301/489 [00:08<00:03, 56.38it/s]Loading weights:  62%|██████▏   | 301/489 [00:08<00:03, 57.95it/s]Loading weights:  62%|██████▏   | 303/489 [00:08<00:03, 54.38it/s]Loading weights:  65%|██████▌   | 319/489 [00:08<00:02, 80.47it/s]Loading weights:  65%|██████▌   | 319/489 [00:08<00:02, 75.34it/s]Loading weights:  65%|██████▌   | 319/489 [00:08<00:02, 79.59it/s]Loading weights:  68%|██████▊   | 333/489 [00:08<00:01, 88.47it/s]Loading weights:  68%|██████▊   | 333/489 [00:08<00:01, 86.06it/s]Loading weights:  68%|██████▊   | 333/489 [00:08<00:01, 83.08it/s]Loading weights:  68%|██████▊   | 333/489 [00:08<00:01, 87.36it/s]Loading weights:  71%|███████▏  | 349/489 [00:08<00:01, 98.96it/s]Loading weights:  71%|███████▏  | 349/489 [00:08<00:01, 97.84it/s]Loading weights:  71%|███████▏  | 349/489 [00:08<00:01, 103.30it/s]Loading weights:  71%|███████▏  | 349/489 [00:08<00:01, 102.82it/s]Loading weights:  74%|███████▎  | 360/489 [00:08<00:01, 99.30it/s]Loading weights:  74%|███████▍  | 361/489 [00:08<00:01, 105.86it/s]Loading weights:  75%|███████▍  | 365/489 [00:09<00:01, 93.79it/s]Loading weights:  75%|███████▍  | 365/489 [00:09<00:01, 94.42it/s] Loading weights:  77%|███████▋  | 375/489 [00:09<00:01, 107.37it/s]Loading weights:  77%|███████▋  | 375/489 [00:09<00:01, 109.88it/s]Loading weights:  78%|███████▊  | 381/489 [00:09<00:01, 106.96it/s]Loading weights:  78%|███████▊  | 381/489 [00:09<00:01, 104.00it/s]Loading weights:  79%|███████▉  | 387/489 [00:09<00:00, 107.61it/s]Loading weights:  79%|███████▉  | 387/489 [00:09<00:00, 105.71it/s]Loading weights:  81%|████████  | 397/489 [00:09<00:00, 109.60it/s]Loading weights:  81%|████████  | 397/489 [00:09<00:00, 111.81it/s]Loading weights:  82%|████████▏ | 399/489 [00:09<00:00, 103.82it/s]Loading weights:  82%|████████▏ | 399/489 [00:09<00:00, 102.60it/s]Loading weights:  85%|████████▍ | 415/489 [00:09<00:00, 106.77it/s]Loading weights:  85%|████████▍ | 415/489 [00:09<00:00, 106.02it/s]Loading weights:  85%|████████▍ | 415/489 [00:09<00:00, 105.04it/s]Loading weights:  85%|████████▍ | 415/489 [00:09<00:00, 107.95it/s]Loading weights:  88%|████████▊ | 429/489 [00:09<00:00, 106.20it/s]Loading weights:  88%|████████▊ | 429/489 [00:09<00:00, 103.78it/s]Loading weights:  88%|████████▊ | 429/489 [00:09<00:00, 104.85it/s]Loading weights:  88%|████████▊ | 429/489 [00:09<00:00, 96.83it/s] Loading weights:  91%|█████████ | 445/489 [00:09<00:00, 93.87it/s] Loading weights:  91%|█████████ | 445/489 [00:09<00:00, 94.07it/s] Loading weights:  91%|█████████ | 445/489 [00:09<00:00, 92.80it/s]Loading weights:  91%|█████████ | 445/489 [00:09<00:00, 90.66it/s] Loading weights:  95%|█████████▍| 463/489 [00:09<00:00, 105.78it/s]Loading weights:  95%|█████████▍| 463/489 [00:09<00:00, 105.24it/s]Loading weights:  95%|█████████▍| 463/489 [00:09<00:00, 106.90it/s]Loading weights:  95%|█████████▍| 463/489 [00:09<00:00, 105.01it/s]Loading weights:  98%|█████████▊| 477/489 [00:10<00:00, 99.70it/s] Loading weights:  98%|█████████▊| 477/489 [00:10<00:00, 99.98it/s] Loading weights:  98%|█████████▊| 477/489 [00:10<00:00, 99.53it/s] Loading weights:  98%|█████████▊| 477/489 [00:10<00:00, 100.56it/s]Loading weights: 100%|██████████| 489/489 [00:10<00:00, 48.48it/s]
+Loading weights: 100%|██████████| 489/489 [00:10<00:00, 48.36it/s]
+Loading weights: 100%|██████████| 489/489 [00:10<00:00, 48.35it/s]
+Loading weights: 100%|██████████| 489/489 [00:10<00:00, 48.36it/s] 
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights:  17%|█▋        | 17/103 [00:00<00:00, 163.22it/s]Loading weights:  31%|███       | 32/103 [00:00<00:00, 319.85it/s]Loading weights:  26%|██▌       | 27/103 [00:00<00:00, 261.80it/s]Loading weights:  16%|█▌        | 16/103 [00:00<00:00, 98.23it/s]Loading weights:  52%|█████▏    | 54/103 [00:00<00:00, 269.37it/s]Loading weights:  52%|█████▏    | 54/103 [00:00<00:00, 260.24it/s]Loading weights:  67%|██████▋   | 69/103 [00:00<00:00, 298.69it/s]Loading weights:  62%|██████▏   | 64/103 [00:00<00:00, 245.25it/s]Loading weights:  93%|█████████▎| 96/103 [00:00<00:00, 329.45it/s]Loading weights:  87%|████████▋ | 90/103 [00:00<00:00, 292.70it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 333.05it/s]
+Loading weights: 100%|██████████| 103/103 [00:00<00:00, 336.03it/s]
+Loading weights: 100%|██████████| 103/103 [00:00<00:00, 323.24it/s]
+Loading weights: 100%|██████████| 103/103 [00:00<00:00, 315.50it/s]
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
+/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
+/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
+/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
+PROBE BM-0 stock: 9/10 = 90% [60,98] steps 89
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   7%|▋         | 36/489 [00:00<00:01, 343.52it/s]Loading weights:   8%|▊         | 41/489 [00:00<00:01, 345.62it/s]Loading weights:  12%|█▏        | 59/489 [00:00<00:00, 519.91it/s]Loading weights:  15%|█▍        | 71/489 [00:00<00:01, 323.63it/s]Loading weights:   7%|▋         | 33/489 [00:00<00:01, 265.97it/s]Loading weights:  18%|█▊        | 86/489 [00:00<00:01, 383.54it/s]Loading weights:  23%|██▎       | 111/489 [00:00<00:00, 502.42it/s]Loading weights:  23%|██▎       | 113/489 [00:00<00:01, 358.51it/s]Loading weights:  13%|█▎        | 63/489 [00:00<00:01, 268.42it/s]Loading weights:  26%|██▌       | 125/489 [00:00<00:01, 332.83it/s]Loading weights:  30%|███       | 149/489 [00:00<00:00, 354.23it/s]Loading weights:  33%|███▎      | 159/489 [00:00<00:01, 313.88it/s]Loading weights:  18%|█▊        | 90/489 [00:00<00:01, 208.50it/s]Loading weights:  33%|███▎      | 162/489 [00:00<00:01, 305.11it/s]Loading weights:  38%|███▊      | 185/489 [00:00<00:00, 336.64it/s]Loading weights:  23%|██▎       | 112/489 [00:00<00:01, 201.08it/s]Loading weights:  39%|███▉      | 191/489 [00:00<00:01, 268.08it/s]Loading weights:  45%|████▌     | 222/489 [00:00<00:00, 339.92it/s]Loading weights:  41%|████      | 199/489 [00:00<00:01, 254.85it/s]Loading weights:  28%|██▊       | 135/489 [00:00<00:01, 201.96it/s]Loading weights:  45%|████▍     | 219/489 [00:00<00:01, 247.93it/s]Loading weights:  53%|█████▎    | 257/489 [00:00<00:00, 307.92it/s]Loading weights:  47%|████▋     | 229/489 [00:00<00:01, 254.38it/s]Loading weights:  36%|███▋      | 178/489 [00:00<00:01, 264.46it/s]Loading weights:  50%|█████     | 245/489 [00:00<00:00, 244.73it/s]Loading weights:  59%|█████▉    | 289/489 [00:00<00:00, 286.53it/s]Loading weights:  57%|█████▋    | 279/489 [00:00<00:00, 312.79it/s]Loading weights:  42%|████▏     | 207/489 [00:00<00:01, 263.00it/s]Loading weights:  56%|█████▌    | 275/489 [00:01<00:00, 248.47it/s]Loading weights:  75%|███████▌  | 368/489 [00:01<00:00, 411.24it/s]Loading weights:  66%|██████▌   | 323/489 [00:00<00:00, 337.23it/s]Loading weights:  48%|████▊     | 234/489 [00:00<00:01, 244.13it/s]Loading weights:  71%|███████▏  | 349/489 [00:01<00:00, 378.53it/s]Loading weights:  88%|████████▊ | 431/489 [00:01<00:00, 469.56it/s]Loading weights:  82%|████████▏ | 401/489 [00:01<00:00, 441.40it/s]Loading weights: 100%|██████████| 489/489 [00:01<00:00, 416.41it/s]
+Loading weights:  53%|█████▎    | 259/489 [00:01<00:01, 217.68it/s]Loading weights:  82%|████████▏ | 399/489 [00:01<00:00, 378.65it/s]Loading weights:  98%|█████████▊| 480/489 [00:01<00:00, 454.85it/s]Loading weights: 100%|██████████| 489/489 [00:01<00:00, 390.31it/s]
+Loading weights: 100%|██████████| 489/489 [00:01<00:00, 382.51it/s]
+Loading weights:  69%|██████▊   | 335/489 [00:01<00:00, 357.18it/s]Loading weights: 100%|██████████| 489/489 [00:01<00:00, 377.08it/s]
+PROBE BM-1 cfg=0 view=0_0_100_2_352: 3/10 = 30% [11,60] steps 203
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:  12%|█▏        | 61/489 [00:00<00:00, 517.60it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   8%|▊         | 37/489 [00:00<00:01, 330.83it/s]Loading weights:  25%|██▍       | 120/489 [00:00<00:00, 551.29it/s]Loading weights:   8%|▊         | 37/489 [00:00<00:01, 321.54it/s]Loading weights:  14%|█▍        | 69/489 [00:00<00:00, 625.22it/s]Loading weights:  19%|█▉        | 92/489 [00:00<00:01, 357.22it/s]Loading weights:  14%|█▍        | 70/489 [00:00<00:01, 262.00it/s]Loading weights:  36%|███▌      | 176/489 [00:00<00:00, 405.99it/s]Loading weights:  27%|██▋       | 132/489 [00:00<00:00, 449.45it/s]Loading weights:  25%|██▍       | 122/489 [00:00<00:01, 346.83it/s]Loading weights:  26%|██▌       | 128/489 [00:00<00:01, 255.76it/s]Loading weights:  37%|███▋      | 180/489 [00:00<00:00, 440.44it/s]Loading weights:  33%|███▎      | 160/489 [00:00<00:00, 337.95it/s]Loading weights:  37%|███▋      | 180/489 [00:00<00:00, 330.22it/s]Loading weights:  45%|████▍     | 220/489 [00:00<00:00, 295.94it/s]Loading weights:  41%|████      | 199/489 [00:00<00:00, 351.97it/s]Loading weights:  46%|████▌     | 226/489 [00:00<00:00, 363.42it/s]Loading weights:  45%|████▍     | 218/489 [00:00<00:00, 332.49it/s]Loading weights:  55%|█████▍    | 267/489 [00:00<00:00, 321.61it/s]Loading weights:  48%|████▊     | 235/489 [00:00<00:00, 311.97it/s]Loading weights:  75%|███████▌  | 367/489 [00:00<00:00, 448.36it/s]Loading weights:  54%|█████▍    | 265/489 [00:00<00:00, 320.44it/s]Loading weights:  52%|█████▏    | 254/489 [00:00<00:00, 264.00it/s]Loading weights:  55%|█████▍    | 268/489 [00:00<00:00, 296.90it/s]Loading weights:  61%|██████    | 299/489 [00:00<00:00, 322.62it/s]Loading weights:  85%|████████▌ | 416/489 [00:01<00:00, 435.07it/s]Loading weights:  58%|█████▊    | 284/489 [00:00<00:00, 261.42it/s]Loading weights:  62%|██████▏   | 303/489 [00:00<00:00, 307.92it/s]Loading weights:  76%|███████▋  | 373/489 [00:00<00:00, 417.45it/s]Loading weights:  96%|█████████▌| 468/489 [00:01<00:00, 456.05it/s]Loading weights: 100%|██████████| 489/489 [00:01<00:00, 436.34it/s]
+Loading weights:  64%|██████▍   | 313/489 [00:01<00:00, 264.73it/s]Loading weights:  93%|█████████▎| 453/489 [00:01<00:00, 511.13it/s]Loading weights: 100%|██████████| 489/489 [00:01<00:00, 459.03it/s]
+Loading weights:  78%|███████▊  | 381/489 [00:01<00:00, 370.92it/s]Loading weights:  83%|████████▎ | 407/489 [00:01<00:00, 427.15it/s]Loading weights: 100%|██████████| 489/489 [00:01<00:00, 402.10it/s]
+Loading weights: 100%|██████████| 489/489 [00:01<00:00, 380.79it/s]
+PROBE BM-1 cfg=1 view=0_0_100_2_354: 2/10 = 20% [6,51] steps 203
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:  14%|█▍        | 68/489 [00:00<00:00, 670.58it/s]Loading weights:  18%|█▊        | 90/489 [00:00<00:00, 816.12it/s]Loading weights:  11%|█▏        | 56/489 [00:00<00:00, 514.31it/s]Loading weights:  13%|█▎        | 65/489 [00:00<00:00, 624.39it/s]Loading weights:  28%|██▊       | 136/489 [00:00<00:00, 496.02it/s]Loading weights:  29%|██▊       | 140/489 [00:00<00:00, 617.89it/s]Loading weights:  22%|██▏       | 108/489 [00:00<00:01, 347.74it/s]Loading weights:  39%|███▊      | 189/489 [00:00<00:00, 460.13it/s]Loading weights:  35%|███▌      | 172/489 [00:00<00:00, 416.71it/s]Loading weights:  30%|██▉       | 146/489 [00:00<00:01, 324.65it/s]Loading weights:  41%|████▏     | 202/489 [00:00<00:00, 457.78it/s]Loading weights:  37%|███▋      | 180/489 [00:00<00:00, 312.04it/s]Loading weights:  46%|████▌     | 224/489 [00:00<00:00, 356.46it/s]Loading weights:  52%|█████▏    | 252/489 [00:00<00:00, 460.35it/s]Loading weights:  48%|████▊     | 237/489 [00:00<00:00, 318.53it/s]Loading weights:  43%|████▎     | 212/489 [00:00<00:00, 278.58it/s]Loading weights:  66%|██████▌   | 321/489 [00:00<00:00, 505.17it/s]Loading weights:  69%|██████▊   | 335/489 [00:00<00:00, 462.53it/s]Loading weights:  54%|█████▍    | 265/489 [00:00<00:00, 299.98it/s]Loading weights:  78%|███████▊  | 381/489 [00:00<00:00, 529.29it/s]Loading weights:  49%|████▉     | 241/489 [00:00<00:00, 268.59it/s]Loading weights:  82%|████████▏ | 403/489 [00:00<00:00, 503.13it/s]Loading weights: 100%|██████████| 489/489 [00:00<00:00, 605.56it/s]
+Loading weights:  61%|██████    | 298/489 [00:00<00:00, 292.31it/s]Loading weights:  96%|█████████▌| 467/489 [00:00<00:00, 537.94it/s]Loading weights:  57%|█████▋    | 281/489 [00:00<00:00, 286.07it/s]Loading weights: 100%|██████████| 489/489 [00:00<00:00, 490.96it/s]
+Loading weights:  83%|████████▎ | 407/489 [00:00<00:00, 461.52it/s]Loading weights:  76%|███████▋  | 373/489 [00:01<00:00, 432.67it/s]Loading weights:  96%|█████████▋| 471/489 [00:01<00:00, 498.88it/s]Loading weights: 100%|██████████| 489/489 [00:01<00:00, 442.34it/s]
+Loading weights: 100%|██████████| 489/489 [00:01<00:00, 426.33it/s]
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:  21%|██        | 102/489 [00:00<00:00, 899.72it/s]Loading weights:  33%|███▎      | 162/489 [00:00<00:00, 1343.13it/s]Loading weights:  43%|████▎     | 209/489 [00:00<00:00, 880.25it/s]Loading weights:  61%|██████    | 298/489 [00:00<00:00, 750.07it/s]Loading weights:  90%|█████████ | 441/489 [00:00<00:00, 972.10it/s]Loading weights:  61%|██████    | 297/489 [00:00<00:00, 636.74it/s] Loading weights: 100%|██████████| 489/489 [00:00<00:00, 953.90it/s]
+Loading weights:  90%|████████▉ | 439/489 [00:00<00:00, 810.41it/s]Loading weights: 100%|██████████| 489/489 [00:00<00:00, 842.50it/s]
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading weights:  10%|█         | 51/489 [00:00<00:00, 481.77it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:  20%|██        | 100/489 [00:00<00:00, 393.38it/s]Loading weights:   0%|          | 1/489 [00:00<01:07,  7.22it/s]Loading weights:  40%|████      | 198/489 [00:00<00:00, 615.39it/s]Loading weights:  22%|██▏       | 108/489 [00:00<00:00, 535.70it/s]Loading weights:  54%|█████▍    | 263/489 [00:00<00:00, 522.07it/s]Loading weights:  66%|██████▌   | 321/489 [00:00<00:00, 537.02it/s]Loading weights:  35%|███▍      | 169/489 [00:00<00:01, 317.60it/s]Loading weights:  96%|█████████▌| 470/489 [00:00<00:00, 809.22it/s]Loading weights: 100%|██████████| 489/489 [00:00<00:00, 673.70it/s]
+Loading weights:  43%|████▎     | 212/489 [00:00<00:00, 279.40it/s]Loading weights:  51%|█████     | 247/489 [00:00<00:00, 272.01it/s]Loading weights:  62%|██████▏   | 305/489 [00:00<00:00, 339.43it/s]Loading weights:  87%|████████▋ | 426/489 [00:01<00:00, 547.34it/s]Loading weights: 100%|██████████| 489/489 [00:01<00:00, 449.75it/s]
+ERROR:fleet_memory.runner.worker:episode ep_774948dc crashed
+Traceback (most recent call last):
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/worker.py", line 319, in run_episode
+    res = loop.run_subtasks(env, obs, plan, shim, tracker, task, episode_id=episode_id, surfaces=list(arm.surfaces),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/loop.py", line 116, in run_subtasks
+    chunk = np.asarray(shim.act(obs), np.float32).reshape(-1, 7)
+                       ^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/execution/shim.py", line 119, in act
+    return self._emit(self.policy.act(obs))
+                      ^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/policies/smolvla.py", line 126, in act
+    actions = self.policy.predict_action_chunk(batch)       # [1, chunk, 7] normalised
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 240, in predict_action_chunk
+    actions = self._get_action_chunk(batch, noise, **kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 207, in _get_action_chunk
+    images, img_masks = self.prepare_images(batch)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 360, in prepare_images
+    img = img * 2.0 - 1.0
+          ~~~~~~~~~~^~~~~
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 19.50 GiB of which 10.94 MiB is free. Process 1313722 has 22.87 GiB memory in use. Process 1443863 has 4.62 GiB memory in use. Including non-PyTorch memory, this process has 4.94 GiB memory in use. Process 1443870 has 4.90 GiB memory in use. Process 1443861 has 4.94 GiB memory in use. Of the allocated memory 4.73 GiB is allocated by PyTorch, and 47.85 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]ERROR:fleet_memory.runner.worker:episode ep_21099072 crashed
+Traceback (most recent call last):
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/worker.py", line 319, in run_episode
+    res = loop.run_subtasks(env, obs, plan, shim, tracker, task, episode_id=episode_id, surfaces=list(arm.surfaces),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/loop.py", line 116, in run_subtasks
+    chunk = np.asarray(shim.act(obs), np.float32).reshape(-1, 7)
+                       ^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/execution/shim.py", line 119, in act
+    return self._emit(self.policy.act(obs))
+                      ^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/policies/smolvla.py", line 126, in act
+    actions = self.policy.predict_action_chunk(batch)       # [1, chunk, 7] normalised
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 240, in predict_action_chunk
+    actions = self._get_action_chunk(batch, noise, **kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 207, in _get_action_chunk
+    images, img_masks = self.prepare_images(batch)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 360, in prepare_images
+    img = img * 2.0 - 1.0
+          ~~~~~~~~~~^~~~~
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 19.50 GiB of which 10.94 MiB is free. Process 1313722 has 22.87 GiB memory in use. Process 1443863 has 4.62 GiB memory in use. Process 1443866 has 4.94 GiB memory in use. Process 1443870 has 4.90 GiB memory in use. Including non-PyTorch memory, this process has 4.94 GiB memory in use. Of the allocated memory 4.73 GiB is allocated by PyTorch, and 47.85 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
+Loading weights:  22%|██▏       | 106/489 [00:00<00:00, 888.40it/s]Loading weights:  46%|████▋     | 227/489 [00:00<00:00, 1054.18it/s]Loading weights: 100%|██████████| 489/489 [00:00<00:00, 1629.03it/s]
+ERROR:fleet_memory.runner.worker:episode ep_776cc459 crashed
+Traceback (most recent call last):
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/worker.py", line 319, in run_episode
+    res = loop.run_subtasks(env, obs, plan, shim, tracker, task, episode_id=episode_id, surfaces=list(arm.surfaces),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/loop.py", line 116, in run_subtasks
+    chunk = np.asarray(shim.act(obs), np.float32).reshape(-1, 7)
+                       ^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/execution/shim.py", line 119, in act
+    return self._emit(self.policy.act(obs))
+                      ^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/policies/smolvla.py", line 126, in act
+    actions = self.policy.predict_action_chunk(batch)       # [1, chunk, 7] normalised
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 240, in predict_action_chunk
+    actions = self._get_action_chunk(batch, noise, **kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 207, in _get_action_chunk
+    images, img_masks = self.prepare_images(batch)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 360, in prepare_images
+    img = img * 2.0 - 1.0
+          ~~~~~~~~~~^~~~~
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 19.50 GiB of which 10.94 MiB is free. Process 1313722 has 22.87 GiB memory in use. Process 1443863 has 4.62 GiB memory in use. Including non-PyTorch memory, this process has 4.94 GiB memory in use. Process 1443870 has 4.90 GiB memory in use. Process 1443861 has 4.94 GiB memory in use. Of the allocated memory 4.73 GiB is allocated by PyTorch, and 47.85 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
+multiprocessing.pool.RemoteTraceback: 
+"""
+Traceback (most recent call last):
+  File "/scratch/ezhao2/.uv_python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/multiprocessing/pool.py", line 125, in worker
+    result = (True, func(*args, **kwds))
+                    ^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/.uv_python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/multiprocessing/pool.py", line 48, in mapstar
+    return list(map(*args))
+           ^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/pool.py", line 40, in _run_one
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/pool.py", line 34, in _cached
+    key = (cfg.env_kind, cfg.policy_kind, cfg.suite, cfg.task_id, cfg.max_steps,
+                                      ^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/worker.py", line 105, in make_policy
+    return SmolVLAPolicy(**kw)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/policies/smolvla.py", line 72, in __init__
+    self.policy = _LRSmolVLA.from_pretrained(path, config=cfg)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/pretrained.py", line 219, in from_pretrained
+    policy = cls._load_as_safetensor(instance, model_file, config.device, strict)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/pretrained.py", line 231, in _load_as_safetensor
+    missing_keys, unexpected_keys = load_model_as_safetensor(
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/safetensors/torch.py", line 228, in load_model
+    state_dict = load_file(filename, device=device, backend=backend)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/safetensors/torch.py", line 360, in load_file
+    return f.get_tensors()
+           ^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 19.50 GiB of which 10.94 MiB is free. Process 1313722 has 22.87 GiB memory in use. Including non-PyTorch memory, this process has 4.62 GiB memory in use. Process 1443866 has 4.94 GiB memory in use. Process 1443870 has 4.90 GiB memory in use. Process 1443861 has 4.94 GiB memory in use. Of the allocated memory 4.39 GiB is allocated by PyTorch, and 61.35 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
+"""
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/scripts/exp/camera_probe.py", line 65, in <module>
+    main(sys.argv[1] if len(sys.argv) > 1 else "0", int(sys.argv[2]) if len(sys.argv) > 2 else 1,
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/scripts/exp/camera_probe.py", line 58, in main
+    run(f"BM-1 cfg={i} view={c['view']}", dataclasses.replace(base, env_kind="libero_plus", env_kwargs={"config": c},
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/scripts/exp/camera_probe.py", line 49, in run
+    eps = run_many([dataclasses.replace(cfg, seed=s) for s in seeds], workers)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/pool.py", line 82, in run_many
+    if workers <= 1 or len(cfgs) <= 1:
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/.uv_python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/multiprocessing/pool.py", line 367, in map
+    return self._map_async(func, iterable, mapstar, chunksize).get()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/scratch/ezhao2/.uv_python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/multiprocessing/pool.py", line 774, in get
+    raise self._value
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 19.50 GiB of which 10.94 MiB is free. Process 1313722 has 22.87 GiB memory in use. Including non-PyTorch memory, this process has 4.62 GiB memory in use. Process 1443866 has 4.94 GiB memory in use. Process 1443870 has 4.90 GiB memory in use. Process 1443861 has 4.94 GiB memory in use. Of the allocated memory 4.39 GiB is allocated by PyTorch, and 61.35 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
+QTASK_DONE cam-probe2

@@ -1,0 +1,76 @@
+skill instance si_1__libero_spatial_1_plus_camera_0_0_100_4_6 view=0_0_100_4_6 act_only=False
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] No private macro file found! (__init__.py:7)
+[robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
+[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:   8%|▊         | 38/489 [00:00<00:01, 310.74it/s]Loading weights:  13%|█▎        | 64/489 [00:00<00:00, 568.91it/s]Loading weights:  13%|█▎        | 62/489 [00:00<00:00, 529.58it/s]Loading weights:  14%|█▍        | 69/489 [00:00<00:00, 609.10it/s]Loading weights:  20%|█▉        | 96/489 [00:00<00:00, 438.00it/s]Loading weights:  25%|██▍       | 121/489 [00:00<00:00, 458.45it/s]Loading weights:  24%|██▎       | 115/489 [00:00<00:00, 422.08it/s]Loading weights:  29%|██▉       | 141/489 [00:00<00:00, 393.31it/s]Loading weights:  27%|██▋       | 130/489 [00:00<00:00, 409.29it/s]Loading weights:  34%|███▍      | 168/489 [00:00<00:00, 403.19it/s]Loading weights:  34%|███▍      | 167/489 [00:00<00:00, 425.82it/s]Loading weights:  37%|███▋      | 182/489 [00:00<00:00, 347.73it/s]Loading weights:  36%|███▌      | 175/489 [00:00<00:00, 406.86it/s]Loading weights:  46%|████▌     | 226/489 [00:00<00:00, 477.24it/s]Loading weights:  43%|████▎     | 210/489 [00:00<00:00, 364.74it/s]Loading weights:  45%|████▌     | 221/489 [00:00<00:00, 355.02it/s]Loading weights:  58%|█████▊    | 282/489 [00:00<00:00, 474.94it/s]Loading weights:  53%|█████▎    | 259/489 [00:00<00:00, 387.40it/s]Loading weights:  55%|█████▍    | 267/489 [00:00<00:00, 378.37it/s]Loading weights:  45%|████▍     | 218/489 [00:00<00:00, 290.68it/s]Loading weights:  62%|██████▏   | 305/489 [00:00<00:00, 401.41it/s]Loading weights:  78%|███████▊  | 381/489 [00:00<00:00, 564.62it/s]Loading weights:  63%|██████▎   | 306/489 [00:00<00:00, 362.70it/s]Loading weights: 100%|██████████| 489/489 [00:00<00:00, 631.82it/s]
+Loading weights:  53%|█████▎    | 258/489 [00:00<00:00, 317.30it/s]Loading weights:  71%|███████   | 346/489 [00:00<00:00, 371.99it/s]Loading weights:  83%|████████▎ | 408/489 [00:00<00:00, 550.61it/s]Loading weights:  66%|██████▌   | 321/489 [00:00<00:00, 392.84it/s]Loading weights: 100%|██████████| 489/489 [00:00<00:00, 497.59it/s]
+Loading weights:  89%|████████▊ | 433/489 [00:00<00:00, 503.44it/s]Loading weights: 100%|██████████| 489/489 [00:01<00:00, 479.02it/s]
+Loading weights:  90%|████████▉ | 439/489 [00:00<00:00, 591.63it/s]Loading weights: 100%|██████████| 489/489 [00:00<00:00, 504.71it/s]
+Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 25379.70it/s]
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+Loading weights: 100%|██████████| 103/103 [00:00<00:00, 16297.47it/s]
+Loading weights: 100%|██████████| 103/103 [00:00<00:00, 36349.46it/s]
+Loading weights: 100%|██████████| 103/103 [00:00<00:00, 19827.13it/s]
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+[1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
+Key                     | Status     |  | 
+------------------------+------------+--+-
+embeddings.position_ids | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
+/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
+/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
+/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+  self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
+CYCLE t1 plus_camera_0_0_100_4_6 cons=cons_bce216a5 rollouts=480 wall=2110s validation={"candidates": ["incumbent", "final_mean", "iter0_best", "iter1_best", "iter2_best", "iter3_best"], "costs": [4.486841812060526, 3.9678193739535965, 3.638876038403585, 4.467580961284608, 4.570244560599815, 4.4821536841095], "chosen": "iter0_best"} gate={"passed": true, "incumbent_cost": 4.459704471169567, "candidate_cost": 4.348593461810014, "n_seeds": 24, "incumbent_success": 0.0, "candidate_success": 0.041666666666666664, "success_delta_pp": 4.166666666666666} promoted=2 best={"approach_offset_xyz": [0.027425857896315263, -0.003977334324867, 0.010635886544002826], "pregrasp_height": 0.030690115703716263, "grasp_offset_z": -0.02, "time_scale": 1.1418448502188585, "velocity_cap": 0.7271448259584371, "gripper_cmd": 1.0, "approach_cone_deg": 60.0, "blend_alpha": 0.0697325533096622, "homing_enable": 0.0, "homing_pos_delta": [0.002986737402092786, -0.0174632403119558, 0.05], "homing_rot_delta": [-0.08378172521415346, 0.08228736136850709, 0.004879720644297869], "cam_roll_deg": 3.6963541590921913, "cam_zoom": 0.9991685107158541, "cam_shift_xy": [0.25, -0.0211000536302203]}
+INCUMBENT t1 plus_camera_0_0_100_4_6 v2 {"approach_offset_xyz": [0.027425857896315263, -0.003977334324867, 0.010635886544002826], "pregrasp_height": 0.030690115703716263, "grasp_offset_z": -0.02, "time_scale": 1.1418448502188585, "velocity_cap": 0.7271448259584371, "gripper_cmd": 1.0, "approach_cone_deg": 60.0, "blend_alpha": 0.0697325533096622, "homing_enable": 0.0, "homing_pos_delta": [0.002986737402092786, -0.0174632403119558, 0.05], "homing_rot_delta": [-0.08378172521415346, 0.08228736136850709, 0.004879720644297869], "cam_roll_deg": 3.6963541590921913, "cam_zoom": 0.9991685107158541, "cam_shift_xy": [0.25, -0.0211000536302203]}
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+[info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+REPS t1 plus_camera_0_0_100_4_6 BM-0: 35/50 = 70% [56,81] steps 139
+REPS t1 plus_camera_0_0_100_4_6 BM-1: 3/50 = 6% [2,16] steps 213
+REPS t1 plus_camera_0_0_100_4_6 BM-2: 2/50 = 4% [1,13] steps 215
+REPS t1 plus_camera_0_0_100_4_6 BM-3: 4/50 = 8% [3,19] steps 213
+QTASK_DONE cam-t1-tilt-a80
