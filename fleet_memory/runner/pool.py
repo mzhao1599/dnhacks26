@@ -27,15 +27,21 @@ from fleet_memory.memory.store import EventStore
 from fleet_memory.runner.conditions import get_arm, seed_set
 from fleet_memory.runner.worker import RunConfig, cost_reference_of, incumbent_of, make_env, make_policy, run_episode
 
-_CACHE: dict[tuple, tuple[Any, Any]] = {}
+_ENV_CACHE: dict[tuple, Any] = {}
+_POLICY_CACHE: dict[tuple, Any] = {}
 
 
 def _cached(cfg: RunConfig) -> tuple[Any, Any]:
-    key = (cfg.env_kind, cfg.policy_kind, cfg.suite, cfg.task_id, cfg.max_steps,
-           json.dumps(cfg.env_kwargs, sort_keys=True), json.dumps(cfg.policy_kwargs, sort_keys=True))
-    if key not in _CACHE:
-        _CACHE[key] = (make_env(cfg), make_policy(cfg))
-    return _CACHE[key]
+    """Per-worker caches. Envs are keyed by everything that shapes the scene; the policy ONLY by its own kind/kwargs —
+    one SmolVLA per worker no matter how many env configs the job cycles through (a per-env policy copy cost ~2.4 GB
+    of GPU memory each and OOMed MIG slices on the third config)."""
+    ek = (cfg.env_kind, cfg.suite, cfg.task_id, cfg.max_steps, json.dumps(cfg.env_kwargs, sort_keys=True))
+    pk = (cfg.policy_kind, json.dumps(cfg.policy_kwargs, sort_keys=True))
+    if ek not in _ENV_CACHE:
+        _ENV_CACHE[ek] = make_env(cfg)
+    if pk not in _POLICY_CACHE:
+        _POLICY_CACHE[pk] = make_policy(cfg)
+    return _ENV_CACHE[ek], _POLICY_CACHE[pk]
 
 
 def _run_one(d: dict) -> dict:
