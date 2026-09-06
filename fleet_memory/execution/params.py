@@ -30,7 +30,7 @@ PARAM_SPEC: list[tuple[str, int, float, float]] = [
     ("homing_rot_delta",    3, -0.15, 0.15),   # rad axis-angle offset from the canonical start orientation
     ("cam_roll_deg",        1, -20.0, 20.0),   # v3.2 camera calibration: rotate the agentview frame (deg, ccw)
     ("cam_zoom",            1,  0.80, 1.25),   # scale about the frame centre (>1 magnifies)
-    ("cam_shift_xy",        2, -0.15, 0.15),   # translate the frame by this fraction of width / height
+    ("cam_shift_xy",        2, -0.25, 0.25),   # translate the frame by this fraction of width / height (a 6-8 deg tilt of the stock camera is ~0.13-0.18)
 ]
 DIM = sum(d for _, d, _, _ in PARAM_SPEC)  # 21
 CALIB_NAMES = ("cam_roll_deg", "cam_zoom", "cam_shift_xy")
