@@ -4,7 +4,7 @@ Weight-frozen improvement for a vision-language-action policy (SmolVLA on LIBERO
 environment and versioned. Two writers, two kinds of knowledge:
 - **Coach (LLM, sparse)** writes discrete knowledge on **S1** (plans, bindings, preferences) as lessons; may
   *propose* S3 edits only as candidates that must pass the optimizer's gate.
-- **Sleep-loop optimizer (CEM, dense)** writes the continuous **S3 vector** (`execution/params.py`, 9 dims)
+- **Sleep-loop optimizer (CEM, dense)** writes the continuous **S3 vector** (`execution/params.py`, 17 dims)
   per skill instance, gated by a perturbation test on disjoint seeds (`runner/consolidate.py`).
 Headline objective: **mastery on a fixed environment** (cost/steps ↓ across versions) plus **recovery after
 perturbation** (drift detector → consolidation → cost recovers, unattended). Transfer/S2 probe/LoRA/arm E are
@@ -26,7 +26,7 @@ post-hackathon.
 fleet_memory/
   envs/        base.py (Env protocol, Obs), libero_env.py, mock_env.py, perturb.py (pose shift / distractor)
   policies/    base.py (Policy protocol, ActionChunk), smolvla.py, mock.py, scripted.py (IK fallback)
-  execution/   shim.py (S3 enforcement + phase-gated blending + time_scale), constraints.py, params.py (9-dim S3 vector),
+  execution/   shim.py (S3 enforcement + phase-gated blending + time_scale), constraints.py, params.py (17-dim S3 vector),
                envelope.py (immutable clamp), detectors.py
   agents/      planner.py (Haiku), coach_inner.py, coach_outer.py, llm.py (anthropic | gemini | mock)
   memory/      schema.py (ALL record types), store.py, retrieval.py, lifecycle.py (lesson A/B gate),
