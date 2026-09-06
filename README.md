@@ -1,6 +1,6 @@
 # somnio robotics
 
-**A frozen robot policy that gets better at its own environment while it sleeps.**
+**A frozen robot policy that gets better at performing in its dynamic environment while it sleeps.**
 
 [![tests](https://github.com/mzhao1599/dnhacks26/actions/workflows/ci.yml/badge.svg)](https://github.com/mzhao1599/dnhacks26/actions/workflows/ci.yml)
 ![python](https://img.shields.io/badge/python-3.12-blue)
