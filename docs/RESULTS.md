@@ -68,9 +68,17 @@ and gate never saw):**
 
 BM-3 vs BM-1: 2.5×, intervals disjoint → **pass** by §13.5 on task 0.
 
+**Replication** (same 10 held-out layouts, 5 *new* policy-noise draws, n=50): BM-0 40/50 = 80% · BM-1 12/50 = 24% [14, 37] ·
+BM-2 13/50 = 26% · BM-4 17/50 = 34% · **BM-3 29/50 = 58% [44, 71]** · BM-3w 21/50 = 42%. **Pooled n=100 per arm:**
+BM-1 **22%** [15, 31] → BM-4 34% [25, 44] → **BM-3 54% [44, 64]**, ratio **2.45×**, intervals disjoint. The headline replicates.
+
 **Same protocol on task 3** (r=0.2 perturbation; its BM-3 came from a cycle-2 promotion gated at n=12):
 BM-1 16/50 = 32% [21, 46] · BM-2 17/50 = 34% · BM-4 hand-set homing 10/50 = **20%** (homing *hurts* here) ·
 BM-3 9/50 = **18%** [10, 31] — a **false-positive promotion**: the n=12 gate accepted a vector that is worse held-out.
+Replication with 5 new noise draws: BM-0 30/50 = 60% · BM-1 14/50 = 28% · BM-2 17/50 = 34% · BM-4 14/50 = 28% · BM-3 17/50 = 34%.
+**Pooled task 3, n=100:** BM-1 30% [22, 40] · BM-2 34% · BM-4 24% [17, 33] · BM-3 26% [18, 35] — the n=12-gate vector is
+≈ BM-1 (no gain, and the first run's "harm" was mostly noise); hand-set homing is the one arm that is worse. Task 3's
+perturbation is r=0.2 rad (twice task 0's) and even the standard arm is at 60%: harder scene, weaker policy.
 With mastery v3 that is two harmful promotions from the 12-seed gate; the strong gate (24 seeds, K=4) has so far
 promoted nothing false (mastery cycle from v2: validation kept the incumbent). The strong-gate re-run on task 3 is queued. The optimizer's vector (homing + time_scale 0.85 +
 grasp offset −1.8 cm + cone 34°) beats hand-set homing alone (50% vs 34%): it found more than the switch.
@@ -95,6 +103,10 @@ the S1 planner neither helps nor hurts this single-skill task once it stops trun
 Arm D on the perturbed benchmark task 0 (optimized vector + Gemini planner + inner coach), 10 held-out layouts × 2
 noise draws: **B vector-only 10/20 = 50% [30, 70], 162 steps; D 12/20 = 60% [39, 78], 151 steps; 0 coach interventions**
 (episodes are ~160 steps, the stall detector never fires). The S1 layer is inert here; the recovery is the vector's.
+Arm C alone on the same 20 perturbed episodes (planner + coach, **no** vector): 10/20 = 50% [30, 70], 155 steps, 0
+interventions — indistinguishable from B and D at n=20. Note: the Gemini coach's JSON replies were truncated on most
+queries in this run (`inner coach query failed: Unterminated string`), so "0 interventions" is partly a parsing failure,
+not only a quiet detector; see `docs/HANDOFF.md`.
 
 ## 6. Protocol P (LIBERO-Spatial task 0, real env, unattended): an honest negative
 baseline 8/15 (cost 3.00, 144 steps) → bowl shifted 6 cm → perturbed **1/15** (cost 4.87) → **drift_trigger fired**
@@ -114,7 +126,11 @@ recovered.)
   analyst dashboard: https://claude.ai/code/artifact/5f1ec73c-fd21-4b6b-845b-a4b1f8432c2e · rebuild: `scripts/pull_logs.sh`,
   `scripts/build_demo_page.py`, then publish `dashboard/demo_artifact.html` / `dashboard/artifact.html`.
 - Held-out mastery (LIBERO-10 task 3, layouts 20–39, n=40/arm): A 78% [62, 88] / 302 steps / cost 2.03 → **v2 80% [65, 90] /
-  278 steps / cost 1.95** → v3 68% [52, 80] / 335 steps / cost 2.31 (a gate false-positive at n=12; regressed). Homing alone, all 50 layouts of tasks 0+3 (n=100/arm, no optimizer): **BM-1 27% [19, 36] → BM-4 33% [25, 43]** — +6 pp, CIs overlap: real but small.
+  278 steps / cost 1.95** → v3 68% [52, 80] / 335 steps / cost 2.31 (a gate false-positive at n=12; regressed).
+  Same-seed rerun (determinism check): A 31/40 again (bit-identical), v2 32/40 / 270 steps / 1.94, v3 23/40 = 58% / 367 / 2.67 —
+  arm A is reproducible under common random numbers; the shim arms wobble ±10 pp at n=40, v3's regression is real.
+  Strong-gate cycle from v2 (24 gate seeds, K=4 reps): fresh-seed validation **kept the incumbent**; its held-out re-eval
+  70% [55, 82] / 312 steps / cost 2.33 (n=40) is the same v2 vector measured a third time — i.e. v2 lands 70–80% held-out. Homing alone, all 50 layouts of tasks 0+3 (n=100/arm, no optimizer): **BM-1 27% [19, 36] → BM-4 33% [25, 43]** — +6 pp, CIs overlap: real but small.
 
 ## Honesty lines
 - Base numbers are ours (SmolVLA), on LIBERO-Plus's exact robot-init perturbation; the CVPR table is π₀/OpenVLA.

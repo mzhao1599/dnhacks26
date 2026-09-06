@@ -29,7 +29,9 @@ if [ "$MUJOCO_GL" = "osmesa" ]; then
   [ -e "$FM_ROOT/lib/libOSMesa.so" ] || ln -sf libOSMesa.so.8 "$FM_ROOT/lib/libOSMesa.so"
   export LD_LIBRARY_PATH="$FM_ROOT/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 fi
-export MUJOCO_EGL_DEVICE_ID=${MUJOCO_EGL_DEVICE_ID:-0}
+# robosuite asserts MUJOCO_EGL_DEVICE_ID is a digit contained in CUDA_VISIBLE_DEVICES whenever both are set, even
+# under osmesa; on MIG slices CUDA_VISIBLE_DEVICES is a "MIG-<uuid>" string, so only set it for EGL.
+if [ "$MUJOCO_GL" = "egl" ]; then export MUJOCO_EGL_DEVICE_ID=${MUJOCO_EGL_DEVICE_ID:-0}; else unset MUJOCO_EGL_DEVICE_ID; fi
 
 # LIBERO reads ~/.libero/config.yaml and, if it is missing, blocks on input() at import time.
 # Write it non-interactively. Assets must be prefetched once (see README: libero assets).

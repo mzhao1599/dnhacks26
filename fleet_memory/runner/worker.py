@@ -75,6 +75,10 @@ def make_env(cfg: RunConfig):
         return MockEnv(cfg.task_id, **kw)
     if cfg.env_kind == "libero":
         from fleet_memory.envs.libero_env import LiberoEnv
+        from fleet_memory.envs.libero_plus import is_plus_backend
+        if is_plus_backend():   # under the LIBERO-plus package the suite tables index 2402+ tasks: go via the base bddl
+            from fleet_memory.envs.libero_plus import make_perturbed_env
+            return make_perturbed_env(cfg.suite, cfg.task_id, "standard", **cfg.env_kwargs)
         return LiberoEnv(cfg.suite, cfg.task_id, **cfg.env_kwargs)
     if cfg.env_kind == "libero_plus":              # LIBERO-Plus perturbation config (envs/libero_plus.py)
         from fleet_memory.envs.libero_plus import make_perturbed_env

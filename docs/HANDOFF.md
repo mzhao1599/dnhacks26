@@ -64,95 +64,54 @@ Numbers here are copied from `docs/RESULTS.md`; **PENDING means not yet measured
 - NFS append from several nodes can tear ~1 line per 1000 (large snapshot lines). Readers are tolerant of a bad
   line; still, **prefer one log file per job**.
 
-## 4. Job scripts (`scripts/hopper/`)
+## 4. Job scripts and the autonomous queue (`scripts/hopper/`)
 
-In the local checkout at this commit: `phase0_v3.sbatch` (arm A + cost reference), `probe_v3.sbatch`,
-`smoke_v3.sbatch`, `perturb_verify.sbatch`, `libero_plus_smoke.sbatch`, `pi05_smoke.sbatch`, plus v2-era
-`phase0.sbatch`, `phase1_probe.sbatch`, `smoke.sbatch`, and `env.sh`.
+- `env.sh` (source it; sets venv, HF cache, MUJOCO_GL, LIBERO config, secrets), one sbatch per experiment
+  (`phase0_v3`, `probe_p1b`, `sleep_v31`, `bm_task`, `bm_followup`, `bm_power`, `mastery_heldout`, `libero_plus_smoke`,
+  `pi05_smoke`, `unzip_plus_assets`, …), `LIBERO_PLUS.md` (perturbation mechanics + plus backend).
+- **Queue runner** (keeps GPUs busy unattended): `queue_runner.sh` polls `queue.txt` every 60 s on the login node
+  (`setsid nohup bash scripts/hopper/queue_runner.sh >> $FM_ROOT/logs/queue_runner.log &`; restart with
+  `pkill -f "^bash scripts/hopper/queue_runner.sh"` — the anchored pattern matters, a bare `pkill -f queue_runner`
+  kills your own ssh shell). One task per line `name | tier [after=<job-or-task-name>] | command`; tier `a100`
+  (cap `MAX_A100`, default 6) or `mig` (cap 2, osmesa prefix); `after=` becomes a slurm `afterany` dependency if
+  that job is still queued/running. A name is submitted once (`$FM_ROOT/logs/queue.done`; delete the line to resubmit).
+  Job names `q-a100-<name>` / `q-mig-<name>`, stdout `logs/slurm/q_<name>_<jid>.out`, ends with `QTASK_DONE <name>`.
+- Experiment drivers in `scripts/exp/`: `bm_reps.py <task> <reps> [rep_offset] [--bm0]` (held-out layouts × noise
+  reps, prints `REPS <arm>: k/n`), `mastery_heldout.py`, `arm_d.py <task> [B,C,D]`, `bm_power.py`, `record_demo.py`.
 
-The coordinator also ran these; they were written on / for Hopper and **are not in this checkout — look in
-`hopper:/scratch/ezhao2/fleet-memory/dnhacks26/scripts/hopper/` and rsync them back before relying on them**:
-`probe_p1b.sbatch` (P1 probes), `sleep_v31.sbatch` (3 sleep cycles + arm-B evals), `bm_task.sbatch <task>`
-(per-task benchmark: consolidate + arms), `bm_followup.sbatch` (cycle-2 for refused gates + `benchmark --aggregate`),
-`bm_power.sbatch`, `mastery_heldout.sbatch`, `consolidate_p2.sbatch` / `probe_p1.sbatch` (v3.0, superseded),
-and `scripts/homing_diag.py` (homing diagnostic, CPU + osmesa).
+## 5. Results
 
-## 5. Results so far (tables copied verbatim from `docs/RESULTS.md`)
-
-**Phase 0 — base rate (LIBERO-10 task 3).** Arm A, 20 train seeds: **55% [34, 74]**, mean **378 steps**.
-`steps_ref=377.95`, `jerk_ref` frozen as a `cost_reference` event.
-
-**Phase 1 — does the S3 surface steer this policy? (same 20 seeds, same policy noise; arm B = shim on)**
-
-| S3 vector | success | mean steps |
-|---|---|---|
-| identity (true pass-through) | 80% [58, 92] | 294 |
-| `time_scale = 1.3` | 80% | **266** (−9%) |
-| `blend_alpha = 0.5` (approach-shaping on, v3.0 default) | 55% | 395 |
-| bad offset (+3 cm xy, −2 cm z, blend on) | 45% | 419 |
-| homing to a **wrong** constant pose (bug, fixed) | 5% | 518 |
-
-**Sleep loop on the real env — mastery (LIBERO-10 task 3, arm B = shim + incumbent, 20 train seeds after each cycle)**
-
-| cycle | gate | incumbent after | arm B success | steps | cost |
-|---|---|---|---|---|---|
-| — (identity v1) | — | v1 | 65% [43, 82] | 341 | 2.46 |
-| 1 | refused (cand 3.53 vs 2.09 on gate seeds, −37 pp) | v1 | — | — | — |
-| 2 | passed | **v2** | **80% [58, 92]** | **275** | **1.95** |
-| 3 | passed | v3 | 60% [39, 78] | 354 | 2.57 |
-
-Mastery curve v1 2.46 → v2 1.95 → v3 2.57: not monotone; report as measured. Gate pass rate 2/3.
-Seeded arm A baseline on the same seeds: PENDING (Phase 0's 55%/378 predates policy seeding).
-
-**LIBERO-Plus robot-initial-state benchmark (LIBERO-Spatial, SmolVLA, our own base numbers)**
-
-| task | BM-0 standard | BM-1 perturbed | BM-2 + untrained shim | BM-4 + hand-set homing | BM-3 after ONE unattended sleep |
-|---|---|---|---|---|---|
-| 0 | 9/10 | 5/10 | 4/10 | 4/10 | 5/10 (gate: 17%→67% on gate seeds; eval: no change) |
-| 1 | 6/10 | 0/10 | 0/10 | 2/10 | gate refused → cycle 2: PENDING |
-| 2 | 10/10 | 0/10 | 0/10 | 0/10 | 0/10 (gate passed on cost only, 0%→0%) |
-| 3 | 9/10 | 2/10 | 2/10 | 3/10 | gate refused → cycle 2: PENDING |
-| 4 | 6/10 | 0/10 | 0/10 | 1/10 | gate refused → cycle 2: PENDING |
-| **pooled** | **40/50 = 80%** | **7/50 = 14% [7, 26]** | 6/50 = 12% | **10/50 = 20% [11, 33]** | 5/20 on tasks 0+2 (= BM-1 there) |
-
-Wide-search variant (task 0, σ₀=0.5, separate skill instance, MIG/OSMesa renderer): BM-1 3/10 → BM-4 5/10 →
-**BM-3 7/10** (gate passed 2.94 → 2.72). Verdict by the spec's own rule (§13.5): **collapse reproduced (80% → 14%)**;
-untrained shim adds nothing; hand-set homing recovers 6 points pooled (**partial**, CIs overlap); one unattended
-sleep found homing on task 0 (gate +50 pp) but eval layouts did not confirm it (**fail on the main run, partial on
-the wide run**). BM-1 vs BM-4 on all 50 init states of tasks 0 and 3 (n=100/arm): PENDING.
-
-**Arm C (Gemini planner `gemini-3.7-flash` + inner coach `gemini-3.1-pro-preview`), LIBERO-10 task 3.**
-First run (12 seeds): 17%, 173 mean steps — per-subtask step budgets truncated the VLA. Fixed. Rerun, 20 seeds:
-**75% [53, 89], 295 steps** — ≈ the identity-shim arm (80%/294): the S1 planner neither helps nor hurts here.
-
-**Protocol P (LIBERO-Spatial task 0):** baseline 8/15 (cost 3.00, 144 steps) → bowl shifted 6 cm → 1/5 →
-**drift_trigger fired unattended** (EWMA cost 4.43 vs baseline 2.37) → auto-sleep (small) running; recovery stage PENDING.
-
-Honesty lines (keep them in any write-up): base numbers are ours (SmolVLA), not the CVPR π₀/OpenVLA table; the shim
-reads object pose from simulator state as a stand-in for a detector; frozen VLA in every arm, zero demonstrations;
-`force_proxy` is an action-magnitude proxy (LIBERO has no force sensor); homing is EE-space, not joint-space.
+All measured numbers, with n and intervals, are in `docs/RESULTS.md` (single source; do not copy tables here).
+Headline as of 2026-09-05 22:30: LIBERO-Spatial task 0 under LIBERO-Plus robot-init perturbation, 10 held-out layouts
+× 10 noise draws (n=100/arm): BM-1 22% → BM-4 hand-set homing 34% → **BM-3 one unattended sleep 54%** (2.45×, CIs
+disjoint; replicated across two independent 50-episode runs). Task 3: the n=12 gate produced a false positive
+(BM-3 18% vs BM-1 32%); strong-gate re-run queued (`cycle2-task3`). Mastery (LIBERO-10 task 3, held-out n=40): A 78%
+→ v2 80% (70–80% over three measurements) → v3 58–68% (false positive; strong gate from v2 kept the incumbent).
 
 ## 6. Known issues / open work
 
-- Gate resolution is ±20 pp at n=12-16 gate seeds and ~50% success; need ≥16 gate seeds and K≥4 rollouts per seed to see small effects.
-- Policy noise is seeded per episode, but GPU nondeterminism still diverges within an episode (A vs identity-B: 80% vs 65% at n=20) → use n≥40 for any A-vs-B claim.
-- EE-space homing cannot restore the joint configuration (wrist-camera view differs); LIBERO-Spatial tasks 1-2 stay ≤6% under robot-init perturbation.
-- Benchmark is n=10 eval layouts per task; on task 0 homing moves *which* layouts succeed rather than expanding the set — 10 layouts cannot resolve that.
-- Protocol-P recovery on the mock env never reached the 10% recovery band; real-env recovery stage is PENDING.
-- Arm E/F, the S2 (instruction paraphrase) probe, and cross-suite transfer are deferred.
-- Dashboard benchmark panel shows only the *latest* `benchmark_result` event (the aggregated one once `bm_followup` finishes).
-- `benchmark/power.jsonl` and the bm_followup cycle-2 results are on Hopper (or still running) and not yet in `docs/RESULTS.md`.
-- Sensor-noise dimension of LIBERO-Plus cannot run on GPU nodes (no ImageMagick); Objects-Layout tasks need the asset extraction to finish.
+- Gate resolution: ±20 pp at 12–16 gate seeds; two false-positive promotions came from n=12 gates (mastery v3,
+  benchmark task 3). The strong gate (24 seeds, K=4) has promoted nothing false so far. Use it.
+- GPU nondeterminism: arm A is bit-reproducible under common random numbers, shim arms wobble ±10 pp at n=40 → n≥40
+  for any A-vs-B claim, n=100 for a headline.
+- Gemini coach replies are often truncated JSON (`inner/outer coach query failed: Unterminated string`) → 0
+  interventions in arms C/D partly for that reason. Fix: raise the coach `max_output_tokens` in `agents/llm.py`
+  (`_gemini`) and/or ask for compact JSON; then re-run `scripts/exp/arm_d.py 0 C,D`.
+- EE-space homing cannot restore the joint configuration (wrist-camera view differs); LIBERO-Spatial tasks 1–2 stay
+  ≤6% under robot-init perturbation. Homing hurts on task 3 (r=0.2).
+- Protocol P on the real env: drift detection and refusal worked; recovery 0/15 (6 cm object shift is outside S3's ±3 cm).
+- The benchmark is the robot-init family only (spec §13, `seeds.json`). Other LIBERO-Plus families are wired
+  (`--dimension camera|light|background|layout`, LIBERO-plus package backend `venv_plus`) but out of plan and unmeasured.
+- Arm E/F, S2 probe, cross-suite transfer: deferred.
 
 ## 7. Resume checklist
 
-1. `ssh -fN hopper` → approve the Duo push → `ssh hopper 'echo ok'` confirms the ControlMaster is up.
-2. `ssh hopper 'squeue -u ezhao2'` — note which of bm_followup / bm_power / protocol / mastery jobs are still running or finished; `ls /scratch/ezhao2/fleet-memory/logs/slurm/` for their stdout.
-3. `rsync -aq hopper:/scratch/ezhao2/fleet-memory/dnhacks26/scripts/ scripts_hopper_snapshot/` (or diff) to recover any sbatch/py files that exist only on the cluster, then copy the ones you need into `scripts/hopper/` and commit them.
-4. `bash scripts/pull_logs.sh` → refreshes `logs/hopper/**` and `logs/demo.jsonl`. Check `logs/hopper/benchmark/power.jsonl` and the tail of `benchmark/events.jsonl` for `benchmark_result` with `aggregated:true`.
-5. `source .venv/bin/activate && FM_LLM=mock pytest -q` → 120 passed (sanity that the local tree is intact).
-6. `python -m fleet_memory.analysis.metrics --log logs/hopper/benchmark/events.jsonl` (and `--log logs/hopper/protocol/events.jsonl`, `logs/hopper/mastery/events.jsonl`, `logs/hopper/armA/events.jsonl`, `logs/hopper/benchmark/power.jsonl`) — read the tables.
-7. Fill each PENDING in `docs/RESULTS.md` from those tables only: seeded arm A baseline (armA), BM-3 cycle-2 for tasks 1/3/4 (benchmark), BM-1 vs BM-4 power (power.jsonl), protocol-P recovery (protocol). If a job did not finish, leave PENDING and say so.
-8. Open `dashboard/index.html`, drop `logs/demo.jsonl`, confirm the mastery curve, house model and the aggregated benchmark panel render.
-9. If any run must be redone, rsync the repo to Hopper first (command in §1), submit with `A100.40gb`, `FM_POLICY_KWARGS='{"n_action_steps":10}'`, one log file per job, and never on the login node.
-10. `git add docs/RESULTS.md scripts/hopper && git commit` — then push only when the user asks.
+1. `ssh -fN hopper` (Duo) → `ssh hopper 'echo ok'`.
+2. `ssh hopper 'squeue -u ezhao2; tail /scratch/ezhao2/fleet-memory/logs/queue_runner.log; pgrep -fa "^bash scripts/hopper/queue_runner.sh"'`
+   — if the runner is dead, restart it (§4). Append new work to `scripts/hopper/queue.txt`, rsync, done.
+3. Finished jobs: `grep -h "REPS\|HELDOUT\|ARMD\|consolidation\|benchmark_result" /scratch/ezhao2/fleet-memory/logs/slurm/q_*.out`
+   or `python -m fleet_memory.runner.benchmark --aggregate --log <log>`; fold into `docs/RESULTS.md` with n and CI.
+4. `bash scripts/pull_logs.sh` → `python scripts/build_demo_page.py` → republish `dashboard/demo_artifact.html`
+   (storyboard) and `dashboard/artifact.html` (dashboard) to their existing artifact URLs (`docs/RESULTS.md` §7).
+5. `source .venv/bin/activate && FM_LLM=mock pytest -q` before any code change lands on Hopper; rsync command in §1.
+6. Commit `docs/`, `scripts/hopper/`, `scripts/exp/`; push only when the user asks.

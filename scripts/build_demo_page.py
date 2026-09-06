@@ -85,6 +85,30 @@ def pooled_from_episodes(bench):
     return out
 
 
+def pooled_reps(recs):
+    """Pool every `benchmark_reps` run per task (each run = the 10 held-out layouts x `reps` fresh policy-noise draws),
+    so two independent 50-episode runs become n=100. Returns {task: {"task", "reps", "n_runs", "results": {arm: row}}}."""
+    from collections import defaultdict
+    acc = defaultdict(lambda: defaultdict(lambda: {"k": 0, "n": 0, "steps": 0.0}))
+    meta = defaultdict(lambda: {"reps": 0, "n_runs": 0})
+    for r in recs:
+        if r.get("type") != "benchmark_reps":
+            continue
+        t = str(r.get("task"))
+        meta[t]["reps"] += int(r.get("reps") or 0); meta[t]["n_runs"] += 1
+        for arm, v in (r.get("results") or {}).items():
+            a = acc[t][arm]; a["k"] += int(v["k"]); a["n"] += int(v["n"]); a["steps"] += float(v.get("mean_steps", 0)) * int(v["n"])
+    out = {}
+    for t, arms in acc.items():
+        rows = {}
+        for arm, a in arms.items():
+            if a["n"]:
+                lo, hi = wilson(a["k"], a["n"])
+                rows[arm] = {"k": a["k"], "n": a["n"], "rate": a["k"] / a["n"], "ci": [lo, hi], "mean_steps": a["steps"] / a["n"]}
+        out[t] = {"task": t, "results": rows, **meta[t]}
+    return out
+
+
 def wilson(k, n, z=1.96):
     if n == 0:
         return (0.0, 0.0)
@@ -112,7 +136,7 @@ def collect():
                            "verdict": "pass" if by["BM-3"]["ci"][0] > hi1 else ("partial" if k3 / n3 > k1 / n1 else "fail")}
     power = read_jsonl(os.path.join(LOGS, "benchmark", "power.jsonl"))
     power = latest(power, type="benchmark_power")
-    reps = latest(read_jsonl(os.path.join(LOGS, "benchmark", "reps.jsonl")), type="benchmark_reps")
+    reps = pooled_reps(read_jsonl(os.path.join(LOGS, "benchmark", "reps.jsonl")))
     videos = {}
     for p in sorted(glob.glob(os.path.join(VID, "*.mp4"))):
         stem = os.path.basename(p)
@@ -169,12 +193,31 @@ def build(inline: bool) -> str:
     res = (pooled or {}).get("results", [])
     by = {r["arm"]: r for r in res}
     # headline = the properly powered task-0 result (10 held-out layouts x 5 policy-noise draws, n=50/arm)
+    reps_all, reps = reps, (reps or {}).get("0")
     reps_rows = []
     if reps:
-        for arm in ("BM-1", "BM-2", "BM-4", "BM-3", "BM-3w"):
+        for arm in ("BM-0", "BM-1", "BM-2", "BM-4", "BM-3", "BM-3w"):
             r = reps["results"].get(arm)
             if r: reps_rows.append({"arm": arm, **r})
-        by = {**by, **{r["arm"]: r for r in reps_rows if r["arm"] in ("BM-1", "BM-2", "BM-3", "BM-4")}}
+        by = {**by, **{r["arm"]: r for r in reps_rows if r["arm"] in ("BM-0", "BM-1", "BM-2", "BM-3", "BM-4")}}
+    # other tasks measured with the same held-out x noise-draw protocol (n>=30)
+    other_html = ""
+    others = [v for t, v in sorted((reps_all or {}).items(), key=lambda kv: int(kv[0])) if t != "0" and v["results"].get("BM-1", {}).get("n", 0) >= 30]
+    if others:
+        cards = []
+        for v in others:
+            rows = [{"arm": a, **v["results"][a]} for a in ("BM-0", "BM-1", "BM-2", "BM-4", "BM-3") if a in v["results"]]
+            r1, r3 = v["results"].get("BM-1"), v["results"].get("BM-3")
+            tag = ""
+            if r1 and r3:
+                sep = r3["ci"][0] > r1["ci"][1]
+                tag = (f'<p class="verdict">perturbed <b>{100 * r1["rate"]:.0f}%</b> → one sleep <b>{100 * r3["rate"]:.0f}%</b> '
+                       f'(n={r1["n"]}) — <span class="chip {"pass" if sep else ("partial" if r3["rate"] > r1["rate"] else "fail")}">'
+                       f'{"pass" if sep else ("partial" if r3["rate"] > r1["rate"] else "fail")}</span></p>')
+            cards.append(f'<div class="card"><h3>Task {v["task"]} · n={r1["n"] if r1 else "?"} per arm</h3>{bars_svg(rows)}{tag}</div>')
+        other_html = (f'<section class="chart"><h2>Same protocol on the other tasks</h2>'
+                      f'<p class="sub">Held-out layouts × fresh policy-noise draws, pooled over replication runs · the sleep cycle for each task is its own; '
+                      f'task 3\'s came through the weaker 12-seed gate</p><div class="cards">{"".join(cards)}</div></section>')
     ratio = (pooled or {}).get("ratio")
     tasks = ", ".join(str(t) for t in (pooled or {}).get("tasks", []))
     beats_html = []
@@ -211,7 +254,7 @@ def build(inline: bool) -> str:
     verdict = ""
     if ratio:
         verdict = (f'<p class="verdict">One sleep cycle vs the collapse on the same tasks ({ratio.get("matched", "")}): <b>{ratio["BM-3/BM-1"]:.2f}×</b> '
-                   f'[{ratio["ci"][0]:.2f}, {ratio["ci"][1]:.2f}] — <span class="chip {ratio["verdict"]}">{ratio["verdict"]}</span> at 10 layouts per task; see the headline above for n=50.</p>')
+                   f'[{ratio["ci"][0]:.2f}, {ratio["ci"][1]:.2f}] — <span class="chip {ratio["verdict"]}">{ratio["verdict"]}</span> at 10 layouts per task; see the headline above for n=100.</p>')
     legend = " · ".join(f"<b>{a}</b> {ARM_NAMES[a]}" for a in ARM_NAMES if a in by)
     headline_html = ""
     if reps_rows:
@@ -221,8 +264,8 @@ def build(inline: bool) -> str:
             line = (f'<p class="verdict">Perturbed <b>{100 * r1["rate"]:.0f}%</b> → after one unattended sleep <b>{100 * r3["rate"]:.0f}%</b> '
                     f'(n={r1["n"]} each, intervals {"do not overlap" if r3["ci"][0] > r1["ci"][1] else "overlap"}) — '
                     f'<span class="chip {"pass" if r3["ci"][0] > r1["ci"][1] else "partial"}">{"pass" if r3["ci"][0] > r1["ci"][1] else "partial"}</span> by the pre-registered rule.</p>')
-        headline_html = (f'<section class="chart"><h2>Headline: LIBERO-Spatial task {reps["task"]}, held-out layouts × {reps["reps"]} policy-noise draws</h2>'
-                         f'<p class="sub">n={r1["n"]} per arm · the 10 evaluation layouts were never seen by the optimizer or the gate · 95% Wilson intervals</p>'
+        headline_html = (f'<section class="chart"><h2>Headline: LIBERO-Spatial task {reps["task"]}, 10 held-out layouts × {reps["reps"]} policy-noise draws</h2>'
+                         f'<p class="sub">n={r1["n"]} per arm, pooled over {reps["n_runs"]} independent runs · the 10 evaluation layouts were never seen by the optimizer or the gate · 95% Wilson intervals</p>'
                          f'{bars_svg(reps_rows)}<p class="legend">{" · ".join(f"<b>{r["arm"]}</b> {ARM_NAMES[r["arm"]]}" for r in reps_rows)}</p>{line}</section>')
     return f'''<title>Fleet Memory Demo</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -254,6 +297,9 @@ header p{{max-width:64ch;color:var(--ink2);margin:0}}
 svg{{width:100%;height:auto;max-width:720px;display:block}}.grid{{stroke:var(--line);stroke-width:1}}.ci{{stroke:var(--ink);stroke-width:1.5}}
 .tick{{fill:var(--muted);font:11px "IBM Plex Mono",monospace}}.lab{{fill:var(--ink);font:500 12px "IBM Plex Mono",monospace}}
 .legend{{font-size:13px;color:var(--ink2);margin:10px 0 0}}.note{{margin:12px 0 0;color:var(--ink2)}}.verdict{{margin:12px 0 0;font-size:17px}}
+.cards{{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}}.card h3{{font-size:15px;margin:0 0 6px;font-weight:600}}
+.tbl{{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}}.tbl th,.tbl td{{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}}.tbl th{{color:var(--muted);font-weight:500;font-size:12px;text-transform:uppercase;letter-spacing:.05em}}
+.chip.fail{{background:var(--chip-fail);color:var(--bad)}}
 .honest{{border-top:1px solid var(--line);padding-top:16px;color:var(--muted);font-size:13px;display:grid;gap:4px;max-width:80ch}}
 a{{color:var(--accent)}}
 </style>
@@ -268,6 +314,16 @@ a{{color:var(--accent)}}
 </header>
 {"".join(beats_html)}
 {headline_html}
+{other_html}
+<section class="chart">
+  <h2>Mastery on a fixed task: LIBERO-10 "bowl into the bottom drawer, close it"</h2>
+  <p class="sub">Held-out layouts 20–39 × 2 policy-noise draws, n=40 per arm, seeds never used by the optimizer or the gate</p>
+  <table class="tbl"><tr><th>arm</th><th>success</th><th>95% CI</th><th>mean steps</th><th>cost</th></tr>
+  <tr><td>raw policy (A)</td><td>78%</td><td>[62, 88]</td><td>302</td><td>2.03</td></tr>
+  <tr><td><b>promoted vector v2</b> (slower chunks, capped velocity)</td><td><b>80%</b></td><td>[65, 90]</td><td><b>270–278</b></td><td><b>1.94–1.95</b></td></tr>
+  <tr><td>v3 (promoted by the 12-seed gate, later refused by the 24-seed gate)</td><td>58–68%</td><td>[42, 80]</td><td>335–367</td><td>2.31–2.67</td></tr></table>
+  <p class="note">Same success, ~10% fewer steps: mastery here is efficiency, not a success jump. v2 measured three times (70–80%). v3 is the gate's one false positive; the strong gate (24 seeds × 4 draws) kept v2 when re-run.</p>
+</section>
 <section class="chart">
   <h2>All five tasks, 10 held-out layouts each</h2>
   <p class="sub">Pooled over tasks {tasks} · BM-3 exists only where a sleep cycle passed its gate (tasks 0, 2, 3; tasks 1 and 4 refused every candidate) · 95% Wilson intervals</p>

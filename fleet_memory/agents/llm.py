@@ -197,21 +197,40 @@ class LLM:
         from google.genai import types
         parts = [types.Part.from_bytes(data=b, mime_type=m) for b, m in (image_bytes(im) for im in images)]
         parts.append(types.Part.from_text(text=user))
+        # Gemini 3.x are thinking models and max_output_tokens covers the thoughts too: a 2–3k cap left the
+        # coaches' JSON truncated mid-string ("Unterminated string"). Give the answer room and keep thinking short.
         cfg = dict(system_instruction=system, response_mime_type="application/json",
-                   max_output_tokens=max_tokens, temperature=0.2)
+                   max_output_tokens=max(int(max_tokens), 8192), temperature=0.2)
+        think = os.environ.get("FM_GEMINI_THINKING", "low")
+        thinking = []
+        if think != "off":
+            thinking += [dict(thinking_level=think), dict(thinking_budget=1024)]
+        thinking.append(None)
         client = self._get_client()
-        try:  # full JSON-schema support (newer SDKs); fall back to the OpenAPI-subset Schema
-            resp = client.models.generate_content(
-                model=self.model, contents=parts,
-                config=types.GenerateContentConfig(response_json_schema=schema, **cfg))
-        except (TypeError, ValueError):
-            resp = client.models.generate_content(
-                model=self.model, contents=parts,
-                config=types.GenerateContentConfig(response_schema=gemini_schema(schema), **cfg))
+        resp = None
+        for tc in thinking:                      # first thinking config the SDK/model accepts wins
+            try:  # full JSON-schema support (newer SDKs); fall back to the OpenAPI-subset Schema
+                tcfg = {"thinking_config": types.ThinkingConfig(**tc)} if tc else {}
+                try:
+                    resp = client.models.generate_content(
+                        model=self.model, contents=parts,
+                        config=types.GenerateContentConfig(response_json_schema=schema, **cfg, **tcfg))
+                except (TypeError, ValueError):
+                    resp = client.models.generate_content(
+                        model=self.model, contents=parts,
+                        config=types.GenerateContentConfig(response_schema=gemini_schema(schema), **cfg, **tcfg))
+                break
+            except Exception as e:               # unsupported thinking field for this model/SDK -> next option
+                if tc is None or "think" not in str(e).lower():
+                    raise
         text = resp.text
         if not text:
             raise RuntimeError(f"empty gemini response: {getattr(resp, 'prompt_feedback', None)}")
-        out = json.loads(text)
+        try:
+            out = json.loads(text)
+        except json.JSONDecodeError as e:
+            fr = getattr(getattr(resp, "candidates", [None])[0], "finish_reason", None) if getattr(resp, "candidates", None) else None
+            raise RuntimeError(f"gemini JSON parse failed ({e}); finish_reason={fr}, {len(text)} chars") from e
         u = getattr(resp, "usage_metadata", None)
         tin = int(getattr(u, "prompt_token_count", 0) or 0)
         tout = int(getattr(u, "candidates_token_count", 0) or 0) + int(getattr(u, "thoughts_token_count", 0) or 0)
