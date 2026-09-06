@@ -6,7 +6,7 @@
 ![python](https://img.shields.io/badge/python-3.12-blue)
 ![license](https://img.shields.io/badge/license-MIT-green)
 
-Vision-language-action models (here: [SmolVLA](https://huggingface.co/lerobot/smolvla_libero) on [LIBERO](https://github.com/Lifelong-Robot-Learning/LIBERO)) are brittle: shift the arm's starting joints by 0.1 rad — [LIBERO-Plus](https://github.com/sylvestf/LIBERO-plus)'s *robot-initial-state* perturbation — and success drops from **80% to 22%**. Fine-tuning is the usual answer. Fleet Memory instead leaves the weights alone and wraps the policy in an execution shim driven by a **17-number parameter file** (approach shaping, time scale, velocity cap, gripper command, a homing move). An offline "sleep loop" searches that file with CEM on layouts it is allowed to see, and a gate on layouts it never sees decides whether the new version replaces the old one. No demonstrations, no gradients, no human in the loop.
+Vision-language-action models (here: [SmolVLA](https://huggingface.co/lerobot/smolvla_libero) on [LIBERO](https://github.com/Lifelong-Robot-Learning/LIBERO)) are brittle: shift the arm's starting joints by 0.1 rad — [LIBERO-Plus](https://github.com/sylvestf/LIBERO-plus)'s *robot-initial-state* perturbation — and success drops from **80% to 22%**. Fine-tuning is the usual answer. Fleet Memory instead leaves the weights alone and wraps the policy in an execution shim driven by a **21-number parameter file** (approach shaping, time scale, velocity cap, gripper command, a homing move, and a camera re-calibration of the frame the policy sees). An offline "sleep loop" searches that file with CEM on layouts it is allowed to see, and a gate on layouts it never sees decides whether the new version replaces the old one. No demonstrations, no gradients, no human in the loop.
 
 <p align="center">
   <img src="docs/media/collapse_vs_sleep.gif" width="384" alt="Top: perturbed start, raw policy fails. Bottom: same seed, after one unattended sleep cycle, success."><br>
@@ -29,6 +29,19 @@ Vision-language-action models (here: [SmolVLA](https://huggingface.co/lerobot/sm
 BM-3 vs BM-1: **2.45×** after one cycle, intervals disjoint, replicated across two independent 50-episode runs on 10 evaluation layouts the optimizer and the gate never saw; a second unattended cycle took it to **70%** on a third independent run (BM-1 on that run: 22% again). The optimizer found homing on its own *and* beat the human's hand-set version (54% vs 37%): its vector also slows the chunks (time scale 0.85, then 0.76), lowers the grasp by ~1.5 cm and narrows the approach cone. The mastery curve on the perturbed environment is **22% → 54% → 70%**, every step through the gate.
 
 It does not always work, and the repo says so: on the harder task 3 (perturbation 0.2 rad) one sleep cycle came out exactly at baseline (27% → 27%, n=150) and the strong gate correctly refused a second one, and a 6 cm object shift is outside what this parameter file can express (recovery 0/15). Every number, with n and interval, is in **[`docs/RESULTS.md`](docs/RESULTS.md)**.
+
+## Second perturbation family: the camera moves (added on the last day)
+
+Same task, same frozen policy, and instead of the robot's start the **camera** is perturbed — LIBERO-Plus's *camera-viewpoint* family, ported exactly (`tests/test_camera.py` checks our poses against their code). Tilting the fixed camera's optical axis by 6° collapses SmolVLA as hard as the joint offset did. The action-side knobs cannot fix a moved camera, so the parameter file gained four *observation-side* numbers: roll, zoom and x/y shift of the external camera frame before the policy sees it — identity by default, optimised and gated exactly like the rest. The optimizer is never told the camera moved; it only sees cost.
+
+| arm (task 0, view `0_0_100_2_354`, 10 held-out layouts × 5 noise draws) | success (n) | 95% CI |
+|---|---|---|
+| BM-0 stock camera, frozen VLA | **88%** (44/50) | [76, 94] |
+| BM-1 camera tilted 6°, frozen VLA — *the collapse* | **14%** (7/50) | [7, 26] |
+| BM-2 tilted + the shim with untrained defaults | 6% (3/50) | [2, 16] |
+| **BM-3 tilted + ONE unattended sleep cycle (v2)** | **58%** (29/50) | **[44, 71]** |
+
+BM-3 vs BM-1: **4.1×**, intervals disjoint. The promoted file moved the frame up and left by ~17% of its size with a 9% zoom and 2° roll — the direction that undoes the tilt — and also slowed the chunks (time scale 0.64). The gate saw 12.5% → 66.7% on its 24 layouts (cost 4.04 → 1.89). An attribution run with the four camera numbers frozen (17 action dims only) also passed its gate but gained far less (20.8% → 33.3%): the recovery is the calibration's. Tasks 1–4 and a harder moved-camera view (11° around, 15° up) were running at submission time; their rows in [`docs/RESULTS.md` §8](docs/RESULTS.md) are filled only with measured numbers.
 
 ## How it works
 
@@ -121,7 +134,7 @@ docs/          RESULTS.md (measured), DECISIONS.md (why), HANDOFF.md (resume)
 * Base numbers are ours (SmolVLA, 10-action chunks) on LIBERO-Plus's exact robot-init perturbation; they are not the LIBERO-Plus paper's π₀/OpenVLA table.
 * The shim reads object poses from simulator state, standing in for a detector. Homing runs in end-effector space (LIBERO's action interface), so it cannot restore the joint configuration itself.
 * LIBERO has no force sensor; the cost's `force_proxy` is an action-magnitude proxy.
-* n=100 per arm on one task is enough for the headline interval; it is one task, one perturbation family, one policy.
+* n=100 per arm on one task is enough for the headline interval; it is one task and one policy, now under two perturbation families (robot start, camera).
 
 ## Credits
 
