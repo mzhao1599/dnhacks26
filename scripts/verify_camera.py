@@ -6,6 +6,8 @@ seeds 5040 + i + 50*r (init state 40+i, policy-noise draw r; so seed % 50 is 40-
 perturbation.consolidation_id and use seeds < 5000 (opt: init states 0-29, gate: 30-39). BM-1 = arm A; BM-2 = arm B with the identity file; BM-3 = arm B with the promoted file.
 
     python scripts/verify_camera.py [logs/hopper]
+
+Without the cluster logs (a fresh clone), it reads the same records from docs/proof/camera_family/events_evaluation.jsonl.
 """
 import json, os, sys
 from collections import defaultdict
@@ -17,8 +19,16 @@ IDENTITY = {"approach_offset_xyz": [0, 0, 0], "pregrasp_height": 0.05, "grasp_of
             "homing_rot_delta": [0, 0, 0], "cam_roll_deg": 0, "cam_zoom": 1, "cam_shift_xy": [0, 0]}
 
 
+PROOF = os.path.join(ROOT, "docs", "proof", "camera_family", "events_evaluation.jsonl")
+
+
 def read(p):
+    """Read a JSONL log; without the full cluster logs, fall back to the committed proof file, whose records keep
+    their original log in `_source` (e.g. "bench_camera/events.jsonl")."""
     out = []
+    if not os.path.exists(p):
+        src = os.path.relpath(p, LOGS).replace(os.sep, "/")
+        return [r for r in read(PROOF) if r.get("_source") == src] if os.path.exists(PROOF) and p != PROOF else out
     for l in open(p):
         try: out.append(json.loads(l))
         except Exception: pass
@@ -68,10 +78,10 @@ def main():
         if r.get("type") == "consolidation" and r.get("phase") == "end" and r.get("gate"):
             g = r["gate"]
             print(f"  {r['skill_instance_id']:60} {'PASSED ' if g['passed'] else 'refused'} cost {g['incumbent_cost']:.2f} -> {g['candidate_cost']:.2f}, "
-                  f"success {100*g['incumbent_success']:.0f}% -> {100*g['candidate_success']:.0f}% on {g['n_seeds']} layouts; {r.get('rollouts')} rollouts, {r.get('wallclock_s',0)/60:.0f} min; promoted v{r.get('promoted_version')}")
-    pp = os.path.join(LOGS, "protocol_cam", "events.jsonl")
-    if os.path.exists(pp):
-        prec = read(pp); by = {r["episode_id"]: r for r in prec if r.get("type") == "episode"}
+                  f"success {100*g['incumbent_success']:.0f}% -> {100*g['candidate_success']:.0f}% on {g['n_seeds']} gate seeds; {r.get('rollouts')} rollouts, {r.get('wallclock_s',0)/60:.0f} min; promoted v{r.get('promoted_version')}")
+    prec = read(os.path.join(LOGS, "protocol_cam", "events.jsonl"))
+    if prec:
+        by = {r["episode_id"]: r for r in prec if r.get("type") == "episode"}
         print("\nProtocol P (camera bump, unattended): per stage from the stage records' episode ids")
         for r in prec:
             if r.get("type") == "protocol_stage":

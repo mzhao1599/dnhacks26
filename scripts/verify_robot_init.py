@@ -4,6 +4,8 @@ policy-noise draws), grouped by task, arm and the S3 parameter file that ran. Ve
 the `skill_instance` promotion records in logs/hopper/benchmark/events.jsonl (or events_wide.jsonl for the wide-search instance).
 
     python scripts/verify_robot_init.py [logs/hopper/benchmark]
+
+Without the cluster logs (a fresh clone), it reads the same records from docs/proof/robot_init/events_evaluation.jsonl.
 """
 import json, os, sys
 from collections import defaultdict
@@ -12,9 +14,16 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 D = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "logs", "hopper", "benchmark")
 
 
+PROOF = os.path.join(ROOT, "docs", "proof", "robot_init", "events_evaluation.jsonl")
+
+
 def read(p):
+    """Read a JSONL log; without the full cluster logs, fall back to the committed proof file, whose records keep
+    their original log in `_source` (e.g. "benchmark/reps.jsonl")."""
     out = []
-    if not os.path.exists(p): return out
+    if not os.path.exists(p):
+        src = "benchmark/" + os.path.basename(p)
+        return [r for r in read(PROOF) if r.get("_source") == src] if os.path.exists(PROOF) and p != PROOF else out
     for l in open(p):
         try: out.append(json.loads(l))
         except Exception: pass
