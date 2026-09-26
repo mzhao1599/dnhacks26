@@ -4,31 +4,11 @@ Read `AGENTS.md` first (what the project is, invariants, conventions). This file
 where things run, where the numbers live, what is pending, and how to pick the work back up cold.
 Numbers here are copied from `docs/RESULTS.md`; **PENDING means not yet measured — do not invent a value.**
 
-## 1. Cluster: GMU Hopper
+## 1. Cluster
 
-- Login: `ssh hopper` (user `ezhao2`, host `hopper.orc.gmu.edu`; account `ezhao`, QOS `gpu`, partition `gpuq`).
-  Off-campus logins need Duo. The user's `~/.ssh/config` has `ControlMaster auto` / `ControlPersist 72h`, so
-  **once per session** run `ssh -fN hopper`, approve the Duo push, and every later `ssh`/`rsync` reuses the master.
-- Paths under `/scratch/ezhao2/fleet-memory/`:
-  `venv` (Python 3.12, `lerobot[smolvla,libero]==0.6.1`, torch 2.11 cu130) · `dnhacks26` (repo clone) ·
-  `logs` (all event logs, per job dir) · `hf_cache` (`HF_HOME`; SmolVLA, SmolVLM2 backbone, pi05, LIBERO assets
-  prefetched) · `LIBERO-plus` (checkout `4976dc3`) · `libero_plus_assets` (6.4 GB assets.zip extraction) ·
-  `venv_plus` (LIBERO-Plus's own `libero` package; `BACKEND=plus` only).
-- Sync the repo from the laptop (what we do; the cluster clone is not a git remote):
-  `rsync -aq --exclude .venv --exclude .git --exclude logs --exclude __pycache__ ./ hopper:/scratch/ezhao2/fleet-memory/dnhacks26/`
-- Secrets: `~/.fm_secrets` on Hopper holds `export GEMINI_API_KEY=...` (chmod 600). `scripts/hopper/env.sh`
-  sources it; with no key it exports `FM_LLM=mock`. `env.sh` also activates the venv, sets `HF_HOME`,
-  `HF_HUB_OFFLINE=1`, `MUJOCO_GL` (default egl), `PYTHONPATH`, `LIBERO_CONFIG_PATH`, `FM_ROOT/FM_REPO/FM_LOGS`.
-- GPU tiers:
-  - Full A100: `-p gpuq -q gpu --gres=gpu:A100.40gb:1 -c 8 --mem=32G` → lands on `dgx001`, EGL works,
-    **starts in seconds**. Use this by default.
-  - MIG: `--gres=gpu:3g.40gb:1` (or `1g.10gb`). No EGL. You must
-    `export MUJOCO_GL=osmesa PYOPENGL_PLATFORM=osmesa` **before AND after** sourcing `env.sh` (it stages
-    libOSMesa from the login node into `$FM_ROOT/lib`; source it once on the login node with `MUJOCO_GL=osmesa`
-    before the first MIG job). Rendering is ~3x slower; results differ slightly from EGL (see wide-σ run).
-  - `A100.80gb` is **queue-blocked** (jobs sit in Resources/Priority indefinitely). Do not request it.
-- Never run MuJoCo or the policy on the login node. Compute nodes have outbound internet.
-- The GPU queue is shared; other agents have `scancel`ed our jobs before. Check `squeue -u ezhao2` before submitting.
+Runs used a Slurm GPU cluster (A100 nodes, MIG slices and CPU nodes). `scripts/hopper/env.sh` sets up the
+environment on a compute node; `$FM_ROOT` below is the project directory on the cluster's scratch space.
+Never run MuJoCo or the policy on a login node.
 
 ## 2. Policy
 
@@ -41,7 +21,7 @@ Numbers here are copied from `docs/RESULTS.md`; **PENDING means not yet measured
   but produced **0/3 on standard LIBERO** and was never validated against `lerobot-eval`. **Unverified — do not
   cite any π₀.₅ number.** Details and next knobs in `scripts/hopper/LIBERO_PLUS.md` §4-5.
 
-## 3. Logs on Hopper (`/scratch/ezhao2/fleet-memory/logs/<name>/events.jsonl`)
+## 3. Logs on the cluster (`$FM_ROOT/logs/<name>/events.jsonl`)
 
 | dir | contents |
 |---|---|
@@ -57,7 +37,7 @@ Numbers here are copied from `docs/RESULTS.md`; **PENDING means not yet measured
 | `mastery/events.jsonl` | held-out A vs v2 vs v3 |
 | `slurm/*.out` | job stdout (`plus_*`, `pi05_*`, `phase0_*`, ...) |
 
-- Local mirror: `scripts/pull_logs.sh` rsyncs `hopper:/scratch/ezhao2/fleet-memory/logs/` → `logs/hopper/**`
+- Local mirror: `scripts/pull_logs.sh` rsyncs the cluster's `$FM_ROOT/logs/` → `logs/hopper/**`
   (jsonl + png only) and merges phase0 / probe_v31 / v31 / benchmark / protocol / armC into `logs/demo.jsonl`
   (dashboard input: open `dashboard/index.html`, drop the file). armA, mastery, events_wide and power are
   mirrored but **not** merged into demo.jsonl — edit the `parts` list in `pull_logs.sh` if you want them shown.
@@ -124,12 +104,12 @@ Headline as of 2026-09-05 23:10: LIBERO-Spatial task 0 under LIBERO-Plus robot-i
 
 ## 7. Resume checklist
 
-1. `ssh -fN hopper` (Duo) → `ssh hopper 'echo ok'`.
-2. `ssh hopper 'squeue -u ezhao2; tail /scratch/ezhao2/fleet-memory/logs/queue_runner.log; pgrep -fa "^bash scripts/hopper/queue_runner.sh"'`
+1. Log in to the cluster.
+2. `squeue --me; tail $FM_ROOT/logs/queue_runner.log; pgrep -fa "^bash scripts/hopper/queue_runner.sh"`
    — if the runner is dead, restart it (§4). Append new work to `scripts/hopper/queue.txt`, rsync, done.
-3. Finished jobs: `grep -h "REPS\|HELDOUT\|ARMD\|consolidation\|benchmark_result" /scratch/ezhao2/fleet-memory/logs/slurm/q_*.out`
+3. Finished jobs: `grep -h "REPS\|HELDOUT\|ARMD\|consolidation\|benchmark_result" $FM_ROOT/logs/slurm/q_*.out`
    or `python -m fleet_memory.runner.benchmark --aggregate --log <log>`; fold into `docs/RESULTS.md` with n and CI.
 4. `bash scripts/pull_logs.sh` → `python scripts/build_demo_page.py` → republish `dashboard/demo_artifact.html`
    (storyboard) and `dashboard/artifact.html` (dashboard) to their existing artifact URLs (`docs/RESULTS.md` §7).
-5. `source .venv/bin/activate && FM_LLM=mock pytest -q` before any code change lands on Hopper; rsync command in §1.
+5. `source .venv/bin/activate && FM_LLM=mock pytest -q` before any code change lands on Hopper; then sync the repo to `$FM_ROOT/dnhacks26/`.
 6. Commit `docs/`, `scripts/hopper/`, `scripts/exp/`; push only when the user asks.
