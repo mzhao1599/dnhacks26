@@ -1,7 +1,7 @@
 6 camera variants for task 0: ['0_0_100_2_352', '0_0_100_2_354', '11_15_100_0_0', '13_15_100_0_0', '14_15_100_0_0', '15_15_100_0_0']
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
 [info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 FRAME cfg=0 view=0_0_100_2_352 camera={"view": "0_0_100_2_352", "h_deg": 0, "v_deg": 0, "scale": 1.0, "end_rot_deg": 2, "end_vert_deg": 352, "cam_pos_before": [0.6586, 0.0, 1.6104], "cam_quat_before": [0.638, 0.3048, 0.3048, 0.638], "cam_pos": [0.6586, 0.0, 1.6104], "cam_quat": [-0.6036, -0.3439, -0.3531, -0.6266], "cam_shift_m": 0.0001}
 FRAME cfg=1 view=0_0_100_2_354 camera={"view": "0_0_100_2_354", "h_deg": 0, "v_deg": 0, "scale": 1.0, "end_rot_deg": 2, "end_vert_deg": 354, "cam_pos_before": [0.6586, 0.0, 1.6104], "cam_quat_before": [0.638, 0.3048, 0.3048, 0.638], "cam_pos": [0.6586, 0.0, 1.6104], "cam_quat": [-0.6097, -0.333, -0.3425, -0.6325], "cam_shift_m": 0.0001}
@@ -13,14 +13,14 @@ FRAME cfg=5 view=15_15_100_0_0 camera={"view": "15_15_100_0_0", "h_deg": 15, "v_
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
 [info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 [info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 [info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -69,13 +69,13 @@ embeddings.position_ids | UNEXPECTED |  |
 
 Notes:
 - UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
 PROBE BM-0 stock: 9/10 = 90% [60,98] steps 89
 Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
@@ -114,116 +114,116 @@ Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
 Loading weights:  43%|████▎     | 212/489 [00:00<00:00, 279.40it/s]Loading weights:  51%|█████     | 247/489 [00:00<00:00, 272.01it/s]Loading weights:  62%|██████▏   | 305/489 [00:00<00:00, 339.43it/s]Loading weights:  87%|████████▋ | 426/489 [00:01<00:00, 547.34it/s]Loading weights: 100%|██████████| 489/489 [00:01<00:00, 449.75it/s]
 ERROR:fleet_memory.runner.worker:episode ep_774948dc crashed
 Traceback (most recent call last):
-  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/worker.py", line 319, in run_episode
+  File "/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/runner/worker.py", line 319, in run_episode
     res = loop.run_subtasks(env, obs, plan, shim, tracker, task, episode_id=episode_id, surfaces=list(arm.surfaces),
           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/loop.py", line 116, in run_subtasks
+  File "/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/runner/loop.py", line 116, in run_subtasks
     chunk = np.asarray(shim.act(obs), np.float32).reshape(-1, 7)
                        ^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/execution/shim.py", line 119, in act
+  File "/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/execution/shim.py", line 119, in act
     return self._emit(self.policy.act(obs))
                       ^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/policies/smolvla.py", line 126, in act
+  File "/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/policies/smolvla.py", line 126, in act
     actions = self.policy.predict_action_chunk(batch)       # [1, chunk, 7] normalised
               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+  File "/scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
     return func(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 240, in predict_action_chunk
+  File "/scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 240, in predict_action_chunk
     actions = self._get_action_chunk(batch, noise, **kwargs)
               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 207, in _get_action_chunk
+  File "/scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 207, in _get_action_chunk
     images, img_masks = self.prepare_images(batch)
                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 360, in prepare_images
+  File "/scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 360, in prepare_images
     img = img * 2.0 - 1.0
           ~~~~~~~~~~^~~~~
 torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 19.50 GiB of which 10.94 MiB is free. Process 1313722 has 22.87 GiB memory in use. Process 1443863 has 4.62 GiB memory in use. Including non-PyTorch memory, this process has 4.94 GiB memory in use. Process 1443870 has 4.90 GiB memory in use. Process 1443861 has 4.94 GiB memory in use. Of the allocated memory 4.73 GiB is allocated by PyTorch, and 47.85 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
 Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
 Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]ERROR:fleet_memory.runner.worker:episode ep_21099072 crashed
 Traceback (most recent call last):
-  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/worker.py", line 319, in run_episode
+  File "/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/runner/worker.py", line 319, in run_episode
     res = loop.run_subtasks(env, obs, plan, shim, tracker, task, episode_id=episode_id, surfaces=list(arm.surfaces),
           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/loop.py", line 116, in run_subtasks
+  File "/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/runner/loop.py", line 116, in run_subtasks
     chunk = np.asarray(shim.act(obs), np.float32).reshape(-1, 7)
                        ^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/execution/shim.py", line 119, in act
+  File "/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/execution/shim.py", line 119, in act
     return self._emit(self.policy.act(obs))
                       ^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/policies/smolvla.py", line 126, in act
+  File "/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/policies/smolvla.py", line 126, in act
     actions = self.policy.predict_action_chunk(batch)       # [1, chunk, 7] normalised
               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+  File "/scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
     return func(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 240, in predict_action_chunk
+  File "/scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 240, in predict_action_chunk
     actions = self._get_action_chunk(batch, noise, **kwargs)
               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 207, in _get_action_chunk
+  File "/scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 207, in _get_action_chunk
     images, img_masks = self.prepare_images(batch)
                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 360, in prepare_images
+  File "/scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 360, in prepare_images
     img = img * 2.0 - 1.0
           ~~~~~~~~~~^~~~~
 torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 19.50 GiB of which 10.94 MiB is free. Process 1313722 has 22.87 GiB memory in use. Process 1443863 has 4.62 GiB memory in use. Process 1443866 has 4.94 GiB memory in use. Process 1443870 has 4.90 GiB memory in use. Including non-PyTorch memory, this process has 4.94 GiB memory in use. Of the allocated memory 4.73 GiB is allocated by PyTorch, and 47.85 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
 Loading weights:  22%|██▏       | 106/489 [00:00<00:00, 888.40it/s]Loading weights:  46%|████▋     | 227/489 [00:00<00:00, 1054.18it/s]Loading weights: 100%|██████████| 489/489 [00:00<00:00, 1629.03it/s]
 ERROR:fleet_memory.runner.worker:episode ep_776cc459 crashed
 Traceback (most recent call last):
-  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/worker.py", line 319, in run_episode
+  File "/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/runner/worker.py", line 319, in run_episode
     res = loop.run_subtasks(env, obs, plan, shim, tracker, task, episode_id=episode_id, surfaces=list(arm.surfaces),
           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/loop.py", line 116, in run_subtasks
+  File "/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/runner/loop.py", line 116, in run_subtasks
     chunk = np.asarray(shim.act(obs), np.float32).reshape(-1, 7)
                        ^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/execution/shim.py", line 119, in act
+  File "/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/execution/shim.py", line 119, in act
     return self._emit(self.policy.act(obs))
                       ^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/policies/smolvla.py", line 126, in act
+  File "/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/policies/smolvla.py", line 126, in act
     actions = self.policy.predict_action_chunk(batch)       # [1, chunk, 7] normalised
               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+  File "/scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
     return func(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 240, in predict_action_chunk
+  File "/scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 240, in predict_action_chunk
     actions = self._get_action_chunk(batch, noise, **kwargs)
               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 207, in _get_action_chunk
+  File "/scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 207, in _get_action_chunk
     images, img_masks = self.prepare_images(batch)
                         ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 360, in prepare_images
+  File "/scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/smolvla/modeling_smolvla.py", line 360, in prepare_images
     img = img * 2.0 - 1.0
           ~~~~~~~~~~^~~~~
 torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 19.50 GiB of which 10.94 MiB is free. Process 1313722 has 22.87 GiB memory in use. Process 1443863 has 4.62 GiB memory in use. Including non-PyTorch memory, this process has 4.94 GiB memory in use. Process 1443870 has 4.90 GiB memory in use. Process 1443861 has 4.94 GiB memory in use. Of the allocated memory 4.73 GiB is allocated by PyTorch, and 47.85 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
 multiprocessing.pool.RemoteTraceback: 
 """
 Traceback (most recent call last):
-  File "/scratch/ezhao2/.uv_python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/multiprocessing/pool.py", line 125, in worker
+  File "/scratch/<user>/.uv_python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/multiprocessing/pool.py", line 125, in worker
     result = (True, func(*args, **kwds))
                     ^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/.uv_python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/multiprocessing/pool.py", line 48, in mapstar
+  File "/scratch/<user>/.uv_python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/multiprocessing/pool.py", line 48, in mapstar
     return list(map(*args))
            ^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/pool.py", line 40, in _run_one
-  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/pool.py", line 34, in _cached
+  File "/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/runner/pool.py", line 40, in _run_one
+  File "/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/runner/pool.py", line 34, in _cached
     key = (cfg.env_kind, cfg.policy_kind, cfg.suite, cfg.task_id, cfg.max_steps,
                                       ^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/worker.py", line 105, in make_policy
+  File "/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/runner/worker.py", line 105, in make_policy
     return SmolVLAPolicy(**kw)
            ^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/policies/smolvla.py", line 72, in __init__
+  File "/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/policies/smolvla.py", line 72, in __init__
     self.policy = _LRSmolVLA.from_pretrained(path, config=cfg)
                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/pretrained.py", line 219, in from_pretrained
+  File "/scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/pretrained.py", line 219, in from_pretrained
     policy = cls._load_as_safetensor(instance, model_file, config.device, strict)
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/pretrained.py", line 231, in _load_as_safetensor
+  File "/scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/lerobot/policies/pretrained.py", line 231, in _load_as_safetensor
     missing_keys, unexpected_keys = load_model_as_safetensor(
                                     ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/safetensors/torch.py", line 228, in load_model
+  File "/scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/safetensors/torch.py", line 228, in load_model
     state_dict = load_file(filename, device=device, backend=backend)
                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/safetensors/torch.py", line 360, in load_file
+  File "/scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/safetensors/torch.py", line 360, in load_file
     return f.get_tensors()
            ^^^^^^^^^^^^^^^
 torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 19.50 GiB of which 10.94 MiB is free. Process 1313722 has 22.87 GiB memory in use. Including non-PyTorch memory, this process has 4.62 GiB memory in use. Process 1443866 has 4.94 GiB memory in use. Process 1443870 has 4.90 GiB memory in use. Process 1443861 has 4.94 GiB memory in use. Of the allocated memory 4.39 GiB is allocated by PyTorch, and 61.35 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
@@ -232,20 +232,20 @@ torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 h
 The above exception was the direct cause of the following exception:
 
 Traceback (most recent call last):
-  File "/scratch/ezhao2/fleet-memory/dnhacks26/scripts/exp/camera_probe.py", line 65, in <module>
+  File "/scratch/<user>/fleet-memory/dnhacks26/scripts/exp/camera_probe.py", line 65, in <module>
     main(sys.argv[1] if len(sys.argv) > 1 else "0", int(sys.argv[2]) if len(sys.argv) > 2 else 1,
-  File "/scratch/ezhao2/fleet-memory/dnhacks26/scripts/exp/camera_probe.py", line 58, in main
+  File "/scratch/<user>/fleet-memory/dnhacks26/scripts/exp/camera_probe.py", line 58, in main
     run(f"BM-1 cfg={i} view={c['view']}", dataclasses.replace(base, env_kind="libero_plus", env_kwargs={"config": c},
-  File "/scratch/ezhao2/fleet-memory/dnhacks26/scripts/exp/camera_probe.py", line 49, in run
+  File "/scratch/<user>/fleet-memory/dnhacks26/scripts/exp/camera_probe.py", line 49, in run
     eps = run_many([dataclasses.replace(cfg, seed=s) for s in seeds], workers)
           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/runner/pool.py", line 82, in run_many
+  File "/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/runner/pool.py", line 82, in run_many
     if workers <= 1 or len(cfgs) <= 1:
               ^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/.uv_python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/multiprocessing/pool.py", line 367, in map
+  File "/scratch/<user>/.uv_python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/multiprocessing/pool.py", line 367, in map
     return self._map_async(func, iterable, mapstar, chunksize).get()
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/scratch/ezhao2/.uv_python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/multiprocessing/pool.py", line 774, in get
+  File "/scratch/<user>/.uv_python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/multiprocessing/pool.py", line 774, in get
     raise self._value
 torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 19.50 GiB of which 10.94 MiB is free. Process 1313722 has 22.87 GiB memory in use. Including non-PyTorch memory, this process has 4.62 GiB memory in use. Process 1443866 has 4.94 GiB memory in use. Process 1443870 has 4.90 GiB memory in use. Process 1443861 has 4.94 GiB memory in use. Of the allocated memory 4.39 GiB is allocated by PyTorch, and 61.35 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://docs.pytorch.org/docs/stable/notes/cuda.html#optimizing-memory-usage-with-pytorch-cuda-alloc-conf)
 QTASK_DONE cam-probe2

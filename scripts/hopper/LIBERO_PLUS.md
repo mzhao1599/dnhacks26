@@ -1,7 +1,7 @@
 # LIBERO-Plus (robot-initial-state perturbation) and π₀.₅ on Hopper
 
 LIBERO-Plus: Fei et al., *In-depth Robustness Analysis of Vision-Language-Action Models*, arXiv 2510.13626.
-Code `github.com/sylvestf/LIBERO-plus` (clone: `/scratch/ezhao2/fleet-memory/LIBERO-plus`, commit
+Code `github.com/sylvestf/LIBERO-plus` (clone: `/scratch/$USER/fleet-memory/LIBERO-plus`, commit
 `4976dc3`, 2026-01-21), assets `huggingface.co/datasets/Sylvest/LIBERO-plus` (one 6.4 GB `assets.zip`).
 
 ## 1. What LIBERO-Plus is, mechanically
@@ -60,20 +60,20 @@ deterministic per N. The smoke supports both (`robot_init:0` vs `robot_init:0/as
 
 ## 2. Install / venvs
 
-* Shared venv `/scratch/ezhao2/fleet-memory/venv` is untouched (hf-libero). **`native` backend**: plain
+* Shared venv `/scratch/$USER/fleet-memory/venv` is untouched (hf-libero). **`native` backend**: plain
   `LiberoEnv` + joint rewrite; only needs the LIBERO-plus checkout for the tables (`FM_LIBERO_PLUS`).
-* **`venv_plus`** (`/scratch/ezhao2/fleet-memory/venv_plus`, built by `/scratch/ezhao2/setup_venv_plus.sh`
-  with uv, cache `/scratch/ezhao2/.uv_cache`): python 3.12, `lerobot[smolvla,pi,scipy-dep,dataset]==0.6.1`
+* **`venv_plus`** (`/scratch/$USER/fleet-memory/venv_plus`, built by `/scratch/$USER/setup_venv_plus.sh`
+  with uv, cache `/scratch/$USER/.uv_cache`): python 3.12, `lerobot[smolvla,pi,scipy-dep,dataset]==0.6.1`
   (no `[libero]` extra), `robosuite==1.4.0 mujoco==3.8.1 bddl==1.0.1 gym==0.26.2 wand scikit-image ...`,
-  then `uv pip install -e /scratch/ezhao2/fleet-memory/LIBERO-plus --no-deps`. Two one-time fixes:
+  then `uv pip install -e /scratch/$USER/fleet-memory/LIBERO-plus --no-deps`. Two one-time fixes:
   1. the clone lacks `libero/__init__.py` (setuptools `find_packages` found nothing) -> `touch libero/__init__.py`;
   2. LIBERO-plus resolves assets as `libero/libero/assets` (hard-coded relative path) ->
      `ln -s <venv>/site-packages/libero/libero/assets LIBERO-plus/libero/libero/assets` (base assets, 404 MB,
      enough for robot-init); full `assets.zip` (6.4 GB, 457k files, nested under
      `inspire/hdd/.../LIBERO-plus-0/assets/{new_objects,scenes,...}`) is being extracted in
-     `/scratch/ezhao2/fleet-memory/libero_plus_assets/` for layout tasks.
+     `/scratch/$USER/fleet-memory/libero_plus_assets/` for layout tasks.
   3. `import libero` prompts on stdin if `$LIBERO_CONFIG_PATH/config.yaml` is missing ->
-     `/scratch/ezhao2/fleet-memory/libero_plus_config/config.yaml` points bddl_files/init_states at the checkout.
+     `/scratch/$USER/fleet-memory/libero_plus_config/config.yaml` points bddl_files/init_states at the checkout.
   4. Compute nodes have no ImageMagick (`wand` import fails; login node has it) -> `libero_plus.py` installs a
      no-op `wand` stub at import time (sensor-noise dimension unusable on those nodes, nothing else needs it).
 * π₀.₅ runs in the **shared venv** (lerobot 0.6.1 ships `lerobot/policies/pi05`; transformers 5.5.4 is enough).

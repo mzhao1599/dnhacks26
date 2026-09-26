@@ -8,7 +8,7 @@
 # Lines starting with # are ignored. A task is submitted once (recorded in logs/queue.done) when
 # fewer than MAX_A100 / MAX_MIG of our jobs are running+pending on that tier. Append lines any time.
 set -u
-ROOT=/scratch/ezhao2/fleet-memory
+ROOT=/scratch/$USER/fleet-memory
 REPO=$ROOT/dnhacks26
 Q=$REPO/scripts/hopper/queue.txt
 DONE=$ROOT/logs/queue.done
@@ -18,13 +18,13 @@ MAX_MIG=${MAX_MIG:-3}
 MAX_CPU=${MAX_CPU:-8}       # `cpu` tier: -p normal, no GPU (SmolVLA on CPU, osmesa)
 POLL=${POLL:-60}
 mkdir -p $ROOT/logs/slurm; touch "$DONE"
-PREFIX_A100='source scripts/hopper/env.sh; export FM_POLICY_KWARGS="{\"n_action_steps\":10}" FM_LIBERO_PLUS=/scratch/ezhao2/fleet-memory/LIBERO-plus PYTHONPATH=$FM_REPO; cd $FM_REPO;'
+PREFIX_A100='source scripts/hopper/env.sh; export FM_POLICY_KWARGS="{\"n_action_steps\":10}" FM_LIBERO_PLUS=/scratch/$USER/fleet-memory/LIBERO-plus PYTHONPATH=$FM_REPO; cd $FM_REPO;'
 PREFIX_MIG='export MUJOCO_GL=osmesa PYOPENGL_PLATFORM=osmesa; '"$PREFIX_A100"' export MUJOCO_GL=osmesa PYOPENGL_PLATFORM=osmesa;'
 # cpu tier (measured 2026-09-06): 16 workers x OMP 2 on 32 cores = ~11.6 env steps/s per node (~1/3 of a MIG slice), ~4.2 GB RSS per worker
 PREFIX_CPU='export MUJOCO_GL=osmesa PYOPENGL_PLATFORM=osmesa CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=2 MKL_NUM_THREADS=2; '"$PREFIX_A100"' export MUJOCO_GL=osmesa PYOPENGL_PLATFORM=osmesa CUDA_VISIBLE_DEVICES= OMP_NUM_THREADS=2 MKL_NUM_THREADS=2; unset MUJOCO_EGL_DEVICE_ID;'
 
 count() {  # our running+pending jobs on a tier, by job-name prefix q-a100- / q-mig-
-  squeue -u ezhao2 -h -o "%j" | grep -c "^q-$1-"
+  squeue --me -h -o "%j" | grep -c "^q-$1-"
 }
 
 while true; do
@@ -39,7 +39,7 @@ while true; do
     case "$tierf" in *c=*) cpus=$(echo "$tierf" | sed -n 's/.*c=\([0-9]*\).*/\1/p'); [ -n "$cpus" ] || cpus=8;; esac
     case "$tierf" in *after=*)
       after=${tierf##*after=}
-      djid=$(squeue -u ezhao2 -h -o "%i %j" | awk -v a="q-a100-$after" -v m="q-mig-$after" -v r="$after" '$2==a||$2==m||$2==r{print $1; exit}')
+      djid=$(squeue --me -h -o "%i %j" | awk -v a="q-a100-$after" -v m="q-mig-$after" -v r="$after" '$2==a||$2==m||$2==r{print $1; exit}')
       [ -n "$djid" ] && dep="--dependency=afterany:$djid";;
     esac
     if [ "$tier" = "a80" ] && [ "$n8" -lt "$MAX_A80" ]; then

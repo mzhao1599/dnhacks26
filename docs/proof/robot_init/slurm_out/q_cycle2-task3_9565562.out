@@ -1,15 +1,15 @@
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
 Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
 `torch_dtype` is deprecated! Use `dtype` instead!
 Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
@@ -30,7 +30,7 @@ embeddings.position_ids | UNEXPECTED |  |
 
 Notes:
 - UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
 Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 14825.95it/s]
 [1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
@@ -40,7 +40,7 @@ embeddings.position_ids | UNEXPECTED |  |
 
 Notes:
 - UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
 Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 11644.56it/s]
 [1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
@@ -50,7 +50,7 @@ embeddings.position_ids | UNEXPECTED |  |
 
 Notes:
 - UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
 Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 11654.30it/s]
 [1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
@@ -60,7 +60,7 @@ embeddings.position_ids | UNEXPECTED |  |
 
 Notes:
 - UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
 consolidation cons_849822c5 task=3 gate=None promoted=None
 [BM-3] arm=B n=10 success=0.20 ci=[0.06,0.51] mean_steps=207.6 mean_cost=3.815
@@ -68,9 +68,9 @@ consolidation cons_849822c5 task=3 gate=None promoted=None
 | arm | n | success | 95% CI | mean steps |
 |---|---|---|---|---|
 | BM-3 | 10 | 20.0% (2) | [5.7, 51.0] | 208 |
-/scratch/ezhao2/.uv_python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/multiprocessing/resource_tracker.py:279: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+/scratch/<user>/.uv_python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/multiprocessing/resource_tracker.py:279: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
   warnings.warn('resource_tracker: There appear to be %d '
-/scratch/ezhao2/.uv_python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/multiprocessing/resource_tracker.py:292: UserWarning: resource_tracker: '/loky-978743-vybrrqio': [Errno 2] No such file or directory
+/scratch/<user>/.uv_python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/multiprocessing/resource_tracker.py:292: UserWarning: resource_tracker: '/loky-978743-vybrrqio': [Errno 2] No such file or directory
   warnings.warn('resource_tracker: %r: %s' % (name, e))
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 [robosuite WARNING] No private macro file found! (__init__.py:7)
@@ -80,10 +80,10 @@ consolidation cons_849822c5 task=3 gate=None promoted=None
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
 Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
 Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
 Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
@@ -104,7 +104,7 @@ embeddings.position_ids | UNEXPECTED |  |
 
 Notes:
 - UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
 Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 10645.70it/s]
 [1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
@@ -114,7 +114,7 @@ embeddings.position_ids | UNEXPECTED |  |
 
 Notes:
 - UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
 Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 12637.51it/s]
 [1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
@@ -132,9 +132,9 @@ embeddings.position_ids | UNEXPECTED |  |
 
 Notes:
 - UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
 REPS BM-1: 11/50 = 22% [13,35] steps 192
 REPS BM-2: 12/50 = 24% [14,37] steps 191

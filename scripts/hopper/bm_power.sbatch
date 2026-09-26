@@ -1,10 +1,10 @@
 #!/bin/bash
 #SBATCH -p gpuq -q gpu --gres=gpu:A100.40gb:1 -c 8 --mem=48G -t 02:00:00 -J fm-bmpower
-#SBATCH -o /scratch/ezhao2/fleet-memory/logs/slurm/bmpower_%j.out
+#SBATCH -o /scratch/%u/fleet-memory/logs/slurm/bmpower_%j.out
 # BM-1 vs BM-4 (hand-set homing, no optimisation involved -> no held-out concern) on ALL 50 init states of tasks 0 and 3.
 set -uo pipefail
-source /scratch/ezhao2/fleet-memory/dnhacks26/scripts/hopper/env.sh
-export FM_LLM=mock FM_POLICY_KWARGS='{"n_action_steps":10}' FM_LIBERO_PLUS=/scratch/ezhao2/fleet-memory/LIBERO-plus
+source /scratch/$USER/fleet-memory/dnhacks26/scripts/hopper/env.sh
+export FM_LLM=mock FM_POLICY_KWARGS='{"n_action_steps":10}' FM_LIBERO_PLUS=/scratch/$USER/fleet-memory/LIBERO-plus
 cd "$FM_REPO"; L=$FM_LOGS/benchmark
 python - <<'PY'
 import dataclasses, json, os, sys

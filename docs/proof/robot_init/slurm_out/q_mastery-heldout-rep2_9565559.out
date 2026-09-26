@@ -18,26 +18,26 @@ Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
 WARNING:robosuite_logs:No private macro file found!
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
 WARNING:robosuite_logs:It is recommended to use a private macro file
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
-WARNING:robosuite_logs:To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+WARNING:robosuite_logs:To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 WARNING:robosuite_logs:No private macro file found!
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
 WARNING:robosuite_logs:It is recommended to use a private macro file
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
-WARNING:robosuite_logs:To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+WARNING:robosuite_logs:To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 WARNING:robosuite_logs:No private macro file found!
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
 WARNING:robosuite_logs:It is recommended to use a private macro file
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
-WARNING:robosuite_logs:To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+WARNING:robosuite_logs:To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 WARNING:robosuite_logs:No private macro file found!
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
 WARNING:robosuite_logs:It is recommended to use a private macro file
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
-WARNING:robosuite_logs:To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+WARNING:robosuite_logs:To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py
 Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 18394.50it/s]
 [1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
 Key                     | Status     |  | 
@@ -46,7 +46,7 @@ embeddings.position_ids | UNEXPECTED |  |
 
 Notes:
 - UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
 Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 25457.47it/s]
 [1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
@@ -56,7 +56,7 @@ embeddings.position_ids | UNEXPECTED |  |
 
 Notes:
 - UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
 Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 19005.47it/s]
 [1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
@@ -66,7 +66,7 @@ embeddings.position_ids | UNEXPECTED |  |
 
 Notes:
 - UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
 Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 10609.62it/s]
 [1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
@@ -76,7 +76,7 @@ embeddings.position_ids | UNEXPECTED |  |
 
 Notes:
 - UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
 HELDOUT A: 31/40 = 78% [62,88] steps 302 cost 2.03
 HELDOUT B_v2: 32/40 = 80% [65,90] steps 270 cost 1.94

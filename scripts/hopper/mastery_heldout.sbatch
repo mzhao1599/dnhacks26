@@ -1,9 +1,9 @@
 #!/bin/bash
 #SBATCH -p gpuq -q gpu --gres=gpu:A100.40gb:1 -c 8 --mem=48G -t 02:00:00 -J fm-mastery
-#SBATCH -o /scratch/ezhao2/fleet-memory/logs/slurm/mastery_%j.out
+#SBATCH -o /scratch/%u/fleet-memory/logs/slurm/mastery_%j.out
 # Held-out mastery eval: LIBERO-10 task 3, layouts 20-39 (unseen by the train arms), two noise reps -> n=40/arm.
 set -uo pipefail
-source /scratch/ezhao2/fleet-memory/dnhacks26/scripts/hopper/env.sh
+source /scratch/$USER/fleet-memory/dnhacks26/scripts/hopper/env.sh
 export FM_LLM=mock FM_POLICY_KWARGS='{"n_action_steps":10}'
 cd "$FM_REPO"; L=$FM_LOGS/mastery; mkdir -p $L
 python - <<'PY'

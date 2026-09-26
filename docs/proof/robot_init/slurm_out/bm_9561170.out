@@ -1,16 +1,16 @@
 === BM task 2: consolidate (CEM pop24 x K2 x 4 iters, gate 12) then arms BM-0..4 x 10 eval seeds
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
 Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
 Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
 `torch_dtype` is deprecated! Use `dtype` instead!
@@ -39,9 +39,9 @@ embeddings.position_ids | UNEXPECTED |  |
 
 Notes:
 - UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
 Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 10594.27it/s]
 [1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
@@ -51,7 +51,7 @@ embeddings.position_ids | UNEXPECTED |  |
 
 Notes:
 - UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
 Loading weights:   0%|          | 0/103 [00:00<?, ?it/s]Loading weights: 100%|██████████| 103/103 [00:00<00:00, 10266.72it/s]
 [1mBertModel LOAD REPORT[0m from: sentence-transformers/all-MiniLM-L6-v2
@@ -61,7 +61,7 @@ embeddings.position_ids | UNEXPECTED |  |
 
 Notes:
 - UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
 consolidation cons_05b61945 task=2 gate={'passed': True, 'incumbent_cost': 4.502693843951666, 'candidate_cost': 4.222829824591389, 'n_seeds': 12, 'incumbent_success': 0.0, 'candidate_success': 0.0, 'success_delta_pp': 0.0} promoted=2
 [info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -91,5 +91,5 @@ Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
 | BM-3 | 10 | 0.0% (0) | [0.0, 27.8] | 220 |
 
 BM-3 / BM-1 = 1.00 [0.02, 45.64] -> fail
-chart: /scratch/ezhao2/fleet-memory/logs/benchmark/bm_task2.png
+chart: /scratch/<user>/fleet-memory/logs/benchmark/bm_task2.png
 BM_TASK_DONE 2

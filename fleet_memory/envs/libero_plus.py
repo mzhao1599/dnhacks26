@@ -43,9 +43,9 @@ import numpy as np
 from fleet_memory.envs.base import Obs
 from fleet_memory.envs.libero_env import DUMMY_ACTION, NUM_STEPS_WAIT, SUITE_MAX_STEPS, LiberoEnv, slugify
 
-PLUS_ROOT = Path(os.environ.get("FM_LIBERO_PLUS", "/scratch/ezhao2/fleet-memory/LIBERO-plus"))
+PLUS_ROOT = Path(os.environ.get("FM_LIBERO_PLUS", os.path.expandvars("/scratch/$USER/fleet-memory/LIBERO-plus")))
 ORIG_TASKMAP = os.environ.get("FM_LIBERO_TASKMAP",
-    "/scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/libero/libero/benchmark/libero_suite_task_map.py")
+    os.path.expandvars("/scratch/$USER/fleet-memory/venv/lib/python3.12/site-packages/libero/libero/benchmark/libero_suite_task_map.py"))
 BASE_QPOS = np.array([0.0, -1.61037389e-01, 0.0, -2.44459747e00, 0.0, 2.22675220e00, np.pi / 4])
 DIMENSIONS = {"robot_init": "Robot Initial States", "layout": "Objects Layout", "camera": "Camera Viewpoints",
               "language": "Language Instructions", "light": "Light Conditions",

@@ -1,16 +1,16 @@
 skill instance si_1__libero_spatial_1_plus_camera_0_0_100_4_6 view=0_0_100_4_6 act_only=False
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
 Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
 Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
 Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
@@ -55,13 +55,13 @@ embeddings.position_ids | UNEXPECTED |  |
 
 Notes:
 - UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
 CYCLE t1 plus_camera_0_0_100_4_6 cons=cons_bce216a5 rollouts=480 wall=2110s validation={"candidates": ["incumbent", "final_mean", "iter0_best", "iter1_best", "iter2_best", "iter3_best"], "costs": [4.486841812060526, 3.9678193739535965, 3.638876038403585, 4.467580961284608, 4.570244560599815, 4.4821536841095], "chosen": "iter0_best"} gate={"passed": true, "incumbent_cost": 4.459704471169567, "candidate_cost": 4.348593461810014, "n_seeds": 24, "incumbent_success": 0.0, "candidate_success": 0.041666666666666664, "success_delta_pp": 4.166666666666666} promoted=2 best={"approach_offset_xyz": [0.027425857896315263, -0.003977334324867, 0.010635886544002826], "pregrasp_height": 0.030690115703716263, "grasp_offset_z": -0.02, "time_scale": 1.1418448502188585, "velocity_cap": 0.7271448259584371, "gripper_cmd": 1.0, "approach_cone_deg": 60.0, "blend_alpha": 0.0697325533096622, "homing_enable": 0.0, "homing_pos_delta": [0.002986737402092786, -0.0174632403119558, 0.05], "homing_rot_delta": [-0.08378172521415346, 0.08228736136850709, 0.004879720644297869], "cam_roll_deg": 3.6963541590921913, "cam_zoom": 0.9991685107158541, "cam_shift_xy": [0.25, -0.0211000536302203]}
 INCUMBENT t1 plus_camera_0_0_100_4_6 v2 {"approach_offset_xyz": [0.027425857896315263, -0.003977334324867, 0.010635886544002826], "pregrasp_height": 0.030690115703716263, "grasp_offset_z": -0.02, "time_scale": 1.1418448502188585, "velocity_cap": 0.7271448259584371, "gripper_cmd": 1.0, "approach_cone_deg": 60.0, "blend_alpha": 0.0697325533096622, "homing_enable": 0.0, "homing_pos_delta": [0.002986737402092786, -0.0174632403119558, 0.05], "homing_rot_delta": [-0.08378172521415346, 0.08228736136850709, 0.004879720644297869], "cam_roll_deg": 3.6963541590921913, "cam_zoom": 0.9991685107158541, "cam_shift_xy": [0.25, -0.0211000536302203]}

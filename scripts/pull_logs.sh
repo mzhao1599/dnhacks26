@@ -3,7 +3,9 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 mkdir -p logs/hopper
-rsync -aq --include='*/' --include='*.jsonl' --include='*.png' --exclude='*' hopper:/scratch/ezhao2/fleet-memory/logs/ logs/hopper/
+# Project dir on the cluster; defaults to /scratch/<your cluster user>/fleet-memory.
+REMOTE_ROOT=${FM_REMOTE_ROOT:-$(ssh hopper 'echo /scratch/$USER/fleet-memory')}
+rsync -aq --include='*/' --include='*.jsonl' --include='*.png' --exclude='*' "hopper:${REMOTE_ROOT}/logs/" logs/hopper/
 python3 - <<'PY'
 import glob, json, os
 parts = ["logs/hopper/phase0/events.jsonl", "logs/hopper/probe_v31/*.jsonl", "logs/hopper/v31/events.jsonl",

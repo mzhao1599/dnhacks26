@@ -1,13 +1,13 @@
-# Source me:  source /scratch/ezhao2/fleet-memory/dnhacks26/scripts/hopper/env.sh
+# Source me:  source /scratch/$USER/fleet-memory/dnhacks26/scripts/hopper/env.sh
 # Activates the venv and sets every env var the LIBERO/SmolVLA stack needs on GMU Hopper.
-export FM_ROOT=/scratch/ezhao2/fleet-memory
+export FM_ROOT=/scratch/$USER/fleet-memory
 export FM_REPO=${FM_REPO:-$FM_ROOT/dnhacks26}
 export FM_LOGS=${FM_LOGS:-$FM_ROOT/logs}
 mkdir -p "$FM_LOGS"
 
 source "$FM_ROOT/venv/bin/activate"
 
-export HF_HOME=/scratch/ezhao2/hf_cache
+export HF_HOME=/scratch/$USER/hf_cache
 export HF_HUB_OFFLINE=${HF_HUB_OFFLINE:-1}          # checkpoints are prefetched; flip to 0 to re-download
 export TOKENIZERS_PARALLELISM=false
 export PYTHONPATH="$FM_REPO${PYTHONPATH:+:$PYTHONPATH}"

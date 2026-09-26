@@ -6,7 +6,7 @@ decision was made or confirmed. Anything that changes `fleet_memory/memory/schem
 
 ## 2026-09-05
 
-- **Python 3.12 venv via `uv`** (laptop and Hopper `/scratch/ezhao2/fleet-memory/venv`): the cluster's system Python is 3.6; lerobot 0.6.1 needs ≥3.10 and `uv` builds the env in seconds without touching modules.
+- **Python 3.12 venv via `uv`** (laptop and Hopper `/scratch/$USER/fleet-memory/venv`): the cluster's system Python is 3.6; lerobot 0.6.1 needs ≥3.10 and `uv` builds the env in seconds without touching modules.
 - **lerobot 0.6.1 `[smolvla,libero]` instead of raw LIBERO**: the SmolVLA-LIBERO checkpoint was evaluated with lerobot's exact env wrapper and preprocessing (image flip, 8-D state, task string); mirroring it (`envs/libero_env.py`) avoids silently evaluating a different distribution.
 - **`A100.40gb` over `A100.80gb`**: the 80 GB pool is queue-blocked (jobs sit in Resources/Priority indefinitely); the 40 GB node `dgx001` starts in seconds, supports EGL, and SmolVLA needs ~1.2 GB.
 - **10-action chunks (`n_action_steps=10`)**: 1-action re-query is ~470 ms/step; chunk-10 is ~50 ms/step amortised with 4/4 vs 4/4 success on seeds 0-3, so all real runs use chunk-10 and Phase 0 references were frozen on it.

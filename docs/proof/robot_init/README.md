@@ -7,7 +7,7 @@ perturbation: 80% → 22% → 54% → 70%).
 |---|---|
 | Slurm accounting for every 2026-09-05 job (ids, nodes, GPUs, start/end) | `sacct_2026-09-05.txt` |
 | raw job stdout with the `REPS` / gate lines (`q_reps-*`, `q_cycle2-task3*`, `bm_*`, `bmfollow_*`) | `slurm_out/` |
-| per-episode records of every held-out evaluation episode (seed, arm, `s3_params`, `outcome.env_success`, steps, timestamp) plus every `skill_instance` promotion, `consolidation` gate and `cost_reference` | `events_evaluation.jsonl` (extracted from `/scratch/ezhao2/fleet-memory/logs/benchmark/{reps,events,events_wide,power}.jsonl`; CEM/gate rollouts dropped for size) |
+| per-episode records of every held-out evaluation episode (seed, arm, `s3_params`, `outcome.env_success`, steps, timestamp) plus every `skill_instance` promotion, `consolidation` gate and `cost_reference` | `events_evaluation.jsonl` (extracted from `/scratch/$USER/fleet-memory/logs/benchmark/{reps,events,events_wide,power}.jsonl`; CEM/gate rollouts dropped for size) |
 | recount from the raw records | `verify_output.txt` = `python scripts/verify_robot_init.py` |
 
 `verify_robot_init.py` labels each arm from the record itself: arm A = raw policy; arm B with the identity file = BM-2; identity +

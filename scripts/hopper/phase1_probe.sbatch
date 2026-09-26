@@ -7,8 +7,8 @@
 #SBATCH --mem=64G
 #SBATCH --time=08:00:00
 #SBATCH --array=0-9
-#SBATCH --output=/scratch/ezhao2/fleet-memory/logs/slurm/phase1_%A_%a.out
-#SBATCH --error=/scratch/ezhao2/fleet-memory/logs/slurm/phase1_%A_%a.err
+#SBATCH --output=/scratch/%u/fleet-memory/logs/slurm/phase1_%A_%a.out
+#SBATCH --error=/scratch/%u/fleet-memory/logs/slurm/phase1_%A_%a.err
 #
 # Phase 1 probes on arm A over the SAME seeds as phase0 (seed-set train, same N, same task
 # partition), so every probe episode has a matched baseline episode:
@@ -19,8 +19,8 @@
 # Usage: sbatch scripts/hopper/phase1_probe.sbatch
 #        PROBES_S2=probes/s2.txt PROBES_S3=probes/s3.jsonl N=30 sbatch scripts/hopper/phase1_probe.sbatch
 set -euo pipefail
-mkdir -p /scratch/ezhao2/fleet-memory/logs/slurm
-source /scratch/ezhao2/fleet-memory/dnhacks26/scripts/hopper/env.sh
+mkdir -p /scratch/$USER/fleet-memory/logs/slurm
+source /scratch/$USER/fleet-memory/dnhacks26/scripts/hopper/env.sh
 
 ID=${SLURM_ARRAY_TASK_ID:-0}
 N=${N:-50}

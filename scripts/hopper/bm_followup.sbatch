@@ -1,11 +1,11 @@
 #!/bin/bash
 #SBATCH -p gpuq -q gpu --gres=gpu:A100.40gb:1 -c 8 --mem=48G -t 03:00:00 -J fm-bmfollow
-#SBATCH -o /scratch/ezhao2/fleet-memory/logs/slurm/bmfollow_%j.out
+#SBATCH -o /scratch/%u/fleet-memory/logs/slurm/bmfollow_%j.out
 # Runs after all per-task benchmark jobs: for any task whose perturbed skill instance is still v1 (gate refused),
 # run a SECOND, wider-search sleep cycle (logged as cycle 2, never hand-tuned) and its BM-3 eval; then pool results.
 set -uo pipefail
-source /scratch/ezhao2/fleet-memory/dnhacks26/scripts/hopper/env.sh
-export FM_LLM=mock FM_POLICY_KWARGS='{"n_action_steps":10}' FM_LIBERO_PLUS=/scratch/ezhao2/fleet-memory/LIBERO-plus
+source /scratch/$USER/fleet-memory/dnhacks26/scripts/hopper/env.sh
+export FM_LLM=mock FM_POLICY_KWARGS='{"n_action_steps":10}' FM_LIBERO_PLUS=/scratch/$USER/fleet-memory/LIBERO-plus
 cd "$FM_REPO"; L=$FM_LOGS/benchmark
 for t in 0 1 2 3 4; do
   v=$(python - <<PY

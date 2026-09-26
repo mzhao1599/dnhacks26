@@ -6,8 +6,8 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=32G
 #SBATCH --time=03:00:00
-#SBATCH --output=/scratch/ezhao2/fleet-memory/logs/slurm/phase0v3_%j.out
-#SBATCH --error=/scratch/ezhao2/fleet-memory/logs/slurm/phase0v3_%j.out
+#SBATCH --output=/scratch/%u/fleet-memory/logs/slurm/phase0v3_%j.out
+#SBATCH --error=/scratch/%u/fleet-memory/logs/slurm/phase0v3_%j.out
 #
 # Phase 0 (v3): arm A baseline on ONE fixed task, 20 train seeds, 4 worker processes sharing one
 # A100.40gb (starts in seconds; A100.80gb is queue-blocked). Writes the frozen cost_reference
@@ -15,8 +15,8 @@
 # Usage:  sbatch scripts/hopper/phase0_v3.sbatch
 #         SUITE=libero_goal TASK=0 N=20 sbatch scripts/hopper/phase0_v3.sbatch
 set -euo pipefail
-mkdir -p /scratch/ezhao2/fleet-memory/logs/slurm
-source /scratch/ezhao2/fleet-memory/dnhacks26/scripts/hopper/env.sh
+mkdir -p /scratch/$USER/fleet-memory/logs/slurm
+source /scratch/$USER/fleet-memory/dnhacks26/scripts/hopper/env.sh
 
 SUITE=${SUITE:-libero_10}
 TASK=${TASK:-3}

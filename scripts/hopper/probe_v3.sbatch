@@ -6,8 +6,8 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=32G
 #SBATCH --time=05:00:00
-#SBATCH --output=/scratch/ezhao2/fleet-memory/logs/slurm/probev3_%j.out
-#SBATCH --error=/scratch/ezhao2/fleet-memory/logs/slurm/probev3_%j.out
+#SBATCH --output=/scratch/%u/fleet-memory/logs/slurm/probev3_%j.out
+#SBATCH --error=/scratch/%u/fleet-memory/logs/slurm/probev3_%j.out
 #
 # Phase 1 (v3): hand-set S3 probes on the SAME train seeds as phase0_v3 (matched episodes).
 #   good : {"time_scale":1.3}                                          -> logs/probe/events_good.jsonl
@@ -16,8 +16,8 @@
 # Usage:  sbatch scripts/hopper/probe_v3.sbatch
 #         SUITE=libero_goal TASK=0 N=20 sbatch scripts/hopper/probe_v3.sbatch
 set -euo pipefail
-mkdir -p /scratch/ezhao2/fleet-memory/logs/slurm
-source /scratch/ezhao2/fleet-memory/dnhacks26/scripts/hopper/env.sh
+mkdir -p /scratch/$USER/fleet-memory/logs/slurm
+source /scratch/$USER/fleet-memory/dnhacks26/scripts/hopper/env.sh
 
 SUITE=${SUITE:-libero_10}
 TASK=${TASK:-3}

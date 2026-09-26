@@ -1,6 +1,6 @@
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
 [info] using task orders [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 WARNING:root:No accelerated backend detected. Using default cpu, this will be slow.
 WARNING:lerobot.configs.policies:Device 'cuda' is not available. Switching to 'cpu'.
@@ -15,13 +15,13 @@ embeddings.position_ids | UNEXPECTED |  |
 
 Notes:
 - UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
-BM-0 stock camera · raw VLA: success=False steps=220 -> /scratch/ezhao2/fleet-memory/logs/videos/cam_BM-0_s5047_fail.mp4
+BM-0 stock camera · raw VLA: success=False steps=220 -> /scratch/<user>/fleet-memory/logs/videos/cam_BM-0_s5047_fail.mp4
 WARNING:root:No accelerated backend detected. Using default cpu, this will be slow.
 WARNING:lerobot.configs.policies:Device 'cuda' is not available. Switching to 'cpu'.
 Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
 Loading weights:   0%|          | 0/489 [00:00<?, ?it/s]Loading weights:  82%|████████▏ | 400/489 [00:00<00:00, 3998.84it/s]Loading weights: 100%|██████████| 489/489 [00:00<00:00, 4296.68it/s]
-BM-1 camera bumped · raw VLA: success=False steps=220 -> /scratch/ezhao2/fleet-memory/logs/videos/cam_BM-1_s5047_fail.mp4
-BM-3 camera bumped · consolidated v2: success=True steps=117 -> /scratch/ezhao2/fleet-memory/logs/videos/cam_BM-3_s5047_ok.mp4
+BM-1 camera bumped · raw VLA: success=False steps=220 -> /scratch/<user>/fleet-memory/logs/videos/cam_BM-1_s5047_fail.mp4
+BM-3 camera bumped · consolidated v2: success=True steps=117 -> /scratch/<user>/fleet-memory/logs/videos/cam_BM-3_s5047_ok.mp4
 QTASK_DONE cam-demo-t0-tilt-cpu3

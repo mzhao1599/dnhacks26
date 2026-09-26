@@ -53,7 +53,7 @@ Cost (analysis/cost.py): `1.0*steps/steps_ref + 0.5*jerk + 0.5*force_proxy + 3.0
 - Log every event via `memory/store.py:EventStore.append(record)`; records are dataclasses from `schema.py` serialised with `to_dict()`.
 
 ## Hopper (GMU ORC)
-- Login: `ssh hopper`. Project root on cluster: `/scratch/ezhao2/fleet-memory` (repo clone at `/scratch/ezhao2/fleet-memory/dnhacks26`).
-- Env: `source /scratch/ezhao2/fleet-memory/venv/bin/activate`; `export HF_HOME=/scratch/ezhao2/hf_cache MUJOCO_GL=egl`.
+- Login: `ssh hopper`. Project root on cluster: `/scratch/$USER/fleet-memory` (repo clone at `/scratch/$USER/fleet-memory/dnhacks26`).
+- Env: `source /scratch/$USER/fleet-memory/venv/bin/activate`; `export HF_HOME=/scratch/$USER/hf_cache MUJOCO_GL=egl`.
 - GPU jobs: `sbatch -p gpuq -q gpu --gres=gpu:A100.80gb:1 ...` (full A100 → EGL works; MIG slices do NOT support EGL, use `MUJOCO_GL=osmesa` there).
 - Never run episodes on the login node.

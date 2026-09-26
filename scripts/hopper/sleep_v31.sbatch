@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH -p gpuq -q gpu --gres=gpu:A100.40gb:1 -c 8 --mem=48G -t 04:00:00 -J fm-sleep31
-#SBATCH -o /scratch/ezhao2/fleet-memory/logs/slurm/sleep31_%j.out
+#SBATCH -o /scratch/%u/fleet-memory/logs/slurm/sleep31_%j.out
 set -uo pipefail
-source /scratch/ezhao2/fleet-memory/dnhacks26/scripts/hopper/env.sh
+source /scratch/$USER/fleet-memory/dnhacks26/scripts/hopper/env.sh
 export FM_LLM=mock FM_POLICY_KWARGS='{"n_action_steps":10}'
 cd "$FM_REPO"; mkdir -p $FM_LOGS/v31
 LOG=$FM_LOGS/v31/events.jsonl

@@ -1,4 +1,4 @@
-TAKEOVER /scratch/ezhao2/fleet-memory/logs/bench_camera/locks/t3_plus_camera_0_0_100_8_6_c1_r0.lock: a80 job 9582000 replaces cpu job 9582079
+TAKEOVER /scratch/<user>/fleet-memory/logs/bench_camera/locks/t3_plus_camera_0_0_100_8_6_c1_r0.lock: a80 job 9582000 replaces cpu job 9582079
 skill instance si_3__libero_spatial_3_plus_camera_0_0_100_8_6 view=0_0_100_8_6 act_only=False
 [robosuite WARNING] No private macro file found! (__init__.py:7)
 [robosuite WARNING] No private macro file found! (__init__.py:7)
@@ -8,10 +8,10 @@ skill instance si_3__libero_spatial_3_plus_camera_0_0_100_8_6 view=0_0_100_8_6 a
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
 [robosuite WARNING] It is recommended to use a private macro file (__init__.py:8)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
-[robosuite WARNING] To setup, run: python /scratch/ezhao2/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
+[robosuite WARNING] To setup, run: python /scratch/<user>/fleet-memory/venv/lib/python3.12/site-packages/robosuite/scripts/setup_macros.py (__init__.py:9)
 Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
 Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
 Loading  HuggingFaceTB/SmolVLM2-500M-Instruct weights ...
@@ -56,13 +56,13 @@ embeddings.position_ids | UNEXPECTED |  |
 
 Notes:
 - UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
-/scratch/ezhao2/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
+/scratch/<user>/fleet-memory/dnhacks26/fleet_memory/memory/retrieval.py:40: FutureWarning: The `get_sentence_embedding_dimension` method has been renamed to `get_embedding_dimension`.
   self.dim = int(self._st.get_sentence_embedding_dimension()) if self._st is not None else int(dim)
 CYCLE t3 plus_camera_0_0_100_8_6 cons=cons_ed890b8f rollouts=504 wall=2117s validation={"candidates": ["incumbent", "final_mean", "iter0_best", "iter1_best", "iter2_best", "iter3_best"], "costs": [4.0838430441657785, 3.1698921896075287, 3.5455096231699637, 3.908834666248065, 3.952677978348754, 3.550702143805759], "chosen": "final_mean"} gate={"passed": true, "incumbent_cost": 4.115206570522713, "candidate_cost": 3.7514195744536036, "n_seeds": 24, "incumbent_success": 0.125, "candidate_success": 0.20833333333333334, "success_delta_pp": 8.333333333333334} promoted=2 best={"approach_offset_xyz": [-0.007418902881970172, -0.0026979879376342504, -0.0016135685615386135], "pregrasp_height": 0.061151274640070086, "grasp_offset_z": -0.0005692195964180566, "time_scale": 0.8237593722654102, "velocity_cap": 0.9929488232235926, "gripper_cmd": 0.8202103266876335, "approach_cone_deg": 33.599225912644364, "blend_alpha": 0.06398678857266499, "homing_enable": 0.11486789565384166, "homing_pos_delta": [-0.00603844741502834, 0.0034596910344832157, -0.011313394091668878], "homing_rot_delta": [-0.019641142196910794, 0.038329635237879744, 0.05958332911909986], "cam_roll_deg": -10.118534691905587, "cam_zoom": 0.9778433122329258, "cam_shift_xy": [0.22028551187511808, 0.13542646322209712]}
 INCUMBENT t3 plus_camera_0_0_100_8_6 v2 {"approach_offset_xyz": [-0.007418902881970172, -0.0026979879376342504, -0.0016135685615386135], "pregrasp_height": 0.061151274640070086, "grasp_offset_z": -0.0005692195964180566, "time_scale": 0.8237593722654102, "velocity_cap": 0.9929488232235926, "gripper_cmd": 0.8202103266876335, "approach_cone_deg": 33.599225912644364, "blend_alpha": 0.06398678857266499, "homing_enable": 0.11486789565384166, "homing_pos_delta": [-0.00603844741502834, 0.0034596910344832157, -0.011313394091668878], "homing_rot_delta": [-0.019641142196910794, 0.038329635237879744, 0.05958332911909986], "cam_roll_deg": -10.118534691905587, "cam_zoom": 0.9778433122329258, "cam_shift_xy": [0.22028551187511808, 0.13542646322209712]}
