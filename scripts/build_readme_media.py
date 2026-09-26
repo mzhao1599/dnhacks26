@@ -58,7 +58,7 @@ if __name__ == "__main__":
     rows = [{"arm": a, **t0["results"][a]} for a in ("BM-0", "BM-1", "BM-2", "BM-4", "BM-3", "BM-3.2") if a in t0["results"]]
     os.makedirs(os.path.join(ROOT, "docs", "media"), exist_ok=True)
     p = chart(rows, "LIBERO-Spatial task 0 under LIBERO-Plus robot-init perturbation (frozen SmolVLA)",
-              f"10 held-out layouts × fresh policy-noise draws, {t0['n_runs']} independent runs, BM-3 per promoted version · whiskers = 95% Wilson CI",
+              f"10 held-out layouts × noise draws, {t0['n_runs']} evaluation runs (run 3 reuses run 1's seeds) · whiskers = 95% Wilson CI",
               os.path.join(ROOT, "docs", "media", "headline.svg"))
     print(p, [(r["arm"], r["k"], r["n"]) for r in rows])
     # second family: camera viewpoints (task 0, tilt view), from logs/hopper/bench_camera/events.jsonl
@@ -67,6 +67,6 @@ if __name__ == "__main__":
     if cam:
         rows = [{"arm": a, **cam["results"][a]} for a in ("BM-0", "BM-1", "BM-2", "BM-3", "BM-3 (action dims only)") if a in cam["results"]]
         p = chart(rows, "Same task, camera tilted 6° instead (LIBERO-Plus camera viewpoint, frozen SmolVLA)",
-                  "10 held-out layouts × 5 policy-noise draws, n=50 per arm · the file gained 4 camera-calibration numbers · whiskers = 95% Wilson CI",
+                  "10 held-out layouts × 5–7 noise draws (n under each bar) · file gained 4 camera numbers · whiskers = 95% Wilson CI",
                   os.path.join(ROOT, "docs", "media", "headline_camera.svg"), labels=CAM_LABEL)
         print(p, [(r["arm"], r["k"], r["n"]) for r in rows])

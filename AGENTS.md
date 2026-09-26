@@ -62,7 +62,7 @@ logs/                     event logs (gitignored; logs/hopper/** is the local mi
 - Plain Python 3.12, numpy. No framework, no DB, no orchestration layer. Install locally with
   `uv venv .venv --python 3.12 && source .venv/bin/activate && uv pip install -e . pytest google-genai`.
 - **Mock-first.** Everything must run end-to-end with `--env mock --policy mock --llm mock` on a laptop.
-  `FM_LLM=mock pytest -q` must pass: **120 tests**. Real sim runs happen only on Hopper (see `docs/HANDOFF.md`).
+  `FM_LLM=mock pytest -q` must pass: **143 tests**. Real sim runs happen only on Hopper (see `docs/HANDOFF.md`).
 - **LLM backend selection** (`fleet_memory/agents/llm.py`). Picked by which key is present:
   `ANTHROPIC_API_KEY` → Claude (planner `claude-haiku-4-5-20251001`, coach `claude-sonnet-5`);
   `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) → Gemini (defaults: planner `gemini-3.7-flash`, coach `gemini-3.1-pro-preview`;

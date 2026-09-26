@@ -1,7 +1,7 @@
 [project]
 name = "fleet-memory"
 version = "0.3.1"
-description = "Weight-frozen improvement of a VLA policy: an execution shim whose 17-number parameter file is rewritten by a gated sleep-loop optimizer (SmolVLA on LIBERO / LIBERO-Plus)"
+description = "Weight-frozen improvement of a VLA policy: an execution shim whose 21-number parameter file is rewritten by a gated sleep-loop optimizer (SmolVLA on LIBERO / LIBERO-Plus)"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.12"

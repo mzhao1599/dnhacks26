@@ -3,7 +3,15 @@
 Frozen **SmolVLA** (`HuggingFaceVLA/smolvla_libero`, 10-action chunks, policy RNG seeded per episode so arms on
 the same seed share the policy's noise) on **LIBERO** (robosuite/MuJoCo, EGL on A100.40GB, OSMesa on MIG).
 Success = the benchmark's programmatic predicate, always. Every number below is in `logs/hopper/**/events.jsonl`
-(merged: `scripts/pull_logs.sh` → `logs/demo.jsonl` → `dashboard/index.html`).
+(merged: `scripts/pull_logs.sh` → `logs/demo.jsonl` → `dashboard/index.html`). Those logs are not committed; the held-out
+evaluation records behind §4 and §8 are, in `docs/proof/`, and `scripts/verify_robot_init.py` / `scripts/verify_camera.py` recount them.
+
+> **Corrections (2026-09-26 recount from `docs/proof/`).** The task-0 BM-3 v2 interval is [44, 63], not [44, 64]. The v3 held-out run
+> reused run 1's evaluation seeds (5040–5249), so it is a repeat on the same layouts and noise draws, not an independent set; v2 scored
+> 25/50 and v3 35/50 on those identical seeds. v2's grasp-offset and cone values were inert (`blend_alpha` 0.044 < 0.05 disables them;
+> the logged constraints show zero grasp offset and no approach cone), so v2 = homing + time scale 0.85 + velocity cap 0.96.
+> The "strong gate" is 24 gate rollouts on the 10 gate layouts (init states 30–39); K=4 is the CEM's seeds per candidate.
+> Task-3 pooled BM-2 is 46/150 = 31%.
 
 ## 1. Phase 0 — base rate and cost reference (LIBERO-10 task 3, "put the black bowl in the bottom drawer of the cabinet and close it")
 Arm A (raw VLA + envelope), 20 train seeds: **55% [34, 74]**, mean **378 steps**. `steps_ref=377.95`, `jerk_ref` frozen
@@ -70,11 +78,11 @@ BM-3 vs BM-1: 2.5×, intervals disjoint → **pass** by §13.5 on task 0.
 
 **Replication** (same 10 held-out layouts, 5 *new* policy-noise draws, n=50): BM-0 40/50 = 80% · BM-1 12/50 = 24% [14, 37] ·
 BM-2 13/50 = 26% · BM-4 17/50 = 34% · **BM-3 29/50 = 58% [44, 71]** · BM-3w 21/50 = 42%. **Pooled n=100 per arm:**
-BM-1 **22%** [15, 31] → BM-4 34% [25, 44] → **BM-3 54% [44, 64]**, ratio **2.45×**, intervals disjoint. The headline replicates.
+BM-1 **22%** [15, 31] → BM-4 34% [25, 44] → **BM-3 54% [44, 63]**, ratio **2.45×**, intervals disjoint. The headline replicates.
 
-**Second unattended sleep cycle (strong gate: 24 gate seeds × 4 draws), from v2:** CEM candidate passed the gate,
-cost 1.946 → 1.626, success 70.8% → 79.2% on the gate layouts (+8.3 pp), promoted as **v3**. Held-out re-eval on a
-third independent set of 5 noise draws (n=50): BM-1 11/50 = 22% · BM-2 13/50 = 26% · BM-4 21/50 = 42% ·
+**Second unattended sleep cycle (strong gate: 24 gate rollouts on layouts 30–39), from v2:** CEM candidate passed the gate,
+cost 1.946 → 1.626, success 70.8% → 79.2% on the gate layouts (+8.3 pp), promoted as **v3**. Held-out re-eval, a third
+run on the same seeds as the first run (5040–5249, n=50; v2 scored 25/50 on these): BM-1 11/50 = 22% · BM-2 13/50 = 26% · BM-4 21/50 = 42% ·
 **BM-3 (v3) 35/50 = 70% [56, 81], 141 steps.** The perturbed-environment mastery curve is therefore
 **v1 22% → v2 54% → v3 70%** (identity → one cycle → two cycles), each step through a gate on layouts the
 optimizer never saw, evaluated on layouts neither saw. v3 = homing on, time_scale 0.755, velocity_cap 0.94,
@@ -85,15 +93,15 @@ BM-1 over all three runs: 33/150 = 22%; BM-4 hand-set homing: 55/150 = 37%.
 BM-1 16/50 = 32% [21, 46] · BM-2 17/50 = 34% · BM-4 hand-set homing 10/50 = **20%** (homing *hurts* here) ·
 BM-3 9/50 = **18%** [10, 31] — a **false-positive promotion**: the n=12 gate accepted a vector that is worse held-out.
 Replication with 5 new noise draws: BM-0 30/50 = 60% · BM-1 14/50 = 28% · BM-2 17/50 = 34% · BM-4 14/50 = 28% · BM-3 17/50 = 34%.
-Strong-gate cycle 2 on task 3 (24 gate seeds × 4 draws, from the n=12-gate incumbent): fresh-seed validation **kept the
+Strong-gate cycle 2 on task 3 (24 gate rollouts on layouts 30–39, from the n=12-gate incumbent): fresh-seed validation **kept the
 incumbent** — nothing promoted. Third independent run (n=50): BM-1 11/50 = 22% · BM-2 12/50 = 24% · BM-4 12/50 = 24% ·
-BM-3 15/50 = 30%. **Pooled task 3, n=150:** BM-1 41/150 = **27%** [21, 35] · BM-2 41/150 = 27% · BM-4 36/150 = 24% ·
+BM-3 15/50 = 30%. **Pooled task 3, n=150:** BM-1 41/150 = **27%** [21, 35] · BM-2 46/150 = 31% · BM-4 36/150 = 24% ·
 BM-3 41/150 = **27%** [21, 35] — the n=12-gate vector is exactly baseline (no gain, no harm; the first run's "harm" was
 noise), and the strong gate was right to refuse another. Task 3's perturbation is r=0.2 rad (twice task 0's) and even
 the standard arm is at 60%: harder scene, weaker policy, and nothing in this 17-dim file fixes it.
-With mastery v3 that is two harmful promotions from the 12-seed gate; the strong gate (24 seeds, K=4) has so far
-promoted nothing false (mastery cycle from v2: validation kept the incumbent). The strong-gate re-run on task 3 is queued. The optimizer's vector (homing + time_scale 0.85 +
-grasp offset −1.8 cm + cone 34°) beats hand-set homing alone (50% vs 34%): it found more than the switch.
+With mastery v3 that is two harmful promotions from the 12-seed gate; the strong gate (24 gate rollouts) has so far
+promoted nothing false (mastery cycle from v2: validation kept the incumbent). The strong-gate re-run on task 3 is queued. The optimizer's vector (homing with learned deltas + time_scale 0.85 +
+velocity cap 0.96; its grasp-offset and cone values were inert because `blend_alpha` < 0.05) beats hand-set homing alone (50% vs 34%): it found more than the switch.
 
 Verdict by the spec's own rule (§13.5), all five tasks at n=10: **collapse reproduced (80% → 14%)**; the untrained shim adds nothing
 (BM-2 ≈ BM-1); hand-set homing recovers 6 points pooled (**partial**, CIs overlap); one unattended sleep found homing
@@ -177,18 +185,18 @@ BM-1 `0_0_100_2_352` (tilt −8°) **3/10** [11, 60], 203 steps · BM-1 `0_0_100
 A 6–8° pointing change of a fixed camera collapses the policy as hard as the robot-init perturbation did (90% → 20–30%).
 Second probe on the CPU tier (own numerics, same 10 layouts): stock 8/10 · tilt −8° 1/10 · tilt −6° 1/10 · **moved camera
 `11_15_100_0_0` (11° around, 15° up, 30 cm away) 6/10** — the policy tolerates a *moved* viewpoint far better than a small
-*pointing* change: what collapses it is the scene shifting in the frame, which is exactly what the shift dims can undo. Views
-`13..15_15` PENDING. (The first GPU probe OOMed at the third view: a per-env policy copy in the worker cache, fixed in `runner/pool.py`.)
+*pointing* change: what collapses it is the scene shifting in the frame, which is exactly what the shift dims can undo. View
+`13_15_100_0_0` 6/10 (CPU probe); `15_15` was not run. (The first GPU probe OOMed at the third view: a per-env policy copy in the worker cache, fixed in `runner/pool.py`.)
 
-**Sleep cycle + held-out reps (10 eval layouts × 5 noise draws, n=50/arm), strong gate (24 gate layouts × 4 draws):**
+**Sleep cycle + held-out reps (10 eval layouts × 5 noise draws, n=50/arm), strong gate (24 gate rollouts on layouts 30–39):**
 | task | view | BM-0 stock | BM-1 camera moved | BM-2 identity shim | BM-3 after one sleep | gate | promoted vector |
 |---|---|---|---|---|---|---|---|
-| 0 | `0_0_100_2_354` (tilt −6°) | 44/50 = **88%** [76, 94], 91 steps | 7/50 = **14%** [7, 26], 208 steps | 3/50 = 6% [2, 16], 214 steps | **29/50 = 58%** [44, 71], 156 steps — **pass** (4.1×, intervals disjoint) | **passed**: cost 4.04 → 1.89, success 12.5% → 66.7% (+54 pp) on 24 gate layouts; 504 rollouts, 31 min on an A100 | v2: `cam_shift_xy` = (−0.17, −0.18) (frame moved up/left by ~17% — the direction that undoes the tilt), `cam_zoom` 1.09, `cam_roll` 2.0°, `time_scale` 0.64, `gripper_cmd` 0.71; blend off, homing off |
-| 0 | same, action dims only (`--act`, calibration frozen at identity) | — | 4/50 = 8% [3, 19] (its own BM-1) | 6/50 = 12% [6, 24] | **8/50 = 16%** [8, 29], 213 steps — no recovery | passed: cost 3.77 → 3.15, success 20.8% → 33.3% (+12.5 pp) on the same 24 gate layouts; 504 rollouts, 31 min | v2: `time_scale` 0.60, `velocity_cap` 0.71, `gripper_cmd` 0.74, `blend_alpha` 0.14 (cone 30°), homing on (δ ≤ 2 cm) — the robot-init recipe, which does not fix a moved camera |
+| 0 | `0_0_100_2_354` (tilt −6°) | 44/50 = **88%** [76, 94], 91 steps | 7/50 = **14%** [7, 26], 208 steps | 3/50 = 6% [2, 16], 214 steps | **29/50 = 58%** [44, 71], 156 steps — **pass** (4.1×, intervals disjoint) | **passed**: cost 4.04 → 1.89, success 12.5% → 66.7% (+54 pp) on 24 gate rollouts; 504 rollouts, 31 min on an A100 | v2: `cam_shift_xy` = (−0.17, −0.18) (frame moved up/left by ~17% — the direction that undoes the tilt), `cam_zoom` 1.09, `cam_roll` 2.0°, `time_scale` 0.64, `gripper_cmd` 0.71; blend off, homing off |
+| 0 | same, action dims only (`--act`, calibration frozen at identity) | — | 4/50 = 8% [3, 19] (its own BM-1) | 6/50 = 12% [6, 24] | **8/50 = 16%** [8, 29], 213 steps — no recovery | passed: cost 3.77 → 3.15, success 20.8% → 33.3% (+12.5 pp) on the same 24 gate rollouts; 504 rollouts, 31 min | v2: `time_scale` 0.60, `velocity_cap` 0.71, `gripper_cmd` 0.74, `blend_alpha` 0.14 (cone 30°), homing on (δ ≤ 2 cm) — the robot-init recipe, which does not fix a moved camera |
 | 0 | `11_15_100_0_0` (moved) | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
-| 1 | `0_0_100_4_6` | 35/50 = **70%** [56, 81], 139 steps | 3/50 = **6%** [2, 16], 213 steps | 2/50 = 4% [1, 13], 215 steps | 4/50 = **8%** [3, 19], 213 steps — **no recovery** | passed on cost only: 4.46 → 4.35, success 0% → 4.2% on 24 gate layouts (480 rollouts, 35 min) | v2: `cam_shift_xy` = (+0.25, −0.02), `cam_roll` 3.7°, `time_scale` 1.14, `velocity_cap` 0.73 — nothing in the file rescues this scene under the tilt |
+| 1 | `0_0_100_4_6` | 35/50 = **70%** [56, 81], 139 steps | 3/50 = **6%** [2, 16], 213 steps | 2/50 = 4% [1, 13], 215 steps | 4/50 = **8%** [3, 19], 213 steps — **no recovery** | passed on cost only: 4.46 → 4.35, success 0% → 4.2% on 24 gate rollouts (480 rollouts, 35 min) | v2: `cam_shift_xy` = (+0.25, −0.02), `cam_roll` 3.7°, `time_scale` 1.14, `velocity_cap` 0.73 — nothing in the file rescues this scene under the tilt |
 | 2 | `0_0_100_6_6` | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
-| 3 | `0_0_100_8_6` | 33/50 = **66%** [52, 78], 131 steps | 4/50 = **8%** [3, 19], 209 steps | 4/50 = 8% [3, 19], 209 steps | **9/50 = 18%** [10, 31], 200 steps — partial (2.3×, intervals overlap) | passed: 4.12 → 3.75, success 12.5% → 20.8% (+8.3 pp) on 24 gate layouts (504 rollouts, 35 min) | v2: `cam_roll` −10.1° (the view turns the axis 8° about z), `cam_shift_xy` = (+0.22, +0.14), `cam_zoom` 0.98, `time_scale` 0.82, `gripper_cmd` 0.82 |
+| 3 | `0_0_100_8_6` | 33/50 = **66%** [52, 78], 131 steps | 4/50 = **8%** [3, 19], 209 steps | 4/50 = 8% [3, 19], 209 steps | **9/50 = 18%** [10, 31], 200 steps — partial (2.3×, intervals overlap) | passed: 4.12 → 3.75, success 12.5% → 20.8% (+8.3 pp) on 24 gate rollouts (504 rollouts, 35 min) | v2: `cam_roll` −10.1° (the view turns the axis 8° about z), `cam_shift_xy` = (+0.22, +0.14), `cam_zoom` 0.98, `time_scale` 0.82, `gripper_cmd` 0.82 |
 | 4 | `0_0_100_10_6` | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
 
 ****Second sleep cycle on task 0 (from v2, half budget: CEM 16 × 3 iterations, K=4, one A100, 232 rollouts, 14 min):** the fresh-seed
