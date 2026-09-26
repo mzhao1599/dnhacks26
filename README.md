@@ -1,22 +1,22 @@
 # Somnio Robotics
 
-**A frozen vision-language-action robot policy that recovers from a changed environment by tuning a small execution file offline ("sleep"), with no change to its weights.**
+**Somnio (DN Hacks 2026) keeps a robot's vision-language-action policy frozen and adapts it to a changed scene by tuning a 17–21-number parameter file offline, in unattended "sleep" cycles.**
 
 [![tests](https://github.com/mzhao1599/dnhacks26/actions/workflows/ci.yml/badge.svg)](https://github.com/mzhao1599/dnhacks26/actions/workflows/ci.yml)
 ![python](https://img.shields.io/badge/python-3.12-blue)
 ![license](https://img.shields.io/badge/license-MIT-green)
 
 <p align="center">
-  <img src="docs/media/collapse_vs_sleep_512.gif" width="512" alt="Two simulated robot-arm clips on the same seed. Top: the arm's starting joints are perturbed and the frozen policy fails after 220 steps. Bottom: the same start after one unattended sleep cycle; the task succeeds in 94 steps.">
-  <br><sub>Same layout, same seed, same frozen SmolVLA. Top: arm start perturbed, raw policy fails. Bottom: after one unattended sleep cycle, success in 94 steps.</sub>
+  <img src="docs/media/collapse_vs_sleep_512.gif" width="512" alt="Two simulated robot-arm clips on the same seed. Top: the arm's starting joints are perturbed and the frozen policy times out at 220 steps. Bottom: the same start after one unattended sleep cycle; the task succeeds in 94 steps.">
+  <br><sub>Same layout, same seed, same frozen SmolVLA. Top: arm start perturbed, raw policy times out at 220 steps. Bottom: after one unattended sleep cycle, success in 94 steps.</sub>
 </p>
 
-**Result.** Shift the arm's starting joints by 0.1 rad and a frozen [SmolVLA](https://huggingface.co/HuggingFaceVLA/smolvla_libero) policy drops from **80% to 22%** success on a LIBERO pick-and-place task. One unattended sleep cycle brings it back to **54%**, and a second to **70%**, on 10 held-out layouts that neither the optimizer nor the promotion gate ever saw. Tilt the camera 6° instead and success drops from **88% to 14%**; one sleep cycle recovers **58%**. The per-episode records behind every number are committed, and two scripts recount them.
+**Result.** Shift the arm's starting joints by 0.1 rad and a frozen [SmolVLA](https://huggingface.co/HuggingFaceVLA/smolvla_libero) policy drops from **80% to 22%** success on a LIBERO pick-and-place task. One unattended sleep cycle brings it back to **54%**, and a second to **70%**, on 10 held-out layouts that neither the optimizer nor the promotion gate ever saw. Tilt the camera 6° instead and success drops from **88% to 14%**; one sleep cycle brings it back to **58%** (n=50 each). The per-episode records behind every number are committed, and two scripts recount them.
 
-**Why it is unusual**
+**What is different**
 
-- **Nothing is trained.** No fine-tuning, demonstrations, gradients or human labels. The only learning signal is the simulator's own success flag.
-- **What adapts is a small, versioned execution file**: timing, a speed cap, the gripper close command, a scripted homing move, approach shaping and, for the camera case, a re-framing of the image the policy sees. It is 17 numbers for the robot-start results and 21 after four camera numbers were added.
+- **The policy's weights never change.** No fine-tuning, demonstrations, gradients or human labels. The search is scored only by simulator outputs: success, step count, smoothness and action size.
+- **What adapts is a small, versioned parameter file**: timing, a speed cap, the gripper close command, a scripted homing move, approach shaping and, for the camera case, a re-framing of the image the policy sees. It is 17 numbers for the robot-start results and 21 after four camera numbers were added.
 - **A gate decides every change.** The optimizer searches on one set of layouts; a candidate replaces the current file only if it lowers cost without losing success on a second set; results are reported on a third. The gate and a fresh-seed check stopped several cycles, and the cases where sleep did *not* help are reported below.
 
 Built at DN Hacks 2026 on LIBERO / LIBERO-Plus in simulation (no physical robot), with runs on a university GPU cluster.
@@ -42,13 +42,13 @@ flowchart LR
 - **Sleep** is a cross-entropy-method (CEM) search over the file, scored by a cost that combines steps, jerk, an action-magnitude force proxy and failure (`fleet_memory/analysis/cost.py`). All candidates in an iteration share seeds, and the final pick is re-checked on fresh seeds before it reaches the gate (`fleet_memory/runner/consolidate.py`).
 - **Three disjoint layout sets** (`fleet_memory/runner/seeds.json`): the optimizer uses LIBERO initial states 0–29, the gate 30–39, and every reported evaluation 40–49.
 - **Drift detection** watches an EWMA of episode cost and can start a sleep cycle by itself (`--auto-sleep`).
-- **An LLM coach is optional** (Gemini or Claude, `fleet_memory/agents/`). It can propose values but cannot apply them; only the gate writes the file. On this benchmark it contributed nothing measurable.
+- **An LLM coach is optional** (Gemini or Claude, `fleet_memory/agents/`). It can propose values but cannot apply them; only the gate writes the file. Adding it on top of the optimized file did not change results (n=20); its effect on its own was not measured cleanly.
 
 The design rules the code follows are in [`AGENTS.md`](AGENTS.md); the reasoning behind them is in [`docs/DECISIONS.md`](docs/DECISIONS.md).
 
 ## Results
 
-All on LIBERO-Spatial with frozen SmolVLA (10-action chunks). Evaluation = the 10 held-out layouts × policy-noise draws; 95% Wilson intervals. Full tables, including every failure, are in [`docs/RESULTS.md`](docs/RESULTS.md).
+All on LIBERO-Spatial with frozen SmolVLA (10-action chunks). Evaluation = the 10 held-out layouts × policy-noise draws; 95% Wilson intervals. Arm codes (BM-0 to BM-4) match `docs/RESULTS.md`. Full tables, including every failure, are in [`docs/RESULTS.md`](docs/RESULTS.md).
 
 ### Robot-start perturbation (LIBERO-Plus robot-initial-state, 0.1 rad, task 0)
 
@@ -64,10 +64,11 @@ All on LIBERO-Spatial with frozen SmolVLA (10-action chunks). Evaluation = the 1
 | **BM-3.2** | **after a second unattended sleep cycle (v3)** | **70%** (35/50) | **[56, 81]** |
 
 - v2 is 2.45× the collapse, with disjoint intervals, over two evaluation runs with different noise draws (25/50 and 29/50).
+- A second, independent sleep cycle with a wider search reached 40% (60/150).
 - v3 was evaluated on the same seeds as the first run, where v2 had scored 25/50, so 35/50 is a same-seed comparison rather than a third independent sample.
 - The optimizer found the homing move on its own and beat the hand-set version (54% vs 37%). v2 = homing with learned offsets, time scale 0.85 and a velocity cap of 0.96. v3 slowed the chunks further (0.76), turned on approach shaping, and lowered the grasp by 1.3 cm.
 
-**Where it did not work.** On task 3 (a 0.2 rad perturbation) one sleep cycle came out exactly at baseline (27% → 27%, n=150), and the stronger gate refused a second. Tasks 1, 2 and 4 did not recover. A 6 cm object shift is outside what the file can express (0/15 after sleep).
+**Where it did not work.** On task 3 (a 0.2 rad perturbation) one sleep cycle came out exactly at baseline (27% → 27%, n=150), and a second cycle with the stronger gate stopped at fresh-seed validation without promoting anything. Tasks 1, 2 and 4 did not recover. A 6 cm object shift is outside what the file can express (0/15 after sleep).
 
 ### Camera perturbation (LIBERO-Plus camera viewpoint, 6° tilt, task 0)
 
@@ -91,9 +92,9 @@ The action-side numbers cannot fix a moved camera, so the file gained four obser
 
 ### The gate
 
-In the committed robot-start records, 11 sleep cycles ended: 5 promoted a new version, 3 were refused by the gate, and 3 stopped at fresh-seed validation. The first gate used 12 rollouts. Its promotions on tasks 2 and 3 and on a LIBERO-10 "mastery" run (RESULTS §3) turned out no better, or worse, held-out, so later cycles used a 24-rollout gate. The gate always runs on layouts 30–39.
+In the committed robot-start records (including the wide-search cycle, which `verify_robot_init.py` lists under the BM-3 rows), 11 sleep cycles ended: 5 promoted a new version, 3 were refused by the gate, and 3 stopped at fresh-seed validation. The first gate used 12 rollouts. Its promotions on tasks 2 and 3 and on a LIBERO-10 "mastery" run (RESULTS §3) turned out no better, or worse, held-out, so later cycles used a 24-rollout gate. The gate always runs on layouts 30–39.
 
-## Proof the numbers are real
+## Raw records and recount
 
 Every number above is recounted from raw per-episode records written by the cluster jobs, and those records are in the repo:
 
@@ -105,7 +106,7 @@ Every number above is recounted from raw per-episode records written by the clus
 | recount | `python scripts/verify_robot_init.py` → [output](docs/proof/robot_init/verify_output.txt) | `python scripts/verify_camera.py` → [output](docs/proof/camera_family/verify_output.txt) |
 | same-seed videos | [`logs/hopper/videos/`](logs/hopper/videos/) | [`cam_BM-1_s5047_fail.mp4`](docs/proof/camera_family/cam_BM-1_s5047_fail.mp4), [`cam_BM-3_s5047_ok.mp4`](docs/proof/camera_family/cam_BM-3_s5047_ok.mp4) |
 
-The verify scripts need only the Python standard library and run from a fresh clone. The optimizer only ever runs on initial states 0–29 and the gate on 30–39; every evaluation episode is on 40–49, which the scripts enforce by seed. Success is the simulator's predicate. Between the collapse arm and the recovered arm, the only field that differs in those records is the parameter file (`s3_params`). The full logs, with every CEM rollout, stayed on the cluster.
+The verify scripts need only the Python standard library and run from a fresh clone. The optimizer only ever runs on initial states 0–29 and the gate on 30–39; every evaluation episode is on 40–49, which the scripts enforce by seed. Success is the simulator's predicate. Between the collapse arm and the recovered arm, the only input that differs in those records is the parameter file (`s3_params`). The full logs, with every CEM rollout, stayed on the cluster.
 
 ## Run it in two minutes (laptop, no GPU)
 
@@ -114,7 +115,7 @@ Everything runs end to end on a mock environment and mock policy, offline:
 ```bash
 git clone https://github.com/mzhao1599/dnhacks26 && cd dnhacks26
 python3.12 -m venv .venv && source .venv/bin/activate && pip install -e ".[dev]"
-FM_LLM=mock pytest -q                                            # 143 tests, under a minute
+FM_LLM=mock pytest -q                                            # 143 tests, about a minute
 
 # baseline -> one sleep cycle -> gated promotion -> results table
 FM_LLM=mock python -m fleet_memory.runner.pool --env mock --policy mock --suite mock --task pick_bowl_to_plate \

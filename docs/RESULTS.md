@@ -6,7 +6,7 @@ Success = the benchmark's programmatic predicate, always. Every number below is 
 (merged: `scripts/pull_logs.sh` → `logs/demo.jsonl` → `dashboard/index.html`). Those logs are not committed; the held-out
 evaluation records behind §4 and §8 are, in `docs/proof/`, and `scripts/verify_robot_init.py` / `scripts/verify_camera.py` recount them.
 
-> **Corrections (2026-09-26 recount from `docs/proof/`).** The task-0 BM-3 v2 interval is [44, 63], not [44, 64]. The v3 held-out run
+> **Corrected 2026-09-26 after a recount from `docs/proof/`** (the text below already includes these). The task-0 BM-3 v2 interval is [44, 63], not [44, 64]. The v3 held-out run
 > reused run 1's evaluation seeds (5040–5249), so it is a repeat on the same layouts and noise draws, not an independent set; v2 scored
 > 25/50 and v3 35/50 on those identical seeds. v2's grasp-offset and cone values were inert (`blend_alpha` 0.044 < 0.05 disables them;
 > the logged constraints show zero grasp offset and no approach cone), so v2 = homing + time scale 0.85 + velocity cap 0.96.
@@ -199,7 +199,7 @@ Second probe on the CPU tier (own numerics, same 10 layouts): stock 8/10 · tilt
 | 3 | `0_0_100_8_6` | 33/50 = **66%** [52, 78], 131 steps | 4/50 = **8%** [3, 19], 209 steps | 4/50 = 8% [3, 19], 209 steps | **9/50 = 18%** [10, 31], 200 steps — partial (2.3×, intervals overlap) | passed: 4.12 → 3.75, success 12.5% → 20.8% (+8.3 pp) on 24 gate rollouts (504 rollouts, 35 min) | v2: `cam_roll` −10.1° (the view turns the axis 8° about z), `cam_shift_xy` = (+0.22, +0.14), `cam_zoom` 0.98, `time_scale` 0.82, `gripper_cmd` 0.82 |
 | 4 | `0_0_100_10_6` | PENDING | PENDING | PENDING | PENDING | PENDING | PENDING |
 
-****Second sleep cycle on task 0 (from v2, half budget: CEM 16 × 3 iterations, K=4, one A100, 232 rollouts, 14 min):** the fresh-seed
+**Second sleep cycle on task 0 (from v2, half budget: CEM 16 × 3 iterations, K=4, one A100, 232 rollouts, 14 min):** the fresh-seed
 validation chose the **incumbent** (v2 cost 2.02 vs 2.48 / 2.88 / 2.91 / 3.40 for the final mean and the per-iteration bests), so no
 candidate reached the gate and v2 stays — the same refusal behaviour the strong gate showed on the robot-init tasks. Held-out re-eval of
 v2 on 2 fresh noise draws (n=20/arm): BM-1 4/20 = 20% · BM-2 2/20 = 10% · **BM-3 (v2) 10/20 = 50%** [30, 70] — the cycle-1 result
