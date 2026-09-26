@@ -10,3 +10,7 @@ logs/runs/
 .env
 logs/hopper/**/*.jsonl
 dashboard/artifact.html
+
+# packaging and generated media
+*.egg-info/
+output/
